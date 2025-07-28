@@ -1,0 +1,3 @@
+[submodule "rmdev"]
+	path = rmdev
+	url = https://github.com/CQUT-RoboMaster-ShiJi-DREAMER-ECU-Team/rmdev.git
