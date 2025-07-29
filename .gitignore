@@ -204,3 +204,7 @@ build/
 # =================================================================================================
 # Exclude
 !Doc/**/*.*
+
+# CubeMX generated CMSIS-DSP lib
+libarm_*_math.a
+libarm_*_math.lib
