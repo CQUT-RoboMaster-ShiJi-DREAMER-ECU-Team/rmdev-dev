@@ -208,3 +208,5 @@ build/
 # CubeMX generated CMSIS-DSP lib
 libarm_*_math.a
 libarm_*_math.lib
+
+__pycache__/
