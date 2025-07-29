@@ -21,7 +21,6 @@ endif()
 # Set the project name
 set(CMAKE_PROJECT_NAME stm32f407_platform_test)
 
-# Include toolchain file
 #include("cmake/gcc-arm-none-eabi.cmake") # 应当预定义 CMAKE_TOOLCHAIN_FILE 变量
 
 # Enable compile command to ease indexing with e.g. clangd
@@ -61,9 +60,10 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
 )
 
 # Add linked libraries
-target_link_libraries(${CMAKE_PROJECT_NAME}
-    stm32cubemx
-
-    # Add user defined libraries
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     rmdev
 )
+
+add_library(rmdev_cmsis_dsp_support INTERFACE)
+target_link_directories(rmdev_cmsis_dsp_support INTERFACE ./Middlewares/ST/ARM/DSP/Lib/)
+target_link_libraries(rmdev_cmsis_dsp_support INTERFACE :libarm_cortexM4lf_math.a stm32cubemx)
