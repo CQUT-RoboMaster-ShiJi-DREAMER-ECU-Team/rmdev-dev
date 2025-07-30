@@ -47,11 +47,13 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
+    RmdevTestImpl/rmdev_test_impl.c
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
+    RmdevTestImpl/
 )
 
 # Add project symbols (macros)
@@ -63,6 +65,13 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     rmdev
 )
+
+target_compile_definitions(emdevif_util PUBLIC EMDEVIF_UTIL_ARRAY_TRAITS_AGGREGATE_ADD_RESERVE_MEMBER=1)
+
+if (RMDEV_ENABLE_TESTS)
+    enable_testing()
+    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE rmdev_unit_test emdevif_test_framework)
+endif ()
 
 add_library(rmdev_cmsis_dsp_support INTERFACE)
 target_link_directories(rmdev_cmsis_dsp_support INTERFACE ./Middlewares/ST/ARM/DSP/Lib/)

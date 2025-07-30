@@ -26,6 +26,9 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+#include "emdevif/attributes_and_useful_macros.h"
+#include "rmdev_test_impl.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -116,10 +119,16 @@ void MX_FREERTOS_Init(void) {
   * @param  argument: Not used
   * @retval None
   */
+EMDEVIF_NO_RETURN
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
+
+  EMDEVIF_UNUSED(argument);
+
+  testEntry();
+
   /* Infinite loop */
   for(;;)
   {
