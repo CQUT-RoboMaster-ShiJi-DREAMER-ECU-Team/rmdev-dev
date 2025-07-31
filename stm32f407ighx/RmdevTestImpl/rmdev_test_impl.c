@@ -16,21 +16,22 @@
 
 extern void rmdev_testEntry(void);
 
+static char printf_buffer[512];
+
 static void test_printf(const char* format, ...)
 {
     va_list args;
     va_start(args, format);
 
-    char buffer[256];
-    sprintf(buffer, format, args);
+    vsprintf(printf_buffer, format, args);
     va_end(args);
 
     while (HAL_UART_GetState(&huart6) != HAL_UART_STATE_READY) {
     }
 
-    for (size_t i = 0; i < strlen(buffer); i++) {
-        const uint8_t c = buffer[i];
-        HAL_UART_Transmit(&huart6, &c, 1, HAL_MAX_DELAY);
+    for (size_t i = 0; i < strlen(printf_buffer); i++) {
+        const uint8_t c = printf_buffer[i];
+        HAL_UART_Transmit(&huart6, &c, sizeof c, HAL_MAX_DELAY);
     }
 }
 
