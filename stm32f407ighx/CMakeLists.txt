@@ -66,8 +66,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     rmdev
 )
 
-target_compile_definitions(emdevif_util PUBLIC EMDEVIF_UTIL_ARRAY_TRAITS_AGGREGATE_ADD_RESERVE_MEMBER=1)
-
 if (RMDEV_ENABLE_TESTS)
     enable_testing()
     target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE rmdev_unit_test emdevif_test_framework)
