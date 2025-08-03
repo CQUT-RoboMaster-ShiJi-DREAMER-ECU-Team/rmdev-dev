@@ -1,11 +1,11 @@
 /**
- * @file rmdev_test_impl.c
+ * @file stm32_hal_test_func_impl.c
  * @author DuYicheng
  * @date 2025-07-30
  * @brief 测试函数的实现
  */
 
-#include "rmdev_test_impl.h"
+#include "stm32_hal_test_func_impl.h"
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -16,6 +16,7 @@
 
 extern void rmdev_testEntry(void);
 
+static UART_HandleTypeDef* test_uart_handle = NULL;
 static char printf_buffer[512];
 
 static void test_printf(const char* format, ...)
@@ -26,13 +27,18 @@ static void test_printf(const char* format, ...)
     vsprintf(printf_buffer, format, args);
     va_end(args);
 
-    while (HAL_UART_GetState(&huart6) != HAL_UART_STATE_READY) {
+    while (HAL_UART_GetState(test_uart_handle) != HAL_UART_STATE_READY) {
     }
 
     for (size_t i = 0; i < strlen(printf_buffer); i++) {
         const uint8_t c = printf_buffer[i];
-        HAL_UART_Transmit(&huart6, &c, sizeof c, HAL_MAX_DELAY);
+        HAL_UART_Transmit(test_uart_handle, &c, sizeof c, HAL_MAX_DELAY);
     }
+}
+
+void testInit(UART_HandleTypeDef* const test_huart)
+{
+    test_uart_handle = test_huart;
 }
 
 void testEntry(void)

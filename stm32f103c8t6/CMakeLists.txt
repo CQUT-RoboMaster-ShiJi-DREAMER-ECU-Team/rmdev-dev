@@ -19,9 +19,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Set the project name
-set(CMAKE_PROJECT_NAME stm32f407ighx)
-
-#include("cmake/gcc-arm-none-eabi.cmake") # 应当预定义 CMAKE_TOOLCHAIN_FILE 变量
+set(CMAKE_PROJECT_NAME stm32f103c8t6)
 
 # Enable compile command to ease indexing with e.g. clangd
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
@@ -59,10 +57,12 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined symbols
 )
 
+# Remove wrong libob.a library dependency when using cpp files
+list(REMOVE_ITEM CMAKE_C_IMPLICIT_LINK_LIBRARIES ob)
+
 # Add linked libraries
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
+target_link_libraries(${CMAKE_PROJECT_NAME}
     rmdev
-    stm32_hal_test_func_impl
 )
 
 if (RMDEV_ENABLE_TESTS)
@@ -72,4 +72,4 @@ endif ()
 
 add_library(rmdev_cmsis_dsp_support INTERFACE)
 target_link_directories(rmdev_cmsis_dsp_support INTERFACE ./Middlewares/ST/ARM/DSP/Lib/)
-target_link_libraries(rmdev_cmsis_dsp_support INTERFACE :libarm_cortexM4lf_math.a stm32cubemx)
+target_link_libraries(rmdev_cmsis_dsp_support INTERFACE :libarm_cortexM3l_math.a stm32cubemx)
