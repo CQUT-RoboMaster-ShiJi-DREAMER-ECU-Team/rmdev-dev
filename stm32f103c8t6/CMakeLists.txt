@@ -63,7 +63,7 @@ list(REMOVE_ITEM CMAKE_C_IMPLICIT_LINK_LIBRARIES ob)
 # Add linked libraries
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     rmdev
-    stm32_hal_test_func_impl
+    stm32_ll_test_func_impl
 )
 
 if (RMDEV_ENABLE_TESTS)
