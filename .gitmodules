@@ -1,3 +1,6 @@
 [submodule "rmdev"]
 	path = rmdev
 	url = https://github.com/CQUT-RoboMaster-ShiJi-DREAMER-ECU-Team/rmdev.git
+[submodule "FreeRTOS-Kernel"]
+	path = FreeRTOS-Kernel
+	url = https://github.com/FreeRTOS/FreeRTOS-Kernel.git

@@ -70,6 +70,21 @@ if (RMDEV_ENABLE_TESTS)
     target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE rmdev_unit_test emdevif_test_framework)
 endif ()
 
+# For CMSIS-DSP
+
 add_library(rmdev_cmsis_dsp_support INTERFACE)
 target_link_directories(rmdev_cmsis_dsp_support INTERFACE ./Middlewares/ST/ARM/DSP/Lib/)
 target_link_libraries(rmdev_cmsis_dsp_support INTERFACE :libarm_cortexM4lf_math.a stm32cubemx)
+
+# For FreeRTOS-Kernel
+
+add_library(freertos_config INTERFACE)
+
+target_sources(freertos_config INTERFACE
+    FILE_SET header_file TYPE HEADERS FILES ./FreeRTOSConfig.h
+)
+
+target_compile_definitions(freertos_config INTERFACE projCOVERAGE_TEST=0)
+
+set(FREERTOS_HEAP "4" CACHE STRING "" FORCE)
+set( FREERTOS_PORT "GCC_ARM_CM4F" CACHE STRING "" FORCE)
