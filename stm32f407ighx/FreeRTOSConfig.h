@@ -185,7 +185,7 @@
  * to the message buffer.  Defaults to size_t if left undefined - but that may
  * waste space if messages never go above a length that could be held in a
  * uint8_t. */
-#define configMESSAGE_BUFFER_LENGTH_TYPE           size_t
+#define configMESSAGE_BUFFER_LENGTH_TYPE           uint32_t
 
 /* If configHEAP_CLEAR_MEMORY_ON_FREE is set to 1, then blocks of memory
  * allocated using pvPortMalloc() will be cleared (i.e. set to zero) when freed
@@ -209,7 +209,7 @@
  * provide system-wide implementations of the necessary stubs. Note that (at the
  * time of writing) the current newlib design implements a system-wide malloc()
  * that must be provided with locks. */
-#define configUSE_NEWLIB_REENTRANT                 0
+#define configUSE_NEWLIB_REENTRANT                 1
 
 /******************************************************************************/
 /* Software timer related definitions. ****************************************/
@@ -227,14 +227,14 @@
  * task, so its priority is set like any other task.  See
  * https://www.freertos.org/RTOS-software-timer-service-daemon-task.html  Only
  * used if configUSE_TIMERS is set to 1. */
-#define configTIMER_TASK_PRIORITY       ( configMAX_PRIORITIES - 1 )
+#define configTIMER_TASK_PRIORITY       ( 2 )
 
 /* configTIMER_TASK_STACK_DEPTH sets the size of the stack allocated to the
  * timer task (in words, not in bytes!).  The timer task is a standard FreeRTOS
  * task.  See
  * https://www.freertos.org/RTOS-software-timer-service-daemon-task.html Only
  * used if configUSE_TIMERS is set to 1. */
-#define configTIMER_TASK_STACK_DEPTH    configMINIMAL_STACK_SIZE
+#define configTIMER_TASK_STACK_DEPTH    256
 
 /* configTIMER_QUEUE_LENGTH sets the length of the queue (the number of discrete
  * items the queue can hold) used to send commands to the timer task.  See
@@ -262,7 +262,7 @@
  * FreeRTOS/source/stream_buffer.c source file must be included in the build if
  * configUSE_STREAM_BUFFERS is set to 1. Defaults to 1 if left undefined. */
 
-#define configUSE_STREAM_BUFFERS    1
+#define configUSE_STREAM_BUFFERS    0
 
 /******************************************************************************/
 /* Memory allocation related definitions. *************************************/
@@ -311,11 +311,31 @@
 /* Interrupt nesting behaviour configuration. *********************************/
 /******************************************************************************/
 
+// Copied from CubeMX Generated config file begin.
+/* Cortex-M specific definitions. */
+#ifdef __NVIC_PRIO_BITS
+ /* __BVIC_PRIO_BITS will be specified when CMSIS is being used. */
+ #define configPRIO_BITS         __NVIC_PRIO_BITS
+#else
+ #define configPRIO_BITS         4
+#endif
+
+/* The lowest interrupt priority that can be used in a call to a "set priority"
+function. */
+#define configLIBRARY_LOWEST_INTERRUPT_PRIORITY   15
+
+/* The highest interrupt priority that can be used by any interrupt service
+routine that makes calls to interrupt safe FreeRTOS API functions.  DO NOT CALL
+INTERRUPT SAFE FREERTOS API FUNCTIONS FROM ANY INTERRUPT THAT HAS A HIGHER
+PRIORITY THAN THIS! (higher priorities are lower numeric values. */
+#define configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY 5
+// end.
+
 /* configKERNEL_INTERRUPT_PRIORITY sets the priority of the tick and context
  * switch performing interrupts.  Not supported by all FreeRTOS ports.  See
  * https://www.freertos.org/RTOS-Cortex-M3-M4.html for information specific to
  * ARM Cortex-M devices. */
-#define configKERNEL_INTERRUPT_PRIORITY          0
+#define configKERNEL_INTERRUPT_PRIORITY          ( configLIBRARY_LOWEST_INTERRUPT_PRIORITY << (8 - configPRIO_BITS) )
 
 /* configMAX_SYSCALL_INTERRUPT_PRIORITY sets the interrupt priority above which
  * FreeRTOS API calls must not be made.  Interrupts above this priority are
@@ -323,11 +343,11 @@
  * to the highest interrupt priority (0).  Not supported by all FreeRTOS ports.
  * See https://www.freertos.org/RTOS-Cortex-M3-M4.html for information specific
  * to ARM Cortex-M devices. */
-#define configMAX_SYSCALL_INTERRUPT_PRIORITY     0
+#define configMAX_SYSCALL_INTERRUPT_PRIORITY     ( configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY << (8 - configPRIO_BITS) )
 
 /* Another name for configMAX_SYSCALL_INTERRUPT_PRIORITY - the name used depends
  * on the FreeRTOS port. */
-#define configMAX_API_CALL_INTERRUPT_PRIORITY    0
+#define configMAX_API_CALL_INTERRUPT_PRIORITY    configMAX_SYSCALL_INTERRUPT_PRIORITY
 
 /******************************************************************************/
 /* Hook and callback function related definitions. ****************************/
@@ -362,7 +382,7 @@
  * configCHECK_FOR_STACK_OVERFLOW is set to 1. See
  * https://www.freertos.org/Stacks-and-stack-overflow-checking.html  Defaults to
  * 0 if left undefined. */
-#define configCHECK_FOR_STACK_OVERFLOW        2
+#define configCHECK_FOR_STACK_OVERFLOW          0
 
 /******************************************************************************/
 /* Run time and task stats gathering related definitions. *********************/
@@ -401,7 +421,7 @@
 /* configMAX_CO_ROUTINE_PRIORITIES defines the number of priorities available
  * to the application co-routines. Any number of co-routines can share the same
  * priority. Defaults to 0 if left undefined. */
-#define configMAX_CO_ROUTINE_PRIORITIES    1
+#define configMAX_CO_ROUTINE_PRIORITIES    2
 
 /******************************************************************************/
 /* Debugging assistance. ******************************************************/
@@ -417,13 +437,17 @@
  * execution on the failing line for viewing in a debugger. */
 
 /* *INDENT-OFF* */
-#define configASSERT( x )         \
-    if( ( x ) == 0 )              \
-    {                             \
-        taskDISABLE_INTERRUPTS(); \
-        for( ; ; )                \
-        ;                         \
-    }
+#define configASSERT( x )             \
+    do                                \
+    {                                 \
+        if( ( x ) == 0 )              \
+        {                             \
+            taskDISABLE_INTERRUPTS(); \
+            for( ; ; )                \
+            ;                         \
+        }                             \
+    }                                 \
+    while (0)
 /* *INDENT-ON* */
 
 /******************************************************************************/
@@ -484,7 +508,7 @@
  * application. The application will not be able to have more than
  * configPROTECTED_KERNEL_OBJECT_POOL_SIZE kernel objects at any point of
  * time. */
-#define configPROTECTED_KERNEL_OBJECT_POOL_SIZE                   10
+#define configPROTECTED_KERNEL_OBJECT_POOL_SIZE                   20
 
 /* When using the v2 MPU wrapper, set configSYSTEM_CALL_STACK_SIZE to the size
  * of the system call stack in words. Each task has a statically allocated
@@ -500,7 +524,7 @@
  * than itself. The application writer needs to explicitly grant the
  * unprivileged task access to the kernel objects it needs using the APIs
  * provided for the same. Defaults to 0 if left undefined. */
-#define configENABLE_ACCESS_CONTROL_LIST                          1
+#define configENABLE_ACCESS_CONTROL_LIST                          0
 
 /******************************************************************************/
 /* SMP( Symmetric MultiProcessing ) Specific Configuration definitions. *******/
@@ -594,7 +618,7 @@
 
 /* Set configENABLE_MPU to 1 to enable the Memory Protection Unit (MPU), or 0
  * to leave the Memory Protection Unit disabled. */
-#define configENABLE_MPU                  1
+#define configENABLE_MPU                  0
 
 /* Set configENABLE_FPU to 1 to enable the Floating Point Unit (FPU), or 0
  * to leave the Floating Point Unit disabled. */
@@ -635,9 +659,9 @@
 
 /* Set the following configUSE_* constants to 1 to include the named feature in
  * the build, or 0 to exclude the named feature from the build. */
-#define configUSE_TASK_NOTIFICATIONS           1
+#define configUSE_TASK_NOTIFICATIONS           0
 #define configUSE_MUTEXES                      1
-#define configUSE_RECURSIVE_MUTEXES            1
+#define configUSE_RECURSIVE_MUTEXES            0
 #define configUSE_COUNTING_SEMAPHORES          1
 #define configUSE_QUEUE_SETS                   0
 #define configUSE_APPLICATION_TASK_TAG         0
@@ -656,10 +680,10 @@
 #define INCLUDE_vTaskDelayUntil                1
 #define INCLUDE_vTaskDelay                     1
 #define INCLUDE_xTaskGetSchedulerState         1
-#define INCLUDE_xTaskGetCurrentTaskHandle      1
+#define INCLUDE_xTaskGetCurrentTaskHandle      0
 #define INCLUDE_uxTaskGetStackHighWaterMark    0
 #define INCLUDE_xTaskGetIdleTaskHandle         0
-#define INCLUDE_eTaskGetState                  0
+#define INCLUDE_eTaskGetState                  1
 #define INCLUDE_xTimerPendFunctionCall         0
 #define INCLUDE_xTaskAbortDelay                0
 #define INCLUDE_xTaskGetHandle                 0

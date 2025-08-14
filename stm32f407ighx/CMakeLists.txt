@@ -46,7 +46,7 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
-    # Add user sources here
+    freertos_init.c
 )
 
 # Add include paths
@@ -61,6 +61,7 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
 
 # Add linked libraries
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
+    freertos_kernel
     rmdev
     stm32_hal_test_func_impl
 )
