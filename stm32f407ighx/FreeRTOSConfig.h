@@ -689,4 +689,9 @@ PRIORITY THAN THIS! (higher priorities are lower numeric values. */
 #define INCLUDE_xTaskGetHandle                 0
 #define INCLUDE_xTaskResumeFromISR             1
 
+/* Definitions that map the FreeRTOS port interrupt handlers to their CMSIS
+standard names. */
+#define vPortSVCHandler    SVC_Handler
+#define xPortPendSVHandler PendSV_Handler
+
 #endif /* FREERTOS_CONFIG_H */
