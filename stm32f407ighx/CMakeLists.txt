@@ -24,7 +24,7 @@ set(CMAKE_PROJECT_NAME stm32f407ighx)
 #include("cmake/gcc-arm-none-eabi.cmake") # 应当预定义 CMAKE_TOOLCHAIN_FILE 变量
 
 # Enable compile command to ease indexing with e.g. clangd
-set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Core project settings
 project(${CMAKE_PROJECT_NAME})
@@ -46,7 +46,6 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
-    freertos_init.c
 )
 
 # Add include paths
@@ -61,7 +60,6 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
 
 # Add linked libraries
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
-    freertos_kernel
     rmdev
     stm32_hal_test_func_impl
 )
@@ -88,4 +86,4 @@ target_sources(freertos_config INTERFACE
 target_compile_definitions(freertos_config INTERFACE projCOVERAGE_TEST=0)
 
 set(FREERTOS_HEAP "4" CACHE STRING "" FORCE)
-set( FREERTOS_PORT "GCC_ARM_CM4F" CACHE STRING "" FORCE)
+set(FREERTOS_PORT "GCC_ARM_CM4F" CACHE STRING "" FORCE)

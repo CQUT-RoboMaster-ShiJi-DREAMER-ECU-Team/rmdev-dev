@@ -4,10 +4,14 @@ project(stm32_hal_test_func_impl C)
 
 add_library(${PROJECT_NAME} STATIC)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE  emdevif_stm32cubemx_support emdevif_test_framework)
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    rmdev
+    emdevif_stm32cubemx_support
+    emdevif_test_framework
+)
 
 target_sources(${PROJECT_NAME}
-    PRIVATE stm32_hal_test_func_impl.c
+    PRIVATE stm32_hal_test_func_impl.cpp
 
     PUBLIC FILE_SET header_file TYPE HEADERS FILES stm32_hal_test_func_impl.h
 )

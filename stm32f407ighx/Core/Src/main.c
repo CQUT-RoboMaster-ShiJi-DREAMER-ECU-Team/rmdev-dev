@@ -24,8 +24,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
-#include "FreeRTOS.h"
-#include "task.h"
+#include "stm32_hal_test_func_impl.h"
 
 /* USER CODE END Includes */
 
@@ -53,8 +52,6 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-
-extern void freeRtosInit(void);
 
 /* USER CODE END PFP */
 
@@ -95,8 +92,7 @@ int main(void)
   MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
 
-  freeRtosInit();
-  vTaskStartScheduler();
+  testEntry();
 
   /* USER CODE END 2 */
 

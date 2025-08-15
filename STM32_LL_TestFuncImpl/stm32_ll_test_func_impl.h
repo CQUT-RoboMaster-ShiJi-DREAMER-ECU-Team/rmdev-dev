@@ -11,7 +11,15 @@
 
 #include "usart.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void testInit(USART_TypeDef* test_usart);
 void testEntry(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif  // !STM32_LL_TEST_FUNC_IMPL
