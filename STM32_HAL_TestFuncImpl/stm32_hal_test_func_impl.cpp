@@ -17,6 +17,8 @@
 #include "emdevif/attributes_and_useful_macros.h"
 #include "emdevif/fault_handler.hpp"
 
+#include <optional>
+
 import emdevif.error_handler;
 import emdevif.sys.thread;
 
@@ -61,9 +63,10 @@ extern "C" EMDEVIF_NO_RETURN void testEntry(void)
                                             .stack_size = DEFAULT_TASK_STACK_DEPTH},
                                            osStartDefaultTask,
                                            nullptr);
-    if (default_task.getHandle() == nullptr) {
+    default_task.getHandle().or_else([] -> std::optional<void*> {
         EMDEVIF_FAULT_HANDLER("Failed to create default task.");
-    }
+        return std::nullopt;
+    });
 
     emdevif::Thread::startScheduler();
 
