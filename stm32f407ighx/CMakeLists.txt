@@ -87,3 +87,8 @@ target_compile_definitions(freertos_config INTERFACE projCOVERAGE_TEST=0)
 
 set(FREERTOS_HEAP "4" CACHE STRING "" FORCE)
 set(FREERTOS_PORT "GCC_ARM_CM4F" CACHE STRING "" FORCE)
+
+add_library(emdevif_from_user_impl OBJECT)
+target_sources(emdevif_from_user_impl
+    PUBLIC FILE_SET saefiu7gsuy7a TYPE CXX_MODULES FILES emdevif_device_handle_map_impl.cppm)
+target_link_libraries(emdevif_from_user_impl PUBLIC emdevif_stm32cubemx_support emdevif_container)

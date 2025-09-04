@@ -19,11 +19,11 @@ else ()
         set(RMDEV_FREERTOS_USE_STM32CUBEMX ON)
     endif ()
 
+    add_subdirectory(${PLATFORM_NAME})
+
     add_subdirectory(rmdev)
     add_subdirectory(STM32_HAL_TestFuncImpl)
     add_subdirectory(STM32_LL_TestFuncImpl)
-
-    add_subdirectory(${PLATFORM_NAME})
 
     if (NOT RMDEV_FREERTOS_USE_STM32CUBEMX)
         add_subdirectory(FreeRTOS-Kernel)
