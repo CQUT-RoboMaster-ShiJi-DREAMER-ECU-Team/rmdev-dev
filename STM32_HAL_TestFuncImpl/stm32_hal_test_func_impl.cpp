@@ -15,7 +15,7 @@
 #include "emdevif_test_framework.h"
 
 #include "emdevif/attributes_and_useful_macros.h"
-#include "emdevif/fault_handler.hpp"
+#include "emdevif/fatal_handler.hpp"
 
 #include <optional>
 
@@ -64,7 +64,7 @@ extern "C" EMDEVIF_NO_RETURN void testEntry(void)
                                            osStartDefaultTask,
                                            nullptr);
     default_task.getHandle().or_else([] -> std::optional<void*> {
-        EMDEVIF_FAULT_HANDLER("Failed to create default task.");
+        EMDEVIF_FATAL_HANDLER("Failed to create default task.");
         return std::nullopt;
     });
 
