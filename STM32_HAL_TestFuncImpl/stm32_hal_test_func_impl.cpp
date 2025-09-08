@@ -63,10 +63,9 @@ extern "C" EMDEVIF_NO_RETURN void testEntry(void)
                                             .stack_size = DEFAULT_TASK_STACK_DEPTH},
                                            osStartDefaultTask,
                                            nullptr);
-    default_task.getHandle().or_else([] -> std::optional<void*> {
+    if (!default_task.getHandle().has_value()) {
         EMDEVIF_FATAL_HANDLER("Failed to create default task.");
-        return std::nullopt;
-    });
+    }
 
     emdevif::Thread::startScheduler();
 
