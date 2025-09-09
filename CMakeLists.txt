@@ -22,6 +22,7 @@ else ()
     add_subdirectory(${PLATFORM_NAME})
 
     add_subdirectory(rmdev)
+    add_subdirectory(rmdev/emdevif_home/emdevif_stm32_peripheral)
     add_subdirectory(STM32_HAL_TestFuncImpl)
     add_subdirectory(STM32_LL_TestFuncImpl)
 
