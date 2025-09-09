@@ -8,6 +8,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     rmdev
     emdevif_stm32cubemx_support
     emdevif_test_framework
+    emdevif_stm32_peripheral
 )
 
 target_sources(${PROJECT_NAME}

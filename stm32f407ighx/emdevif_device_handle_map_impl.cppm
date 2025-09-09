@@ -17,6 +17,6 @@ export import emdevif.container.Map;
 
 export namespace emdevif::from_user_impl {
 
-constexpr auto peripheral_handle_map = makeStaticMap<std::string_view, void*>({{"usart6", &huart6}});
+constexpr auto peripheral_handle_map = makeStaticMap<std::string_view, void*>({{"test transmit serial", &huart6}});
 
 }  // namespace emdevif::from_user_impl
