@@ -17,10 +17,10 @@
 #include "emdevif/attributes_and_useful_macros.h"
 #include "emdevif/fatal_handler.hpp"
 
-import emdevif.error_handler;
+import emdevif.errorHandler;
 import emdevif.sys.thread;
-import emdevif.stm32_peripheral.hal.usart;
-import emdevif.connectivity.Serial;
+import emdevif.stm32Peripheral.hal.usart;
+import emdevif.connectivity.serial;
 
 extern "C" void rmdev_testEntry(void);  // NOLINT(*-redundant-void-arg)
 

@@ -13,7 +13,7 @@ module;
 
 export module emdevif.from_user_impl;
 
-export import emdevif.container.Map;
+export import emdevif.container.map;
 
 export namespace emdevif::from_user_impl {
 
