@@ -24,7 +24,7 @@ import emdevif.connectivity.Serial;
 
 extern "C" void rmdev_testEntry(void);  // NOLINT(*-redundant-void-arg)
 
-emdevif::Serial test_tx_serial{
+constinit emdevif::Serial test_tx_serial{
     "test transmit serial",
     {.receive_function = emdevif::Serial::noReceive, .transmit_function = emdevif::stm32hal::uartTransmitBlocking}};
 
@@ -50,6 +50,13 @@ static void test_printf(const char* format, ...)
 
 extern "C" EMDEVIF_NO_RETURN void testEntry(void)
 {
+    emdevif::registerFatalHandler([](const char* file, const int line, const char* message) {
+        test_printf("emdevif: Fatal touched at {}:{}\r\n\r\n", file, line);
+        test_printf("Message: {}", message);
+        while (true) {
+        }
+    });
+
     default_task = emdevif::Thread::create({.name = "DefaultTask",
                                             .priority = emdevif::Thread::Priority::Max,
                                             .static_instance = &default_task_static_instance,
