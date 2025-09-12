@@ -22,6 +22,9 @@ else ()
     add_subdirectory(${PLATFORM_NAME})
 
     add_subdirectory(rmdev)
+
+    set(EMDEVIF_DEVICE_ENABLED_PERIPHERAL_LIST USART)
+    set(EMDEVIF_STM32_PERIPHERAL_DRIVER HAL)
     add_subdirectory(rmdev/emdevif_home/emdevif_stm32_peripheral)
     add_subdirectory(STM32_HAL_TestFuncImpl)
     add_subdirectory(STM32_LL_TestFuncImpl)
