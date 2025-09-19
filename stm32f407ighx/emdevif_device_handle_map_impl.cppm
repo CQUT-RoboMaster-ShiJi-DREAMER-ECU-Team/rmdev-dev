@@ -11,12 +11,12 @@ module;
 
 #include "usart.h"
 
-export module emdevif.from_user_impl;
+export module emdevif.userDeclares;
 
 export import emdevif.container.map;
 
-export namespace emdevif::from_user_impl {
+export namespace emdevif::user_declares {
 
 constexpr auto peripheral_handle_map = makeStaticMap<std::string_view, void*>({{"test transmit serial", &huart6}});
 
-}  // namespace emdevif::from_user_impl
+}  // namespace emdevif::user_declares
