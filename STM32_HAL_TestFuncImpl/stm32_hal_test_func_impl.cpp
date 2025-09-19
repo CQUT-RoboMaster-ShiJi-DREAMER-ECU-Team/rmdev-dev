@@ -12,6 +12,8 @@
 #include <cstring>
 #include <cstdint>
 
+#include "main.h"
+
 #include "emdevif_test_framework.h"
 
 #include "emdevif/attributes_and_useful_macros.h"
@@ -21,6 +23,7 @@ import emdevif.errorHandler;
 import emdevif.sys.thread;
 import emdevif.stm32Peripheral.hal.usart;
 import emdevif.connectivity.serial;
+import emdevif.userDeclares;
 
 extern "C" void rmdev_testEntry(void);  // NOLINT(*-redundant-void-arg)
 
@@ -50,12 +53,31 @@ static void test_printf(const char* format, ...)
 
 extern "C" EMDEVIF_NO_RETURN void testEntry(void)
 {
-    emdevif::registerFatalHandler([](const char* file, const int line, const char* message) {
-        test_printf("emdevif: Fatal touched at {}:{}\r\n\r\n", file, line);
-        test_printf("Message: {}", message);
+    emdevif::registerTerminateFunction([]() noexcept {
+        __disable_irq();
         while (true) {
         }
     });
+
+    emdevif::registerFatalHandler([](const char* file, const int line, const char* message) noexcept {
+        test_printf("emdevif: Fatal touched at %s:%d\r\n\r\n", file, line);
+        test_printf("Message: %s\r\n", message);
+    });
+
+    emdevif::registerAssertFailedHandler([](const char* file,
+                                            const int line,
+                                            const char* func_name,
+                                            const char* condition_name,
+                                            const char* message) noexcept {
+        test_printf("emdevif: Assert failed at %s:%d in function `%s\' with expression `%s\' is false. ",
+                    file,
+                    line,
+                    func_name,
+                    condition_name);
+        test_printf("Message: %s\r\n", message);
+    });
+
+    emdevif::user_declares::logger::init();
 
     default_task = emdevif::Thread::create({.name = "DefaultTask",
                                             .priority = emdevif::Thread::Priority::Max,
