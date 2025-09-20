@@ -19,6 +19,12 @@ else ()
         set(RMDEV_FREERTOS_USE_STM32CUBEMX ON)
     endif ()
 
+    add_library(printf STATIC)
+    target_sources(printf PRIVATE libprintf/printf.c
+        PUBLIC FILE_SET header TYPE HEADERS BASE_DIRS libprintf/ FILES libprintf/printf.h
+    )
+    target_compile_definitions(printf PRIVATE PRINTF_INCLUDE_CONFIG_H)
+
     add_subdirectory(${PLATFORM_NAME})
 
     add_subdirectory(rmdev)

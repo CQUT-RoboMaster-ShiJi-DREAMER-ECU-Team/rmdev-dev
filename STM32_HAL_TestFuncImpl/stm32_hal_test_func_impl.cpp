@@ -7,11 +7,14 @@
 
 #include "stm32_hal_test_func_impl.h"
 
-#include <cstdio>
 #include <cstdarg>
 #include <cstring>
 #include <cstdint>
 
+#include <iterator>
+#include <limits>
+
+#include "printf.h"
 #include "main.h"
 
 #include "emdevif_test_framework.h"
@@ -24,6 +27,7 @@ import emdevif.sys.thread;
 import emdevif.stm32Peripheral.hal.usart;
 import emdevif.connectivity.serial;
 import emdevif.userDeclares;
+import emdevif.logger;
 
 extern "C" void rmdev_testEntry(void);  // NOLINT(*-redundant-void-arg)
 
@@ -44,7 +48,7 @@ static void test_printf(const char* format, ...)
     va_list args;
     va_start(args, format);
 
-    vsprintf(printf_buffer, format, args);
+    ::vsnprintf(printf_buffer, std::size(printf_buffer), format, args);
     va_end(args);
 
     const auto tx_ptr = reinterpret_cast<const uint8_t*>(printf_buffer);
@@ -78,6 +82,9 @@ extern "C" EMDEVIF_NO_RETURN void testEntry(void)
     });
 
     emdevif::user_declares::logger::init();
+    emdevif::Logger::getInstance().registerVSPrintfFunction([](char* dst, const char* format, std::va_list args) {
+        return ::vsnprintf(dst, std::numeric_limits<std::size_t>::max(), format, args);
+    });
 
     default_task = emdevif::Thread::create({.name = "DefaultTask",
                                             .priority = emdevif::Thread::Priority::Max,
