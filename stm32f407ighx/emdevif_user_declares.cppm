@@ -9,6 +9,8 @@ module;
 
 #include <string_view>
 
+#include "printf.h"
+
 #include "usart.h"
 
 #include "emdevif/fatal_handler.hpp"
@@ -35,20 +37,31 @@ void init() noexcept
     }
 }
 
-void lock() noexcept
+inline void lock() noexcept
 {
     mutex.lock();
 }
 
-void unlock() noexcept
+inline void unlock() noexcept
 {
     mutex.unlock();
 }
 
-std::size_t getTimeLine() noexcept
+inline std::size_t getTimeLine() noexcept
 {
     constinit static std::size_t timeLine = 0;
     return timeLine++;
+}
+
+static char buffer[256];
+char* getBuffer() noexcept
+{
+    return buffer;
+}
+
+void printLogMessage(const char* message) noexcept
+{
+    ::sprintf(buffer, "%s", message);
 }
 
 }  // namespace logger
