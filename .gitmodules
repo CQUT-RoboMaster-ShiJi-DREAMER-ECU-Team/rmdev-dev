@@ -7,3 +7,6 @@
 [submodule "libprintf"]
 	path = libprintf
 	url = https://github.com/mpaland/printf.git
+[submodule "CMSIS-DSP"]
+	path = CMSIS-DSP
+	url = https://github.com/ARM-software/CMSIS-DSP.git

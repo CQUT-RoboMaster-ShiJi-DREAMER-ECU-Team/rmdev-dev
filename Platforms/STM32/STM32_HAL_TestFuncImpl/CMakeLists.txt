@@ -6,7 +6,9 @@ add_library(${PROJECT_NAME} STATIC)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     rmdev
+    rmdev_unit_test
     emdevif_stm32cubemx_support
+    emdevif_user_declares
     emdevif_test_framework
     emdevif_stm32_peripheral
 )

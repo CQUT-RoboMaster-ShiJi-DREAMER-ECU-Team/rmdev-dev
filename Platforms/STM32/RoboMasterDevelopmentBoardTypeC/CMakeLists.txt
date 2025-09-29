@@ -56,14 +56,13 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
 
 if (RMDEV_ENABLE_TESTS)
     enable_testing()
-    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE rmdev_unit_test emdevif_test_framework)
 endif ()
 
 # For CMSIS-DSP
 
-add_library(rmdev_cmsis_dsp_support INTERFACE)
-target_link_directories(rmdev_cmsis_dsp_support INTERFACE ./Middlewares/ST/ARM/DSP/Lib/)
-target_link_libraries(rmdev_cmsis_dsp_support INTERFACE :libarm_cortexM4lf_math.a stm32cubemx)
+add_library(CMSISDSP INTERFACE)
+target_link_directories(CMSISDSP INTERFACE ./Middlewares/ST/ARM/DSP/Lib/)
+target_link_libraries(CMSISDSP INTERFACE :libarm_cortexM4lf_math.a stm32cubemx)
 
 # For FreeRTOS-Kernel
 
