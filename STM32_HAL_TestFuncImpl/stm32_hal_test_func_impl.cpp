@@ -81,8 +81,8 @@ extern "C" EMDEVIF_NO_RETURN void testEntry(void)
         test_printf("Message: %s\r\n", message);
     });
 
-    emdevif::user_declares::logger::init();
-    emdevif::Logger::getInstance().registerVSPrintfFunction([](char* dst, const char* format, std::va_list args) {
+    emdevif::Logger::init();
+    emdevif::Logger::registerVSPrintfFunction([](char* dst, const char* format, std::va_list args) {
         return ::vsnprintf(dst, std::numeric_limits<std::size_t>::max(), format, args);
     });
 

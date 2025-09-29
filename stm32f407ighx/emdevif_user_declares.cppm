@@ -18,7 +18,6 @@ module;
 export module emdevif.userDeclares;
 
 import emdevif.container.map;
-import emdevif.sys.mutex;
 import emdevif.errorHandler;
 
 export namespace emdevif::user_declares {
@@ -26,26 +25,6 @@ export namespace emdevif::user_declares {
 constexpr auto peripheral_handle_map = makeStaticMap<std::string_view, void*>({{"test transmit serial", &huart6}});
 
 namespace logger {
-
-Mutex mutex;
-
-void init() noexcept
-{
-    mutex = Mutex::create({.name = "Logger Mutex"});
-    if (!mutex.getHandle().has_value()) {
-        EMDEVIF_FATAL_HANDLER("Failed to create `Logger Mutex\'!");
-    }
-}
-
-inline void lock() noexcept
-{
-    mutex.lock();
-}
-
-inline void unlock() noexcept
-{
-    mutex.unlock();
-}
 
 inline std::size_t getTimeLine() noexcept
 {
@@ -59,9 +38,14 @@ char* getBuffer() noexcept
     return buffer;
 }
 
-void printLogMessage(const char* message) noexcept
+ErrorCode printLogMessage(const char* message) noexcept
 {
-    ::sprintf(buffer, "%s", message);
+    const auto ret = ::sprintf(buffer, "%s", message);
+    if (ret < 0) {
+        EMDEVIF_FATAL_HANDLER("Failed to print log message");
+    }
+
+    return ErrorCode::Success;
 }
 
 }  // namespace logger
