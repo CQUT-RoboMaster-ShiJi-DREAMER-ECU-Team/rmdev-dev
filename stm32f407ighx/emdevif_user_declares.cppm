@@ -32,7 +32,8 @@ inline std::size_t getTimeLine() noexcept
     return timeLine++;
 }
 
-static char buffer[256];
+static char buffer[512];
+static std::size_t buffer_head = 0;
 char* getBuffer() noexcept
 {
     return buffer;
@@ -40,10 +41,12 @@ char* getBuffer() noexcept
 
 ErrorCode printLogMessage(const char* message) noexcept
 {
-    const auto ret = ::sprintf(buffer, "%s", message);
+    const auto ret = ::snprintf(buffer + buffer_head, std::size(buffer) - buffer_head, "%s", message);
     if (ret < 0) {
         EMDEVIF_FATAL_HANDLER("Failed to print log message");
     }
+
+    buffer_head += ret;
 
     return ErrorCode::Success;
 }
