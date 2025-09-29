@@ -19,7 +19,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Set the project name
-set(CMAKE_PROJECT_NAME stm32f407ighx)
+set(CMAKE_PROJECT_NAME RoboMasterDevelopmentBoardTypeC)
 
 #include("cmake/gcc-arm-none-eabi.cmake") # 应当预定义 CMAKE_TOOLCHAIN_FILE 变量
 
@@ -38,6 +38,15 @@ add_executable(${CMAKE_PROJECT_NAME})
 
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
+
+add_subdirectory(../STM32_HAL_TestFuncImpl ../STM32_HAL_TestFuncImpl)
+
+set(EMDEVIF_DEVICE_ENABLED_PERIPHERAL_LIST "USART" CACHE STRING "" FORCE)
+set(EMDEVIF_STM32_PERIPHERAL_DRIVER "HAL" CACHE STRING "" FORCE)
+add_subdirectory(
+    ${CMAKE_SOURCE_DIR}/rmdev/emdevif_home/emdevif_stm32_peripheral
+    ${CMAKE_BINARY_DIR}/rmdev/emdevif_home/emdevif_stm32_peripheral
+)
 
 # Add linked libraries
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
