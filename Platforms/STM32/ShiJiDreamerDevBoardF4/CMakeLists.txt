@@ -58,7 +58,7 @@ target_sources(printf PRIVATE FILE_SET config TYPE HEADERS FILES printf_config.h
 set(CMSISCORE "${CMAKE_CURRENT_LIST_DIR}/Drivers/CMSIS" CACHE STRING "" FORCE)
 set(DISABLEFLOAT16 ON CACHE BOOL "" FORCE)
 add_subdirectory(${CMAKE_SOURCE_DIR}/CMSIS-DSP ${CMAKE_BINARY_DIR}/CMSIS-DSP)
-target_compile_options(CMSISDSP PUBLIC -ffast-math)
+target_compile_options(CMSISDSP PRIVATE -ffast-math -fno-finite-math-only -Ofast)
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     rmdev

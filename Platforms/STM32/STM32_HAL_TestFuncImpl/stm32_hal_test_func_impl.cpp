@@ -48,11 +48,14 @@ static void test_printf(const char* format, ...)
     va_list args;
     va_start(args, format);
 
-    ::vsnprintf(printf_buffer, std::size(printf_buffer), format, args);
+    const auto len = ::vsnprintf(printf_buffer, std::size(printf_buffer), format, args);
     va_end(args);
+    if (len < 0) {
+        EMDEVIF_FATAL_HANDLER("Failed to format string in test_printf.");
+    }
 
     const auto tx_ptr = reinterpret_cast<const uint8_t*>(printf_buffer);
-    test_tx_serial.transmit(false, {tx_ptr, strlen(printf_buffer)}, emdevif::stm32hal::uart_max_delay);
+    test_tx_serial.transmit(false, {tx_ptr, static_cast<std::size_t>(len)}, emdevif::stm32hal::uart_max_delay);
 }
 
 extern "C" EMDEVIF_NO_RETURN void testEntry(void)
@@ -109,7 +112,12 @@ EMDEVIF_NO_RETURN static void osStartDefaultTask(void* arguments)
 
     constexpr emdevif_test_Callbacks callbacks = {.printfCallback = test_printf,
                                                   .testEntryCallback = rmdev_testEntry,
-                                                  .testFinishCallback = nullptr,
+                                                  .testFinishCallback =
+                                                      [](emdevif_test_ErrorCode ec) {
+                                                          while (true) {
+                                                              emdevif::Thread::delay(1);
+                                                          }
+                                                      },
                                                   .errorCallback = nullptr};
     emdevif_test_framework_main("\r\n", &callbacks, nullptr);
 
