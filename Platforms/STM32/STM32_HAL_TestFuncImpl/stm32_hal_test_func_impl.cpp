@@ -26,7 +26,7 @@
 import emdevif.errorHandler;
 import emdevif.sys.thread;
 import emdevif.stm32Peripheral.hal.usart;
-import emdevif.connectivity.serial;
+import emdevif.peripheralModels.serial;
 import emdevif.userDeclares;
 import emdevif.logger;
 

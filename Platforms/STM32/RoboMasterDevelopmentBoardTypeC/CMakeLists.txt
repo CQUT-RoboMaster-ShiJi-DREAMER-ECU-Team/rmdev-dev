@@ -41,8 +41,8 @@ add_subdirectory(cmake/stm32cubemx)
 
 add_subdirectory(../STM32_HAL_TestFuncImpl ../STM32_HAL_TestFuncImpl)
 
-set(EMDEVIF_DEVICE_ENABLED_PERIPHERAL_LIST "USART;SPI" CACHE STRING "" FORCE)
-set(EMDEVIF_STM32_PERIPHERAL_DRIVER "HAL;HAL" CACHE STRING "" FORCE)
+set(EMDEVIF_DEVICE_ENABLED_PERIPHERAL_LIST "GPIO;USART;SPI" CACHE STRING "" FORCE)
+set(EMDEVIF_STM32_PERIPHERAL_DRIVER        "HAL;HAL;HAL" CACHE STRING "" FORCE)
 add_subdirectory(
     ${CMAKE_SOURCE_DIR}/rmdev/emdevif_home/emdevif_stm32_peripheral
     ${CMAKE_BINARY_DIR}/rmdev/emdevif_home/emdevif_stm32_peripheral
