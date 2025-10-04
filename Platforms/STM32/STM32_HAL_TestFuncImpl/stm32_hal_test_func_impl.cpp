@@ -21,6 +21,7 @@
 
 #include "emdevif/attributes_and_useful_macros.h"
 #include "emdevif/fatal_handler.hpp"
+#include "emdevif/line_separator.h"
 
 import emdevif.errorHandler;
 import emdevif.sys.thread;
@@ -67,8 +68,8 @@ extern "C" EMDEVIF_NO_RETURN void testEntry(void)
     });
 
     emdevif::registerFatalHandler([](const char* file, const int line, const char* message) noexcept {
-        test_printf("emdevif: Fatal touched at %s:%d\r\n\r\n", file, line);
-        test_printf("Message: %s\r\n", message);
+        test_printf("emdevif: Fatal touched at %s:%d" EMDEVIF_LINE_SEPARATOR EMDEVIF_LINE_SEPARATOR, file, line);
+        test_printf("Message: %s" EMDEVIF_LINE_SEPARATOR, message);
     });
 
     emdevif::registerAssertFailedHandler([](const char* file,
@@ -81,7 +82,7 @@ extern "C" EMDEVIF_NO_RETURN void testEntry(void)
                     line,
                     func_name,
                     condition_name);
-        test_printf("Message: %s\r\n", message);
+        test_printf("Message: %s" EMDEVIF_LINE_SEPARATOR, message);
     });
 
     emdevif::Logger::init();
@@ -119,7 +120,7 @@ EMDEVIF_NO_RETURN static void osStartDefaultTask(void* arguments)
                                                           }
                                                       },
                                                   .errorCallback = nullptr};
-    emdevif_test_framework_main("\r\n", &callbacks, nullptr);
+    emdevif_test_framework_main(EMDEVIF_LINE_SEPARATOR, &callbacks, nullptr);
 
     while (true) {
         emdevif::Thread::delay(1);

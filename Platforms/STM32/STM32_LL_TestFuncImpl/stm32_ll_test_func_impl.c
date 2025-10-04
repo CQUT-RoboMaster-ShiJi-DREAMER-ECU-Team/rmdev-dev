@@ -14,6 +14,8 @@
 #include "usart.h"
 #include "emdevif_test_framework.h"
 
+#include "emdevif/line_separator.h"
+
 extern void rmdev_testEntry(void);
 
 static USART_TypeDef* usartx = NULL;
@@ -44,5 +46,5 @@ void testInit(USART_TypeDef* const test_usart)
 void testEntry(void)
 {
     const emdevif_test_Callbacks callbacks = {.printfCallback = test_printf, .testEntryCallback = rmdev_testEntry};
-    emdevif_test_framework_main("\r\n", &callbacks, NULL);
+    emdevif_test_framework_main(EMDEVIF_LINE_SEPARATOR, &callbacks, NULL);
 }
