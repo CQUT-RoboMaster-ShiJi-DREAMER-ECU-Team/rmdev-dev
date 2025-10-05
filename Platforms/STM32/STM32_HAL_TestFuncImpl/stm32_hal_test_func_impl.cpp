@@ -32,9 +32,8 @@ import emdevif.logger;
 
 extern "C" void rmdev_testEntry(void);  // NOLINT(*-redundant-void-arg)
 
-constinit emdevif::Serial test_tx_serial{
-    "test transmit serial",
-    {.receive_function = emdevif::Serial::noReceive, .transmit_function = emdevif::stm32hal::uartTransmitBlocking}};
+constinit emdevif::Serial test_tx_serial{"test transmit serial",
+                                         {.transmit_function = emdevif::stm32hal::uartTransmitBlocking}};
 
 static char printf_buffer[512];
 
