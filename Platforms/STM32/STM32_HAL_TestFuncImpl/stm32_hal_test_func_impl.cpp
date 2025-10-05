@@ -13,6 +13,7 @@
 
 #include <iterator>
 #include <limits>
+#include <string_view>
 
 #include "printf.h"
 #include "main.h"
@@ -29,6 +30,7 @@ import emdevif.stm32Peripheral.hal.usart;
 import emdevif.peripheralModels.serial;
 import emdevif.userDeclares;
 import emdevif.logger;
+import afterUnitTestDemo;
 
 extern "C" void rmdev_testEntry(void);  // NOLINT(*-redundant-void-arg)
 
@@ -110,18 +112,32 @@ EMDEVIF_NO_RETURN static void osStartDefaultTask(void* arguments)
 {
     EMDEVIF_UNUSED(arguments);
 
-    constexpr emdevif_test_Callbacks callbacks = {.printfCallback = test_printf,
-                                                  .testEntryCallback = rmdev_testEntry,
-                                                  .testFinishCallback =
-                                                      [](emdevif_test_ErrorCode ec) {
-                                                          while (true) {
-                                                              emdevif::Thread::delay(1);
-                                                          }
-                                                      },
-                                                  .errorCallback = nullptr};
+    constexpr emdevif_test_Callbacks callbacks = {
+        .printfCallback = test_printf,
+        .testEntryCallback = rmdev_testEntry,
+        .testFinishCallback =
+            [](const emdevif_test_ErrorCode ec) {
+                if (ec != EMDEVIF_TEST_ALL_PASSED) {
+                    using namespace std::literals;
+
+                    emdevif::err_msg.clear();
+
+                    char ec_buffer[8];
+                    ::snprintf(ec_buffer, std::size(ec_buffer), "%d", ec);
+                    emdevif::err_msg << "Error occured from emdevif_test_framework with code "sv << ec_buffer << "."sv;
+                    EMDEVIF_FATAL_HANDLER(emdevif::err_msg.c_str());
+                }
+            },
+        .errorCallback = nullptr};
     emdevif_test_framework_main(EMDEVIF_LINE_SEPARATOR, &callbacks, nullptr);
 
+    demoEntry();
+
+    if (!default_task.getHandle().has_value()) {
+        EMDEVIF_FATAL_HANDLER("Default task Should not be null here!");
+    }
+    emdevif::Thread::suspend(*default_task.getHandle());
     while (true) {
-        emdevif::Thread::delay(1);
+        emdevif::Thread::delay(emdevif::Thread::maxDelay());
     }
 }

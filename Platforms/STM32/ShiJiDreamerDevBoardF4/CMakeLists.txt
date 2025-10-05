@@ -34,13 +34,10 @@ enable_language(C ASM)
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME})
 
-# Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
 
-add_subdirectory(../STM32_HAL_TestFuncImpl ../STM32_HAL_TestFuncImpl)
-
-set(EMDEVIF_DEVICE_ENABLED_PERIPHERAL_LIST "USART" CACHE STRING "" FORCE)
-set(EMDEVIF_STM32_PERIPHERAL_DRIVER "HAL" CACHE STRING "" FORCE)
+set(EMDEVIF_DEVICE_ENABLED_PERIPHERAL_LIST "USART;PWM" CACHE STRING "" FORCE)
+set(EMDEVIF_STM32_PERIPHERAL_DRIVER        "HAL;HAL" CACHE STRING "" FORCE)
 add_subdirectory(
     ${CMAKE_SOURCE_DIR}/rmdev/emdevif_home/emdevif_stm32_peripheral
     ${CMAKE_BINARY_DIR}/rmdev/emdevif_home/emdevif_stm32_peripheral
@@ -49,8 +46,12 @@ add_subdirectory(
 add_library(emdevif_user_declares STATIC)
 target_sources(emdevif_user_declares
     PUBLIC FILE_SET saefiu7gsuy7a TYPE CXX_MODULES FILES emdevif_user_declares.cppm)
+
+add_subdirectory(Demo)
+add_subdirectory(../STM32_HAL_TestFuncImpl ../STM32_HAL_TestFuncImpl)
+
 target_link_libraries(emdevif_user_declares PUBLIC
-    emdevif_stm32cubemx_support emdevif_core emdevif_container printf
+    emdevif_stm32cubemx_support emdevif_core emdevif_container printf emdevif_stm32_peripheral
 )
 
 target_sources(printf PRIVATE FILE_SET config TYPE HEADERS FILES printf_config.h)

@@ -11,6 +11,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     emdevif_user_declares
     emdevif_test_framework
     emdevif_stm32_peripheral
+    AfterUnitTestDemo
 )
 
 target_sources(${PROJECT_NAME}

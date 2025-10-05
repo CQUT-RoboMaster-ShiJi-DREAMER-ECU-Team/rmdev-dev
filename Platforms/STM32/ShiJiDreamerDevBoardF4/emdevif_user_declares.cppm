@@ -12,6 +12,7 @@ module;
 #include "printf.h"
 
 #include "usart.h"
+#include "tim.h"
 
 #include "emdevif/fatal_handler.hpp"
 
@@ -20,11 +21,16 @@ export module emdevif.userDeclares;
 import emdevif.container.map;
 import emdevif.errorHandler;
 
-export namespace emdevif::user_declares {
+import emdevif.stm32Peripheral.hal.pwm;
 
-constexpr auto peripheral_handle_map = makeStaticMap<std::string_view, void*>({{"test transmit serial", &huart1}});
+namespace emdevif::user_declares {
 
-namespace logger {
+constinit emdevif::stm32hal::PwmHandle breathing_light_pwm_handle{.htim = &htim3, .channel = TIM_CHANNEL_1};
+
+export constexpr auto peripheral_handle_map = makeStaticMap<std::string_view, void*>(
+    {{"test transmit serial", &huart1}, {"breathing light pwm", &breathing_light_pwm_handle}});
+
+export namespace logger {
 
 inline std::size_t getTimeLine() noexcept
 {
