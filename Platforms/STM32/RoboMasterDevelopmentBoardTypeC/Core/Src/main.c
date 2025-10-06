@@ -91,10 +91,17 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_TIM5_Init();
   MX_USART6_UART_Init();
   MX_SPI1_Init();
   MX_TIM10_Init();
   /* USER CODE BEGIN 2 */
+
+  LL_TIM_DisableCounter(TIM5);
+  LL_TIM_SetCounter(TIM5, 0U);
+  LL_TIM_ClearFlag_UPDATE(TIM5);
+  LL_TIM_EnableIT_UPDATE(TIM5);
+  LL_TIM_EnableCounter(TIM5);
 
   testEntry();
 

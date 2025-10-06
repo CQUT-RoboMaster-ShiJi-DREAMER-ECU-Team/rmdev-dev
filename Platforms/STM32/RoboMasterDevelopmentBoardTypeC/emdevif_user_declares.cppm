@@ -8,10 +8,12 @@
 module;
 
 #include <string_view>
+#include <limits>
 
 #include "printf.h"
 
 #include "usart.h"
+#include "tim.h"
 
 #include "emdevif/fatal_handler.hpp"
 
@@ -20,9 +22,33 @@ export module emdevif.userDeclares;
 import emdevif.container.map;
 import emdevif.errorHandler;
 
+import emdevif.sys.atomic;
+
 export namespace emdevif::user_declares {
 
 constexpr auto peripheral_handle_map = makeStaticMap<std::string_view, void*>({{"test transmit serial", &huart6}});
+
+namespace timeline {
+
+emdevif::atomic<uint32_t> overflow_count = 0;
+
+extern "C" void TIM5_IRQHandler(void)
+{
+    if (LL_TIM_IsActiveFlag_UPDATE(TIM5)) {
+        overflow_count.fetch_add(1, emdevif::memory_order::release);
+
+        LL_TIM_ClearFlag_UPDATE(TIM5);
+    }
+}
+
+inline uint64_t getMicroseconds() noexcept
+{
+    return static_cast<uint64_t>(overflow_count.load(emdevif::memory_order::acquire)) *
+               static_cast<uint64_t>(std::numeric_limits<uint32_t>::max()) +
+           static_cast<uint64_t>(LL_TIM_GetCounter(TIM5));
+}
+
+}  // namespace timeline
 
 namespace logger {
 
