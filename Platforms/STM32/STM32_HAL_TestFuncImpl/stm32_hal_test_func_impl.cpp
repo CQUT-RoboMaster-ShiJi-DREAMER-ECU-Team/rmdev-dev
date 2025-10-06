@@ -30,7 +30,10 @@ import emdevif.stm32Peripheral.hal.usart;
 import emdevif.peripheralModels.serial;
 import emdevif.userDeclares;
 import emdevif.logger;
+
+#ifdef ENABLE_AFTER_UNIT_TEST_DEMO
 import afterUnitTestDemo;
+#endif
 
 extern "C" void rmdev_testEntry(void);  // NOLINT(*-redundant-void-arg)
 
@@ -131,7 +134,9 @@ EMDEVIF_NO_RETURN static void osStartDefaultTask(void* arguments)
         .errorCallback = nullptr};
     emdevif_test_framework_main(EMDEVIF_LINE_SEPARATOR, &callbacks, nullptr);
 
+#ifdef ENABLE_AFTER_UNIT_TEST_DEMO
     demoEntry();
+#endif
 
     if (!default_task.getHandle().has_value()) {
         EMDEVIF_FATAL_HANDLER("Default task Should not be null here!");

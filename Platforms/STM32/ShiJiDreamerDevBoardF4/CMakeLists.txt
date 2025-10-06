@@ -48,6 +48,8 @@ target_sources(emdevif_user_declares
     PUBLIC FILE_SET saefiu7gsuy7a TYPE CXX_MODULES FILES emdevif_user_declares.cppm)
 
 add_subdirectory(Demo)
+
+set(ENABLE_AFTER_UNIT_TEST_DEMO ON CACHE BOOL "" FORCE)
 add_subdirectory(../STM32_HAL_TestFuncImpl ../STM32_HAL_TestFuncImpl)
 
 target_link_libraries(emdevif_user_declares PUBLIC

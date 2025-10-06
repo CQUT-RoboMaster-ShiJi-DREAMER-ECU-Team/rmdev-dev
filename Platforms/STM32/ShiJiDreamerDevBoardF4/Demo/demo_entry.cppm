@@ -20,10 +20,10 @@ import emdevif.sys.thread;
 import emdevif.peripheralModels.pwm;
 import emdevif.stm32Peripheral.hal.pwm;
 
-using namespace emdevif;
-
 export EMDEVIF_NO_RETURN void demoEntry() noexcept
 {
+    using namespace emdevif;
+
     Thread breathing_light_thread = Thread::create(
         {.name = "breathingLight", .priority = Thread::Priority::BelowNormal, .stack_size = 128},
         [](void*) noexcept {
