@@ -39,6 +39,9 @@ add_executable(${CMAKE_PROJECT_NAME})
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
 
+add_subdirectory(Demo)
+
+set(ENABLE_AFTER_UNIT_TEST_DEMO ON CACHE BOOL "" FORCE)
 add_subdirectory(../STM32_HAL_TestFuncImpl ../STM32_HAL_TestFuncImpl)
 
 set(EMDEVIF_DEVICE_ENABLED_PERIPHERAL_LIST "GPIO;USART;SPI;PWM" CACHE STRING "" FORCE)

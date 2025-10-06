@@ -1,8 +1,8 @@
 /**
  * @file demo_entry.cppm
- * @author NaAlO2
+ * @author DuYicheng
  * @date 2025-10-05
- * @brief
+ * @brief 单元测试结束后的演示程序
  */
 
 module;

@@ -26,7 +26,8 @@ import emdevif.sys.atomic;
 
 export namespace emdevif::user_declares {
 
-constexpr auto peripheral_handle_map = makeStaticMap<std::string_view, void*>({{"test transmit serial", &huart6}});
+constexpr auto peripheral_handle_map = makeStaticMap<std::string_view, void*>(
+    {{"test transmit serial", &huart6}, {"INS result transmit serial", &huart1}});
 
 namespace timeline {
 
