@@ -19,6 +19,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 if (ENABLE_AFTER_UNIT_TEST_DEMO)
     target_link_libraries(${PROJECT_NAME} PRIVATE AfterUnitTestDemo)
     target_compile_definitions(${PROJECT_NAME} PRIVATE ENABLE_AFTER_UNIT_TEST_DEMO=1)
+    message("[${PROJECT_NAME}]: Enabled demo.")
 endif ()
 
 target_sources(${PROJECT_NAME}
