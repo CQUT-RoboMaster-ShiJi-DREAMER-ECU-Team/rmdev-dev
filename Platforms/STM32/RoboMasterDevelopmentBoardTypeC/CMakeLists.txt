@@ -80,11 +80,15 @@ target_compile_definitions(freertos_config INTERFACE projCOVERAGE_TEST=0)
 set(FREERTOS_HEAP "4" CACHE STRING "" FORCE)
 set(FREERTOS_PORT "GCC_ARM_CM4F" CACHE STRING "" FORCE)
 
+set(RMDEV_ENABLED_DRIVER_LIST "BMI088" CACHE STRING "" FORCE)
+
 add_library(emdevif_user_declares STATIC)
 target_sources(emdevif_user_declares
     PUBLIC FILE_SET saefiu7gsuy7a TYPE CXX_MODULES FILES emdevif_user_declares.cppm)
 target_link_libraries(emdevif_user_declares PUBLIC
     emdevif_stm32cubemx_support emdevif_core emdevif_container printf emdevif_system
+    emdevif_stm32_peripheral
+    PRIVATE emdevif_compile_options
 )
 
 target_sources(printf PRIVATE FILE_SET config TYPE HEADERS FILES printf_config.h)

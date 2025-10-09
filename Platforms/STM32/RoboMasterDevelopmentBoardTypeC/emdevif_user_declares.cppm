@@ -9,13 +9,16 @@ module;
 
 #include <string_view>
 #include <limits>
+#include <tuple>
+
+#include "emdevif/fatal_handler.hpp"
 
 #include "printf.h"
 
 #include "usart.h"
 #include "tim.h"
-
-#include "emdevif/fatal_handler.hpp"
+#include "spi.h"
+#include "gpio.h"
 
 export module emdevif.userDeclares;
 
@@ -24,10 +27,23 @@ import emdevif.errorHandler;
 
 import emdevif.sys.atomic;
 
+import emdevif.stm32Peripheral.hal.pwm;
+import emdevif.stm32Peripheral.hal.gpio;
+
 export namespace emdevif::user_declares {
 
-constexpr auto peripheral_handle_map = makeStaticMap<std::string_view, void*>(
-    {{"test transmit serial", &huart6}, {"INS result transmit serial", &huart1}});
+constinit emdevif::stm32hal::PwmHandle bmi088_heat_pwm_handle{&htim10, TIM_CHANNEL_1};
+
+inline emdevif::stm32hal::GpioHandle bmi088_accel_cs_gpio{CS1_ACCEL_GPIO_Port, CS1_ACCEL_Pin};
+inline emdevif::stm32hal::GpioHandle bmi088_gyro_cs_gpio{CS1_GYRO_GPIO_Port, CS1_GYRO_Pin};
+
+constexpr auto peripheral_handle_map =
+    makeStaticMap<std::string_view, void*>({{"test transmit serial", &huart6},
+                                            {"INS result transmit serial", &huart1},
+                                            {"BMI088 heat PWM", &bmi088_heat_pwm_handle},
+                                            {"BMI088 communicate SPI", &hspi1},
+                                            {"BMI088 SPI accel cs", &bmi088_accel_cs_gpio},
+                                            {"BMI088 SPI gyro cs", &bmi088_gyro_cs_gpio}});
 
 namespace timeline {
 
