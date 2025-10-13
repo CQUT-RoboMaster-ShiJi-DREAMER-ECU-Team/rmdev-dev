@@ -26,8 +26,7 @@
 
 import emdevif.errorHandler;
 import emdevif.sys.thread;
-import emdevif.stm32Peripheral.hal.usart;
-import emdevif.peripheralModels.serial;
+import emdevif.peripheral.serial;
 import emdevif.userDeclares;
 import emdevif.logger;
 
@@ -37,8 +36,7 @@ import afterUnitTestDemo;
 
 extern "C" void rmdev_testEntry(void);  // NOLINT(*-redundant-void-arg)
 
-constinit emdevif::Serial test_tx_serial{"test transmit serial",
-                                         {.transmit_function = emdevif::stm32hal::uartTransmitBlocking}};
+emdevif::Serial test_tx_serial{"test transmit serial"};
 
 static char printf_buffer[512];
 
@@ -60,7 +58,7 @@ static void test_printf(const char* format, ...)
     }
 
     const auto tx_ptr = reinterpret_cast<const uint8_t*>(printf_buffer);
-    test_tx_serial.transmit(false, {tx_ptr, static_cast<std::size_t>(len)}, emdevif::stm32hal::uart_max_delay);
+    test_tx_serial.transmit(false, {tx_ptr, static_cast<std::size_t>(len)}, emdevif::Serial::max_delay);
 }
 
 extern "C" EMDEVIF_NO_RETURN void testEntry(void)

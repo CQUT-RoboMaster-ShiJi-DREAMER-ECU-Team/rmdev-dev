@@ -62,21 +62,16 @@ if (RMDEV_ENABLE_TESTS)
 endif ()
 
 # For CMSIS-DSP
-
 add_library(CMSISDSP INTERFACE)
 target_link_directories(CMSISDSP INTERFACE ./Middlewares/ST/ARM/DSP/Lib/)
 target_link_libraries(CMSISDSP INTERFACE :libarm_cortexM4lf_math.a stm32cubemx)
 
 # For FreeRTOS-Kernel
-
 add_library(freertos_config INTERFACE)
-
 target_sources(freertos_config INTERFACE
     FILE_SET header_file TYPE HEADERS FILES ./FreeRTOSConfig.h
 )
-
 target_compile_definitions(freertos_config INTERFACE projCOVERAGE_TEST=0)
-
 set(FREERTOS_HEAP "4" CACHE STRING "" FORCE)
 set(FREERTOS_PORT "GCC_ARM_CM4F" CACHE STRING "" FORCE)
 
@@ -88,7 +83,7 @@ target_sources(emdevif_user_declares
 target_link_libraries(emdevif_user_declares PUBLIC
     emdevif_stm32cubemx_support emdevif_core emdevif_container printf emdevif_system
     emdevif_stm32_peripheral
-    PRIVATE emdevif_compile_options
+    PRIVATE emdevif_compile_options emdevif_peripheral_model
 )
 
 target_sources(printf PRIVATE FILE_SET config TYPE HEADERS FILES printf_config.h)

@@ -18,14 +18,11 @@ export module afterUnitTestDemo;
 import emdevif.errorHandler;
 import emdevif.sys.thread;
 
-import emdevif.peripheralModels.pwm;
-import emdevif.stm32Peripheral.hal.pwm;
-import emdevif.peripheralModels.gpio;
-import emdevif.stm32Peripheral.hal.gpio;
-import emdevif.peripheralModels.spi;
-import emdevif.stm32Peripheral.hal.spi;
+import emdevif.peripheral.pwm;
+import emdevif.peripheral.gpio;
+import emdevif.peripheral.spi;
 
-emdevif::Gpio bmi088_accel_cs{"BMI088 SPI accel cs", emdevif::stm32hal::gpioWrite, emdevif::stm32hal::gpioRead};
+emdevif::Gpio bmi088_accel_cs{"BMI088 SPI accel cs"};
 
 export EMDEVIF_NO_RETURN void demoEntry() noexcept
 {
