@@ -7,6 +7,9 @@
 
 module;
 
+#include <cstdint>
+
+#include <limits>
 #include <string_view>
 
 #include "printf.h"
@@ -20,6 +23,7 @@ export module emdevif.userDeclares;
 
 import emdevif.container.map;
 import emdevif.errorHandler;
+import emdevif.sys.atomic;
 
 import emdevif.stm32Peripheral.hal.pwm;
 
@@ -29,6 +33,28 @@ constinit emdevif::stm32hal::PwmHandle breathing_light_pwm_handle{.htim = &htim3
 
 export constexpr auto peripheral_handle_map = makeStaticMap<std::string_view, void*>(
     {{"test transmit serial", &huart1}, {"breathing light pwm", &breathing_light_pwm_handle}});
+
+export namespace timeline {
+
+emdevif::atomic<uint32_t> overflow_count = 0;
+
+extern "C" void TIM5_IRQHandler(void)
+{
+    if (LL_TIM_IsActiveFlag_UPDATE(TIM5)) {
+        overflow_count.fetch_add(1, emdevif::memory_order::release);
+
+        LL_TIM_ClearFlag_UPDATE(TIM5);
+    }
+}
+
+inline uint64_t getMicroseconds() noexcept
+{
+    return static_cast<uint64_t>(overflow_count.load(emdevif::memory_order::acquire)) *
+               static_cast<uint64_t>(std::numeric_limits<uint32_t>::max()) +
+           static_cast<uint64_t>(LL_TIM_GetCounter(TIM5));
+}
+
+}  // namespace timeline
 
 export namespace logger {
 

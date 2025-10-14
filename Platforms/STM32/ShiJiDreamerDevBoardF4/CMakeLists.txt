@@ -43,17 +43,17 @@ add_subdirectory(
     ${CMAKE_BINARY_DIR}/rmdev/emdevif_home/emdevif_stm32_peripheral
 )
 
-add_library(emdevif_user_declares STATIC)
-target_sources(emdevif_user_declares
-    PUBLIC FILE_SET saefiu7gsuy7a TYPE CXX_MODULES FILES emdevif_user_declares.cppm)
-
 add_subdirectory(Demo)
 
 set(ENABLE_AFTER_UNIT_TEST_DEMO ON CACHE BOOL "" FORCE)
 add_subdirectory(../STM32_HAL_TestFuncImpl ../STM32_HAL_TestFuncImpl)
 
-target_link_libraries(emdevif_user_declares PUBLIC
-    emdevif_stm32cubemx_support emdevif_core emdevif_container printf emdevif_stm32_peripheral
+add_library(emdevif_user_declares STATIC)
+target_sources(emdevif_user_declares
+    PUBLIC FILE_SET saefiu7gsuy7a TYPE CXX_MODULES FILES emdevif_user_declares.cppm)
+target_link_libraries(emdevif_user_declares PUBLIC emdevif_core
+    PRIVATE emdevif_stm32cubemx_support emdevif_container printf emdevif_stm32_peripheral
+    emdevif_peripheral_model emdevif_system
 )
 
 target_sources(printf PRIVATE FILE_SET config TYPE HEADERS FILES printf_config.h)

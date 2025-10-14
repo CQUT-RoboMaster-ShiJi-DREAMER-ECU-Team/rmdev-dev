@@ -17,7 +17,7 @@ export module afterUnitTestDemo;
 
 import emdevif.errorHandler;
 import emdevif.sys.thread;
-import emdevif.peripheralModels.pwm;
+import emdevif.peripheral.pwm;
 import emdevif.stm32Peripheral.hal.pwm;
 
 export EMDEVIF_NO_RETURN void demoEntry() noexcept
@@ -27,10 +27,7 @@ export EMDEVIF_NO_RETURN void demoEntry() noexcept
     Thread breathing_light_thread = Thread::create(
         {.name = "breathingLight", .priority = Thread::Priority::BelowNormal, .stack_size = 128},
         [](void*) noexcept {
-            const emdevif::Pwm pwm{"breathing light pwm",
-                                   stm32hal::pwmEnable,
-                                   stm32hal::pwmDisable,
-                                   stm32hal::setRatio};
+            const emdevif::Pwm pwm{"breathing light pwm"};
 
             pwm.enable();
             while (true) {

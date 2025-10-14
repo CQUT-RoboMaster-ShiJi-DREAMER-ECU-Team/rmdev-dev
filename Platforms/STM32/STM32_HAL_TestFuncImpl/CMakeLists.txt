@@ -14,6 +14,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     emdevif_user_declares
     emdevif_test_framework
     emdevif_stm32_peripheral
+    printf
 )
 
 if (ENABLE_AFTER_UNIT_TEST_DEMO)
