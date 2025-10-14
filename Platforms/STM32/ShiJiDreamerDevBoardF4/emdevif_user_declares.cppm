@@ -25,14 +25,26 @@ import emdevif.container.map;
 import emdevif.errorHandler;
 import emdevif.sys.atomic;
 
+import emdevif.peripheral.model.pwm;
+import emdevif.peripheral.model.serial;
+
 import emdevif.stm32Peripheral.hal.pwm;
+import emdevif.stm32Peripheral.hal.usart;
 
 namespace emdevif::user_declares {
 
 constinit emdevif::stm32hal::PwmHandle breathing_light_pwm_handle{.htim = &htim3, .channel = TIM_CHANNEL_1};
+constinit emdevif::PwmModel::Instance breathing_light_pwm_model{.handle_ = &breathing_light_pwm_handle,
+                                                                .enable_ = emdevif::stm32hal::pwmEnable,
+                                                                .disable_ = emdevif::stm32hal::pwmDisable,
+                                                                .setRatio_ = emdevif::stm32hal::pwmSetRatio};
+
+constinit emdevif::SerialModel::Instance test_transmit_serial_model{
+    .handle_ = &huart1,
+    .transmit_function_ = emdevif::stm32hal::uartTransmitBlocking};
 
 export constexpr auto peripheral_handle_map = makeStaticMap<std::string_view, void*>(
-    {{"test transmit serial", &huart1}, {"breathing light pwm", &breathing_light_pwm_handle}});
+    {{"test transmit serial", &test_transmit_serial_model}, {"breathing light pwm", &breathing_light_pwm_model}});
 
 export namespace timeline {
 
