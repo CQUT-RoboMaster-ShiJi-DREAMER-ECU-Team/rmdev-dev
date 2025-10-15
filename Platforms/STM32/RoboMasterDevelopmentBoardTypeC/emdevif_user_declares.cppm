@@ -51,7 +51,7 @@ constinit emdevif::stm32hal::PwmHandle bmi088_heat_pwm_handle{&htim10, TIM_CHANN
 constinit emdevif::PwmModel::Instance bmi088_heat_pwm_model{.handle_ = &bmi088_heat_pwm_handle,
                                                             .enable_ = emdevif::stm32hal::pwmEnable,
                                                             .disable_ = emdevif::stm32hal::pwmDisable,
-                                                            .setRatio_ = emdevif::stm32hal::setRatio};
+                                                            .setRatio_ = emdevif::stm32hal::pwmSetRatio};
 
 constinit emdevif::SpiModel::Instance bmi088_comm_spi_model{
     .handle_ = &hspi1,
