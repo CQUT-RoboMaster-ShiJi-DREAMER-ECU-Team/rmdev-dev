@@ -56,8 +56,6 @@ target_link_libraries(emdevif_user_declares PUBLIC emdevif_core
     emdevif_peripheral_model emdevif_system
 )
 
-target_sources(printf PRIVATE FILE_SET config TYPE HEADERS FILES printf_config.h)
-
 set(CMSISCORE "${CMAKE_CURRENT_LIST_DIR}/Drivers/CMSIS" CACHE STRING "" FORCE)
 set(DISABLEFLOAT16 ON CACHE BOOL "" FORCE)
 add_subdirectory(${CMAKE_SOURCE_DIR}/CMSIS-DSP ${CMAKE_BINARY_DIR}/CMSIS-DSP)

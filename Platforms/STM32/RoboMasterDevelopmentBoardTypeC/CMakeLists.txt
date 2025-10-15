@@ -86,7 +86,5 @@ target_link_libraries(emdevif_user_declares PUBLIC
     PRIVATE emdevif_compile_options emdevif_peripheral_model
 )
 
-target_sources(printf PRIVATE FILE_SET config TYPE HEADERS FILES printf_config.h)
-
 # Remove wrong libob.a library dependency when using cpp files
 list(REMOVE_ITEM CMAKE_C_IMPLICIT_LINK_LIBRARIES ob)

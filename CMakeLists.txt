@@ -20,7 +20,7 @@ add_library(printf STATIC)
 target_sources(printf PRIVATE libprintf/printf.c
     PUBLIC FILE_SET header TYPE HEADERS BASE_DIRS libprintf/ FILES libprintf/printf.h
 )
-target_compile_definitions(printf PRIVATE PRINTF_INCLUDE_CONFIG_H)
+target_compile_definitions(printf PRIVATE PRINTF_DISABLE_SUPPORT_EXPONENTIAL)
 
 block()
     set(boardDir "")
