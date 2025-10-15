@@ -97,6 +97,12 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
+  LL_TIM_DisableCounter(TIM5);
+  LL_TIM_SetCounter(TIM5, 0U);
+  LL_TIM_ClearFlag_UPDATE(TIM5);
+  LL_TIM_EnableIT_UPDATE(TIM5);
+  LL_TIM_EnableCounter(TIM5);
+
   testEntry();
 
     // 由于此处并不需要使用 cubemx 生成的 FreeRTOS 初始化代码，因此使用宏直接屏蔽掉

@@ -104,6 +104,12 @@ int main(void)
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
 
+  LL_TIM_DisableCounter(TIM5);
+  LL_TIM_SetCounter(TIM5, 0U);
+  LL_TIM_ClearFlag_UPDATE(TIM5);
+  LL_TIM_EnableIT_UPDATE(TIM5);
+  LL_TIM_EnableCounter(TIM5);
+
   testEntry();
 
   /* USER CODE END 2 */
