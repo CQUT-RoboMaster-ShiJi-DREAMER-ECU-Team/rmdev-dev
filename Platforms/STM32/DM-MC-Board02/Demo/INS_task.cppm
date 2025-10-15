@@ -38,6 +38,8 @@ export EMDEVIF_NO_RETURN void insTask(void*)
     rmdev::Bmi088 bmi088{Spi{"BMI088 communicate SPI"}, Gpio{"BMI088 SPI accel cs"}, Gpio{"BMI088 SPI gyro cs"}};
 
     bmi088_heat_pwm.enable();
+    bmi088.deviceInit(true);
+
     while (true) {
         uint_fast16_t tick = 0;
 
