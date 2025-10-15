@@ -26,7 +26,7 @@ import emdevif.peripheral.spi;
 
 import rmdev.driver.imu.bmi088;
 import rmdev.controlAlgorithm.pid;
-import rmdev.util.math;
+import rmdev.math;
 
 export EMDEVIF_NO_RETURN void insTask(void*)
 {
