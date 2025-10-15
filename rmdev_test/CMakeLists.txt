@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.28)
 set(ENABLE_AFTER_UNIT_TEST_DEMO OFF CACHE BOOL "Enable it to link lib \"AfterUnitTestDemo\" \
 to run demo program in this platform.")
 
-project(stm32_hal_test_func_impl C)
+project(rmdev_test C CXX)
 
 add_library(${PROJECT_NAME} STATIC)
 
@@ -24,7 +24,7 @@ if (ENABLE_AFTER_UNIT_TEST_DEMO)
 endif ()
 
 target_sources(${PROJECT_NAME}
-    PRIVATE stm32_hal_test_func_impl.cpp
+    PRIVATE rmdev_test.cpp
 
-    PUBLIC FILE_SET header_file TYPE HEADERS FILES stm32_hal_test_func_impl.h
+    PUBLIC FILE_SET header_file TYPE HEADERS FILES rmdev_test.h
 )

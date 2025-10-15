@@ -33,6 +33,8 @@ block()
 
     add_subdirectory(${boardDir}/${BOARD_NAME})
 
+    add_subdirectory(rmdev_test)
+
     add_subdirectory(rmdev)
 
     if (NOT RMDEV_FREERTOS_USE_STM32CUBEMX)

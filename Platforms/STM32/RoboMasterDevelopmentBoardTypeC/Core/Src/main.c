@@ -27,7 +27,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
-#include "stm32_hal_test_func_impl.h"
+#include "rmdev_test.h"
 
 /* USER CODE END Includes */
 

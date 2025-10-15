@@ -1,11 +1,11 @@
 /**
- * @file stm32_hal_test_func_impl.cpp
+ * @file rmdev_test.cpp
  * @author DuYicheng
  * @date 2025-07-30
  * @brief 测试函数的实现
  */
 
-#include "stm32_hal_test_func_impl.h"
+#include "rmdev_test.h"
 
 #include <cstdarg>
 #include <cstring>

@@ -46,7 +46,6 @@ add_subdirectory(
 add_subdirectory(Demo)
 
 set(ENABLE_AFTER_UNIT_TEST_DEMO ON CACHE BOOL "" FORCE)
-add_subdirectory(../STM32_HAL_TestFuncImpl ../STM32_HAL_TestFuncImpl)
 
 add_library(emdevif_user_declares STATIC)
 target_sources(emdevif_user_declares
@@ -63,7 +62,7 @@ target_compile_options(CMSISDSP PRIVATE -ffast-math -fno-finite-math-only -Ofast
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     rmdev
-    stm32_hal_test_func_impl
+    rmdev_test
 )
 
 # Remove wrong libob.a library dependency when using cpp files
