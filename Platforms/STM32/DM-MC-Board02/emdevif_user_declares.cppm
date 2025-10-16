@@ -11,7 +11,7 @@ module;
 #include <limits>
 #include <tuple>
 
-#include "emdevif/fatal_handler.hpp"
+#include "emdevif/fatal_handler.h"
 
 #include "printf.h"
 

@@ -29,6 +29,8 @@
 
 #include "rmdev_test.h"
 
+#include "emdevif/fatal_handler.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -246,10 +248,9 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
-  __disable_irq();
-  while (1)
-  {
-  }
+
+  EMDEVIF_FATAL_HANDLER("Error_Handler called.");
+
   /* USER CODE END Error_Handler_Debug */
 }
 #ifdef USE_FULL_ASSERT
@@ -265,6 +266,9 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+
+  EMDEVIF_FATAL_HANDLER("STM32 assert_param failed.");
+
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

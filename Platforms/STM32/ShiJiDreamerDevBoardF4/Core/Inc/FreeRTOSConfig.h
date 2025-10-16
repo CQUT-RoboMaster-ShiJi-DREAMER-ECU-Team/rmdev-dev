@@ -45,6 +45,9 @@
 
 /* USER CODE BEGIN Includes */
 /* Section where include file can be added */
+
+#include "emdevif/fatal_handler.h"
+
 /* USER CODE END Includes */
 
 /* Ensure definitions are only used by the compiler, and not by the assembler. */
@@ -154,7 +157,7 @@ See http://www.FreeRTOS.org/RTOS-Cortex-M3-M4.html. */
 /* Normal assert() semantics without relying on the provision of an assert.h
 header file. */
 /* USER CODE BEGIN 1 */
-#define configASSERT( x ) do { if ((x) == 0) {taskDISABLE_INTERRUPTS(); for( ;; );} } while (0)
+#define configASSERT( x ) EMDEVIF_ASSERT( x )
 /* USER CODE END 1 */
 
 /* Definitions that map the FreeRTOS port interrupt handlers to their CMSIS

@@ -36,6 +36,8 @@ add_executable(${CMAKE_PROJECT_NAME})
 
 add_subdirectory(cmake/stm32cubemx)
 
+target_link_libraries(FreeRTOS PUBLIC emdevif_core)
+
 set(EMDEVIF_DEVICE_ENABLED_PERIPHERAL_LIST "USART;PWM" CACHE STRING "" FORCE)
 set(EMDEVIF_STM32_PERIPHERAL_DRIVER        "HAL;HAL" CACHE STRING "" FORCE)
 add_subdirectory(

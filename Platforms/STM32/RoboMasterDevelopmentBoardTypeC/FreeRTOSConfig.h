@@ -43,6 +43,8 @@
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
 
+#include "emdevif/fatal_handler.h"
+
 /******************************************************************************/
 /* Hardware description related definitions. **********************************/
 /******************************************************************************/
@@ -437,17 +439,7 @@ PRIORITY THAN THIS! (higher priorities are lower numeric values. */
  * execution on the failing line for viewing in a debugger. */
 
 /* *INDENT-OFF* */
-#define configASSERT( x )             \
-    do                                \
-    {                                 \
-        if( ( x ) == 0 )              \
-        {                             \
-            taskDISABLE_INTERRUPTS(); \
-            for( ; ; )                \
-            ;                         \
-        }                             \
-    }                                 \
-    while (0)
+#define configASSERT( x ) EMDEVIF_ASSERT( x )
 /* *INDENT-ON* */
 
 /******************************************************************************/

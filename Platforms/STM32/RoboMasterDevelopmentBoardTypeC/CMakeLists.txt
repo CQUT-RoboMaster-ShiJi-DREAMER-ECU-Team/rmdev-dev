@@ -71,6 +71,7 @@ target_sources(freertos_config INTERFACE
     FILE_SET header_file TYPE HEADERS FILES ./FreeRTOSConfig.h
 )
 target_compile_definitions(freertos_config INTERFACE projCOVERAGE_TEST=0)
+target_link_libraries(freertos_config INTERFACE emdevif_core)
 set(FREERTOS_HEAP "4" CACHE STRING "" FORCE)
 set(FREERTOS_PORT "GCC_ARM_CM4F" CACHE STRING "" FORCE)
 

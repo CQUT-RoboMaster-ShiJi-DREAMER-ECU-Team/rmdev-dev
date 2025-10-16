@@ -27,6 +27,10 @@ block()
 
     if (PLATFORM_NAME MATCHES "stm32")
         set(boardDir Platforms/STM32/)
+
+        if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+            add_compile_definitions(USE_FULL_ASSERT=1)
+        endif ()
     else ()
         message(FATAL_ERROR "Unknown platform name!")
     endif ()

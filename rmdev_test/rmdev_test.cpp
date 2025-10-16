@@ -21,7 +21,7 @@
 #include "emdevif_test_framework.h"
 
 #include "emdevif/attributes_and_useful_macros.h"
-#include "emdevif/fatal_handler.hpp"
+#include "emdevif/fatal_handler.h"
 #include "emdevif/line_separator.h"
 
 import emdevif.errorHandler;
