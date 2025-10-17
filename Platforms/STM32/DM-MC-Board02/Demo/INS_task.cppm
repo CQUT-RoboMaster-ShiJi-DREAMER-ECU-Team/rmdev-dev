@@ -10,6 +10,7 @@ module;
 #include <cstdint>
 
 #include <algorithm>
+#include <span>
 
 #include "emdevif/attributes_and_useful_macros.h"
 #include "emdevif/fatal_handler.h"
@@ -23,14 +24,18 @@ import emdevif.timeline;
 import emdevif.peripheral.pwm;
 import emdevif.peripheral.gpio;
 import emdevif.peripheral.spi;
+import emdevif.peripheral.serial;
 
 import rmdev.driver.imu.bmi088;
 import rmdev.controlAlgorithm.pid;
 import rmdev.math;
+import rmdev.debugAssistance.vofa;
 
 export EMDEVIF_NO_RETURN void insTask(void*)
 {
     using namespace emdevif;
+
+    const emdevif::Serial ins_result_serial{"INS result transmit serial"};
 
     const emdevif::Pwm bmi088_heat_pwm{"BMI088 heat PWM"};
     rmdev::Pid bmi088_heat_ctrl_pid{{.kp = 0.005f, .ki = 0.0f, .kd = 0.0f}, 100.0f, 100.0f};
@@ -44,6 +49,17 @@ export EMDEVIF_NO_RETURN void insTask(void*)
         uint_fast16_t tick = 0;
 
         bmi088.readImuData();
+
+        const auto& imu_data = bmi088.getImuData();
+        float imu_data_buffer[7 + 4] = {imu_data.accel[0],
+                                        imu_data.accel[1],
+                                        imu_data.accel[2],
+                                        imu_data.gyro[0],
+                                        imu_data.gyro[1],
+                                        imu_data.gyro[2],
+                                        imu_data.temperature};
+        const auto buf = rmdev::debug_assistance::vofa::JustFloat::appendFrameTail(imu_data_buffer);
+        (void)ins_result_serial.transmit(false, buf, 1000);
 
         if (tick % 2 == 0) {
             bmi088_heat_ctrl_pid(40.0f, bmi088.getImuData().temperature);
