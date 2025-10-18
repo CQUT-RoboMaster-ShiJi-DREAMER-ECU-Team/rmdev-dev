@@ -45,7 +45,8 @@ constinit emdevif::SerialModel::Instance test_transmit_serial_model{
 
 constinit emdevif::SerialModel::Instance ins_result_transmit_serial_model{
     .handle_ = &huart7,
-    .transmit_function_ = emdevif::stm32hal::uartTransmitBlocking};
+    .get_state_function_ = emdevif::stm32hal::uartGetState,
+    .transmit_function_ = emdevif::stm32hal::uartTransmitInterrupt};
 
 constinit emdevif::stm32hal::PwmHandle bmi088_heat_pwm_handle{&htim3, TIM_CHANNEL_4};
 constinit emdevif::PwmModel::Instance bmi088_heat_pwm_model{.handle_ = &bmi088_heat_pwm_handle,

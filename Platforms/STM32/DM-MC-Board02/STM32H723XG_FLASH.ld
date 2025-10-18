@@ -250,4 +250,12 @@ SECTIONS
     libgcc.a:* ( * )
   }
 
+  /* 自定义的 .ram_d1 段，放进 RAM_D1 中 */
+  .ram_d1 (NOLOAD) : {
+    . = ALIGN(4);
+    *(.ram_d1)
+    *(.ram_d1*)
+    . = ALIGN(4);
+  } >RAM_D1
+
 }

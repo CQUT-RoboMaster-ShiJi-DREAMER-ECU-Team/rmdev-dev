@@ -24,7 +24,7 @@ export EMDEVIF_NO_RETURN void demoEntry() noexcept
 {
     using namespace emdevif;
 
-    Thread ins_task = Thread::create({.name = "INS task", .priority = Thread::Priority::Realtime, .stack_size = 1024},
+    Thread ins_task = Thread::create({.name = "INS task", .priority = Thread::Priority::Realtime, .stack_size = 512},
                                      insTask,
                                      nullptr);
     if (!ins_task.getHandle().has_value()) {

@@ -12,6 +12,9 @@ module;
 #include <algorithm>
 #include <span>
 
+#include "FreeRTOS.h"
+#include "task.h"
+
 #include "emdevif/attributes_and_useful_macros.h"
 #include "emdevif/fatal_handler.h"
 
@@ -38,7 +41,7 @@ export EMDEVIF_NO_RETURN void insTask(void*)
     const emdevif::Serial ins_result_serial{"INS result transmit serial"};
 
     const emdevif::Pwm bmi088_heat_pwm{"BMI088 heat PWM"};
-    rmdev::Pid bmi088_heat_ctrl_pid{{.kp = 0.005f, .ki = 0.0f, .kd = 0.0f}, 100.0f, 100.0f};
+    rmdev::Pid bmi088_heat_ctrl_pid{{.kp = 0.5f, .ki = 0.0f, .kd = 0.0f}, 100.0f, 100.0f};
 
     rmdev::Bmi088 bmi088{Spi{"BMI088 communicate SPI"}, Gpio{"BMI088 SPI accel cs"}, Gpio{"BMI088 SPI gyro cs"}};
 
@@ -51,15 +54,21 @@ export EMDEVIF_NO_RETURN void insTask(void*)
         bmi088.readImuData();
 
         const auto& imu_data = bmi088.getImuData();
-        float imu_data_buffer[7 + 4] = {imu_data.accel[0],
-                                        imu_data.accel[1],
-                                        imu_data.accel[2],
-                                        imu_data.gyro[0],
-                                        imu_data.gyro[1],
-                                        imu_data.gyro[2],
-                                        imu_data.temperature};
-        const auto buf = rmdev::debug_assistance::vofa::JustFloat::appendFrameTail(imu_data_buffer);
-        (void)ins_result_serial.transmit(false, buf, 1000);
+
+        EMDEVIF_SECTION(.ram_d1) static std::array<float, 7 + 1> imu_data_buffer;
+
+        if (ins_result_serial.getStatus(false) == Serial::Ready) {
+            imu_data_buffer = {imu_data.accel[0],
+                               imu_data.accel[1],
+                               imu_data.accel[2],
+                               imu_data.gyro[0],
+                               imu_data.gyro[1],
+                               imu_data.gyro[2],
+                               imu_data.temperature};
+        }
+
+        const auto buf = rmdev::debug_assistance::vofa::JustFloat::processData(imu_data_buffer, 7);
+        (void)ins_result_serial.transmit(false, buf, 0);
 
         if (tick % 2 == 0) {
             bmi088_heat_ctrl_pid(40.0f, bmi088.getImuData().temperature);
@@ -69,6 +78,6 @@ export EMDEVIF_NO_RETURN void insTask(void*)
         }
 
         ++tick;
-        Thread::delay(1);
+        Thread::delay(30);
     }
 }
