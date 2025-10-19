@@ -78,6 +78,6 @@ export EMDEVIF_NO_RETURN void insTask(void*)
         }
 
         ++tick;
-        Thread::delay(30);
+        Thread::delay(1);
     }
 }

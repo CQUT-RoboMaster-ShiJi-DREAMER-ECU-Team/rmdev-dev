@@ -9,5 +9,6 @@ target_sources(${PROJECT_NAME} PUBLIC FILE_SET dxzbsabef TYPE CXX_MODULES FILES
 )
 
 target_link_libraries(${PROJECT_NAME}
-    PRIVATE emdevif_core emdevif_compile_options rmdev emdevif_stm32_peripheral
+    PUBLIC emdevif_core
+    PRIVATE emdevif_compile_options rmdev emdevif_stm32_peripheral
 )
