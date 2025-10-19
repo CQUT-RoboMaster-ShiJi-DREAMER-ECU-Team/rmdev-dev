@@ -70,7 +70,7 @@ export EMDEVIF_NO_RETURN void insTask(void*)
 
         ins.insUpdate(imu_data);
 
-        EMDEVIF_SECTION(.ram_d1) static std::array<float, 7 + 1> imu_data_buffer;
+        EMDEVIF_SECTION(.ram_d1) static std::array<float, 10 + 1> imu_data_buffer;
 
         if (ins_result_serial.getStatus(false) == Serial::Ready) {
             imu_data_buffer = {imu_data.accel[0],
@@ -79,10 +79,13 @@ export EMDEVIF_NO_RETURN void insTask(void*)
                                imu_data.gyro[0],
                                imu_data.gyro[1],
                                imu_data.gyro[2],
-                               imu_data.temperature};
+                               imu_data.temperature,
+                               imu_data.yaw,
+                               imu_data.pitch,
+                               imu_data.roll};
         }
 
-        const auto buf = rmdev::debug_assistance::vofa::JustFloat::processData(imu_data_buffer, 7);
+        const auto buf = rmdev::debug_assistance::vofa::JustFloat::processData(imu_data_buffer, 10);
         (void)ins_result_serial.transmit(false, buf, 0);
 
         if (tick % 2 == 0) {
