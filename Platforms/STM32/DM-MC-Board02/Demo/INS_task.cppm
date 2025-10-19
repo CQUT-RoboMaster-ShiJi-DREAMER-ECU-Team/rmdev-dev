@@ -8,9 +8,12 @@
 module;
 
 #include <cstdint>
+#include <cstring>
 
 #include <algorithm>
 #include <span>
+
+#include "printf.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -33,12 +36,14 @@ import rmdev.driver.imu.bmi088;
 import rmdev.controlAlgorithm.pid;
 import rmdev.math;
 import rmdev.debugAssistance.vofa;
+import rmdev.ins;
 
 export EMDEVIF_NO_RETURN void insTask(void*)
 {
     using namespace emdevif;
 
     const emdevif::Serial ins_result_serial{"INS result transmit serial"};
+    const emdevif::Serial ins_log_serial{"test transmit serial"};
 
     const emdevif::Pwm bmi088_heat_pwm{"BMI088 heat PWM"};
     rmdev::Pid bmi088_heat_ctrl_pid{{.kp = 0.5f, .ki = 0.0f, .kd = 0.0f}, 100.0f, 100.0f};
@@ -48,12 +53,22 @@ export EMDEVIF_NO_RETURN void insTask(void*)
     bmi088_heat_pwm.enable();
     bmi088.deviceInit(true);
 
+    rmdev::Ins ins;
+    ins.init();
+
+    char msg[64];
+    ::sprintf(msg, "[INS task]: sizeof(ins) = %zu", sizeof ins);
+    const auto p_msg = reinterpret_cast<uint8_t*>(msg);
+    ins_log_serial.transmit(false, {p_msg, std::strlen(msg)}, Serial::max_delay);
+
     while (true) {
         uint_fast16_t tick = 0;
 
         bmi088.readImuData();
 
-        const auto& imu_data = bmi088.getImuData();
+        auto& imu_data = bmi088.getImuData();
+
+        ins.insUpdate(imu_data);
 
         EMDEVIF_SECTION(.ram_d1) static std::array<float, 7 + 1> imu_data_buffer;
 
