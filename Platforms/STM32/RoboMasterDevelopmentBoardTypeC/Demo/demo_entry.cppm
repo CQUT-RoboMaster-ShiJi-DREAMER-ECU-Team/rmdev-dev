@@ -18,15 +18,18 @@ export module afterUnitTestDemo;
 import emdevif.errorHandler;
 import emdevif.sys.thread;
 
-import emdevif.peripheral.pwm;
-import emdevif.peripheral.gpio;
-import emdevif.peripheral.spi;
-
-emdevif::Gpio bmi088_accel_cs{"BMI088 SPI accel cs"};
+import ins_task;
 
 export EMDEVIF_NO_RETURN void demoEntry() noexcept
 {
     using namespace emdevif;
+
+    Thread ins_task = Thread::create({.name = "INS task", .priority = Thread::Priority::Realtime, .stack_size = 512},
+                                     insTask,
+                                     nullptr);
+    if (!ins_task.getHandle().has_value()) {
+        EMDEVIF_FATAL_HANDLER("Failed to create `INS task\'");
+    }
 
     while (true) {
         Thread::delay(Thread::maxDelay());

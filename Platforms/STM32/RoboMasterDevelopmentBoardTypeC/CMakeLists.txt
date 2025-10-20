@@ -76,6 +76,7 @@ set(FREERTOS_HEAP "4" CACHE STRING "" FORCE)
 set(FREERTOS_PORT "GCC_ARM_CM4F" CACHE STRING "" FORCE)
 
 set(RMDEV_ENABLED_DRIVER_LIST "BMI088" CACHE STRING "" FORCE)
+set(RMDEV_ENABLE_INS_MODULE ON CACHE BOOL "" FORCE)
 
 add_library(emdevif_user_declares STATIC)
 target_sources(emdevif_user_declares
