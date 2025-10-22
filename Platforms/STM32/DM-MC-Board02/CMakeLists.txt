@@ -80,7 +80,7 @@ add_library(emdevif_user_declares STATIC)
 target_sources(emdevif_user_declares
     PUBLIC FILE_SET saefiu7gsuy7a TYPE CXX_MODULES FILES emdevif_user_declares.cppm)
 target_link_libraries(emdevif_user_declares PUBLIC
-    emdevif_stm32cubemx_support emdevif_core emdevif_container printf emdevif_system
+    emdevif_stm32cubemx_support emdevif_core printf emdevif_system
     emdevif_stm32_peripheral
     PRIVATE emdevif_compile_options emdevif_peripheral_model
 )
