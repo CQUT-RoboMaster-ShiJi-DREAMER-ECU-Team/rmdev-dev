@@ -69,9 +69,13 @@ extern "C" EMDEVIF_NO_RETURN void testEntry(void)
         }
     });
 
-    emdevif::registerFatalHandler([](const char* file, const int line, const char* message) noexcept {
+    emdevif::registerFatalHandler([](const char* file, const int line, const char* format, std::va_list args) noexcept {
         test_printf("emdevif: Fatal touched at %s:%d" EMDEVIF_LINE_SEPARATOR EMDEVIF_LINE_SEPARATOR, file, line);
-        test_printf("Message: %s" EMDEVIF_LINE_SEPARATOR, message);
+
+        static char buffer[256];
+        ::snprintf(buffer, std::size(buffer), format, args);
+
+        test_printf("Message: %s" EMDEVIF_LINE_SEPARATOR, buffer);
     });
 
     emdevif::registerAssertFailedHandler([](const char* file,
@@ -119,14 +123,7 @@ EMDEVIF_NO_RETURN static void osStartDefaultTask(void* arguments)
         .testFinishCallback =
             [](const emdevif_test_ErrorCode ec) {
                 if (ec != EMDEVIF_TEST_ALL_PASSED) {
-                    using namespace std::literals;
-
-                    emdevif::err_msg.clear();
-
-                    char ec_buffer[8];
-                    ::snprintf(ec_buffer, std::size(ec_buffer), "%d", ec);
-                    emdevif::err_msg << "Error occured from emdevif_test_framework with code "sv << ec_buffer << "."sv;
-                    EMDEVIF_FATAL_HANDLER(emdevif::err_msg.c_str());
+                    EMDEVIF_FATAL_HANDLER("Error occurred from emdevif_test_framework exit with code %d.", ec);
                 }
             },
         .errorCallback = nullptr};
