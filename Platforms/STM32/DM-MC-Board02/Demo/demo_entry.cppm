@@ -27,7 +27,7 @@ export EMDEVIF_NO_RETURN void demoEntry() noexcept
     Thread ins_task = Thread::create({.name = "INS task", .priority = Thread::Priority::Realtime, .stack_size = 512},
                                      insTask,
                                      nullptr);
-    if (!ins_task.getHandle().has_value()) {
+    if (ins_task.getHandle() == nullptr) {
         EMDEVIF_FATAL_HANDLER("Failed to create `INS task\'");
     }
 

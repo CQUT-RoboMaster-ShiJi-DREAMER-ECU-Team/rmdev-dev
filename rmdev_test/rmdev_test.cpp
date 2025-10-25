@@ -102,7 +102,7 @@ extern "C" EMDEVIF_NO_RETURN void testEntry(void)
                                             .stack_size = DEFAULT_TASK_STACK_DEPTH},
                                            osStartDefaultTask,
                                            nullptr);
-    if (!default_task.getHandle().has_value()) {
+    if (default_task.getHandle() == nullptr) {
         EMDEVIF_FATAL_HANDLER("Failed to create default task.");
     }
 
@@ -133,10 +133,10 @@ EMDEVIF_NO_RETURN static void osStartDefaultTask(void* arguments)
     demoEntry();
 #endif
 
-    if (!default_task.getHandle().has_value()) {
+    if (default_task.getHandle() == nullptr) {
         EMDEVIF_FATAL_HANDLER("Default task Should not be null here!");
     }
-    emdevif::Thread::suspend(*default_task.getHandle());
+    emdevif::Thread::suspend(default_task.getHandle());
     while (true) {
         emdevif::Thread::delay(emdevif::Thread::maxDelay());
     }
