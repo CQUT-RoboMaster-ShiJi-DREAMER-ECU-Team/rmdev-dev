@@ -26,7 +26,7 @@ block()
     set(boardDir "")
 
     if (PLATFORM_NAME MATCHES "stm32")
-        set(boardDir Platforms/STM32/)
+        set(boardDir Platforms/STM32)
 
         if (CMAKE_BUILD_TYPE STREQUAL "Debug")
             add_compile_definitions(USE_FULL_ASSERT=1)
@@ -39,6 +39,7 @@ block()
 
     add_subdirectory(rmdev_test)
 
+    add_subdirectory(emdevif_collection/emdevif)
     add_subdirectory(rmdev)
 
     if (NOT RMDEV_FREERTOS_USE_STM32CUBEMX)

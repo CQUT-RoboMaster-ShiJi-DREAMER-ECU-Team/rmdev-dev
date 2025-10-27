@@ -41,8 +41,8 @@ target_link_libraries(FreeRTOS PUBLIC emdevif_core)
 set(EMDEVIF_DEVICE_ENABLED_PERIPHERAL_LIST "USART;PWM" CACHE STRING "" FORCE)
 set(EMDEVIF_STM32_PERIPHERAL_DRIVER        "HAL;HAL" CACHE STRING "" FORCE)
 add_subdirectory(
-    ${CMAKE_SOURCE_DIR}/rmdev/emdevif_home/emdevif_stm32_peripheral
-    ${CMAKE_BINARY_DIR}/rmdev/emdevif_home/emdevif_stm32_peripheral
+    ${CMAKE_SOURCE_DIR}/emdevif_collection/emdevif_stm32_peripheral
+    ${CMAKE_BINARY_DIR}/emdevif_collection/emdevif_stm32_peripheral
 )
 
 add_subdirectory(Demo)

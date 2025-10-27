@@ -10,3 +10,9 @@
 [submodule "CMSIS-DSP"]
 	path = CMSIS-DSP
 	url = https://github.com/ARM-software/CMSIS-DSP.git
+[submodule "emdevif_collection/emdevif"]
+	path = emdevif_collection/emdevif
+	url = https://github.com/CQUT-RoboMaster-ShiJi-DREAMER-ECU-Team/emdevif.git
+[submodule "emdevif_collection/emdevif_stm32_peripheral"]
+	path = emdevif_collection/emdevif_stm32_peripheral
+	url = https://github.com/CQUT-RoboMaster-ShiJi-DREAMER-ECU-Team/emdevif_stm32_peripheral.git
