@@ -23,7 +23,7 @@ target_sources(printf PRIVATE libprintf/printf.c
 target_compile_definitions(printf PRIVATE PRINTF_DISABLE_SUPPORT_EXPONENTIAL)
 
 block()
-    set(boardDir "")
+    set(boardDir "${CMAKE_CURRENT_LIST_DIR}/")
 
     if (PLATFORM_NAME MATCHES "stm32")
         set(boardDir Platforms/STM32)
@@ -35,6 +35,10 @@ block()
         message(FATAL_ERROR "Unknown platform name!")
     endif ()
 
+    if (NOT (EXISTS ${boardDir}/${BOARD_NAME}))
+        message(FATAL_ERROR "Directory `${boardDir}/${BOARD_NAME}\' does not exist! \
+This may be caused by an incorrect BOARD_NAME or this board have not been supported yet.")
+    endif ()
     add_subdirectory(${boardDir}/${BOARD_NAME})
 
     add_subdirectory(rmdev_test)
