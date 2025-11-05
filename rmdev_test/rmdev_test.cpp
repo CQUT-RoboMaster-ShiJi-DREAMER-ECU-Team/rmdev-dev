@@ -64,7 +64,7 @@ static void test_printf(const char* format, ...)
 extern "C" EMDEVIF_NO_RETURN void testEntry(void)
 {
     emdevif::registerTerminateFunction([]() noexcept {
-        __disable_irq();
+        test::disableIrq();
         while (true) {
         }
     });

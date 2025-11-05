@@ -14,6 +14,7 @@ module;
 
 #include "printf.h"
 
+#include "main.h"
 #include "usart.h"
 #include "tim.h"
 
@@ -30,6 +31,15 @@ import emdevif.peripheral.model.serial;
 
 import emdevif.stm32Peripheral.hal.pwm;
 import emdevif.stm32Peripheral.hal.usart;
+
+export namespace test {
+
+void disableIrq() noexcept
+{
+    __disable_irq();
+}
+
+}  // namespace test
 
 namespace emdevif::user_declares {
 

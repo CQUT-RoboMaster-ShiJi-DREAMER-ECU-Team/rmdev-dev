@@ -15,6 +15,7 @@ module;
 
 #include "printf.h"
 
+#include "main.h"
 #include "usart.h"
 #include "tim.h"
 #include "spi.h"
@@ -36,6 +37,15 @@ import emdevif.stm32Peripheral.hal.pwm;
 import emdevif.stm32Peripheral.hal.gpio;
 import emdevif.stm32Peripheral.hal.usart;
 import emdevif.stm32Peripheral.hal.spi;
+
+export namespace test {
+
+void disableIrq() noexcept
+{
+    __disable_irq();
+}
+
+}  // namespace test
 
 export namespace emdevif::user_declares {
 
