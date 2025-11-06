@@ -67,6 +67,7 @@ target_compile_definitions(freertos_config INTERFACE projCOVERAGE_TEST=0)
 target_link_libraries(freertos_config INTERFACE emdevif_core)
 set(FREERTOS_HEAP "4" CACHE STRING "" FORCE)
 set(FREERTOS_PORT "GCC_ARM_CM4F" CACHE STRING "" FORCE)
+add_subdirectory(${CMAKE_SOURCE_DIR}/FreeRTOS-Kernel ${CMAKE_BINARY_DIR}/FreeRTOS-Kernel)
 
 set(RMDEV_ENABLED_DRIVER_LIST "BMI088" CACHE STRING "" FORCE)
 set(RMDEV_ENABLE_INS_MODULE ON CACHE BOOL "" FORCE)
@@ -82,3 +83,13 @@ target_link_libraries(emdevif_user_declares PUBLIC
 
 # Remove wrong libob.a library dependency when using cpp files
 list(REMOVE_ITEM CMAKE_C_IMPLICIT_LINK_LIBRARIES ob)
+
+add_subdirectory(
+    ${CMAKE_SOURCE_DIR}/emdevif_collection/emdevif
+    ${CMAKE_BINARY_DIR}/emdevif_collection/emdevif
+)
+add_subdirectory(${CMAKE_SOURCE_DIR}/rmdev ${CMAKE_BINARY_DIR}/rmdev)
+
+target_compile_definitions(emdevif_system PUBLIC EMDEVIF_SYS_TICK_TYPE_UINT_BITS=32)
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/rmdev_test ${CMAKE_BINARY_DIR}/rmdev_test)

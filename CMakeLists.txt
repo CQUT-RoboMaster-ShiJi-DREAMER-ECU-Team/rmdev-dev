@@ -59,12 +59,3 @@ foreach (_ _)
     add_subdirectory(${boardDir}/${BOARD_NAME})
     message("In CMAKE_SOURCE_DIR >>>> Board dir: ${boardDir}/${BOARD_NAME}")
 endforeach ()
-
-add_subdirectory(rmdev_test)
-
-add_subdirectory(emdevif_collection/emdevif)
-add_subdirectory(rmdev)
-
-if (NOT (RMDEV_FREERTOS_USE_STM32CUBEMX OR EMDEVIF_USE_ESP_IDF))
-    add_subdirectory(FreeRTOS-Kernel)
-endif ()
