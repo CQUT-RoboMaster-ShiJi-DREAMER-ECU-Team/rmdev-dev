@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.28)
 
-project(rmdev_developing_or_testing_environment C CXX ASM)
-
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_SCAN_FOR_MODULES ON)
@@ -22,31 +20,51 @@ target_sources(printf PRIVATE libprintf/printf.c
 )
 target_compile_definitions(printf PRIVATE PRINTF_DISABLE_SUPPORT_EXPONENTIAL)
 
-block()
-    set(boardDir "${CMAKE_CURRENT_LIST_DIR}/")
+set(boardDir "${CMAKE_CURRENT_LIST_DIR}")
 
+foreach (_ _)
     if (PLATFORM_NAME MATCHES "stm32")
-        set(boardDir Platforms/STM32)
+        set(boardDir ${boardDir}/Platforms/STM32)
 
         if (CMAKE_BUILD_TYPE STREQUAL "Debug")
             add_compile_definitions(USE_FULL_ASSERT=1)
         endif ()
+    elseif (PLATFORM_NAME MATCHES "esp32")
+        set(boardDir ${boardDir}/Platforms/ESP32)
+
+        if (NOT (EXISTS ${boardDir}/${BOARD_NAME}))
+            message(FATAL_ERROR "Directory `${boardDir}/${BOARD_NAME}\' does not exist! \
+                This may be caused by an incorrect BOARD_NAME or this board have not been supported yet.")
+        endif ()
+        list(APPEND EXTRA_COMPONENT_DIRS "${boardDir}/${BOARD_NAME}")
+        list(APPEND EXTRA_COMPONENT_DIRS "${boardDir}/${BOARD_NAME}/main")
+
+        include($ENV{IDF_PATH}/tools/cmake/project.cmake)
+        idf_build_set_property(MINIMAL_BUILD ON)
+        project(rmdev_developing_or_testing_environment)
+
+        message("In CMAKE_SOURCE_DIR >>>> EXTRA_COMPONENT_DIRS: ${EXTRA_COMPONENT_DIRS}")
+
+        break ()
     else ()
         message(FATAL_ERROR "Unknown platform name!")
     endif ()
 
+    project(rmdev_developing_or_testing_environment C CXX ASM)
+
     if (NOT (EXISTS ${boardDir}/${BOARD_NAME}))
         message(FATAL_ERROR "Directory `${boardDir}/${BOARD_NAME}\' does not exist! \
-This may be caused by an incorrect BOARD_NAME or this board have not been supported yet.")
+            This may be caused by an incorrect BOARD_NAME or this board have not been supported yet.")
     endif ()
     add_subdirectory(${boardDir}/${BOARD_NAME})
+    message("In CMAKE_SOURCE_DIR >>>> Board dir: ${boardDir}/${BOARD_NAME}")
+endforeach ()
 
-    add_subdirectory(rmdev_test)
+add_subdirectory(rmdev_test)
 
-    add_subdirectory(emdevif_collection/emdevif)
-    add_subdirectory(rmdev)
+add_subdirectory(emdevif_collection/emdevif)
+add_subdirectory(rmdev)
 
-    if (NOT RMDEV_FREERTOS_USE_STM32CUBEMX)
-        add_subdirectory(FreeRTOS-Kernel)
-    endif ()
-endblock()
+if (NOT (RMDEV_FREERTOS_USE_STM32CUBEMX OR EMDEVIF_USE_ESP_IDF))
+    add_subdirectory(FreeRTOS-Kernel)
+endif ()

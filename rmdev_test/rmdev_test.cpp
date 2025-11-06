@@ -34,8 +34,6 @@ import emdevif.logger;
 import afterUnitTestDemo;
 #endif
 
-extern "C" void rmdev_testEntry(void);  // NOLINT(*-redundant-void-arg)
-
 emdevif::Serial test_tx_serial{"test transmit serial"};
 
 static char printf_buffer[512];
@@ -113,13 +111,19 @@ extern "C" EMDEVIF_NO_RETURN void testEntry(void)
     }
 }
 
+extern "C" void emdevif_testEntry(void);
+#if (defined(BUILD_RMDEV) && BUILD_RMDEV)
+extern "C" void rmdev_testEntry(void);
+#endif
+
 EMDEVIF_NO_RETURN static void osStartDefaultTask(void* arguments)
 {
     EMDEVIF_UNUSED(arguments);
 
-    constexpr emdevif_test_Callbacks callbacks = {
+    test_printf("    emdevif test begin..." EMDEVIF_LINE_SEPARATOR);
+    emdevif_test_Callbacks callbacks = {
         .printfCallback = test_printf,
-        .testEntryCallback = rmdev_testEntry,
+        .testEntryCallback = emdevif_testEntry,
         .testFinishCallback =
             [](const emdevif_test_ErrorCode ec) {
                 if (ec != EMDEVIF_TEST_ALL_PASSED) {
@@ -128,6 +132,12 @@ EMDEVIF_NO_RETURN static void osStartDefaultTask(void* arguments)
             },
         .errorCallback = nullptr};
     emdevif_test_framework_main(EMDEVIF_LINE_SEPARATOR, &callbacks, nullptr);
+
+#if (defined(BUILD_RMDEV) && BUILD_RMDEV)
+    test_printf("    rmdev test begin..." EMDEVIF_LINE_SEPARATOR);
+    callbacks.testEntryCallback = rmdev_testEntry;
+    emdevif_test_framework_main(EMDEVIF_LINE_SEPARATOR, &callbacks, nullptr);
+#endif
 
 #ifdef ENABLE_AFTER_UNIT_TEST_DEMO
     demoEntry();

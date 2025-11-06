@@ -210,3 +210,6 @@ libarm_*_math.a
 libarm_*_math.lib
 
 __pycache__/
+
+# ESP-IDF
+**/sdkconfig

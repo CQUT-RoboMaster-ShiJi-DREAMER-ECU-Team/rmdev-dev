@@ -1,21 +1,28 @@
 cmake_minimum_required(VERSION 3.28)
 
-set(ENABLE_AFTER_UNIT_TEST_DEMO OFF CACHE BOOL "Enable it to link lib \"AfterUnitTestDemo\" \
-to run demo program in this platform.")
+option(BUILD_RMDEV "Enabled it to build `rmdev\' and run the test for rmdev." ON)
+option(ENABLE_AFTER_UNIT_TEST_DEMO "Enable it to link lib \"AfterUnitTestDemo\" \
+to run demo program in this platform." OFF)
 
 project(rmdev_test C CXX)
 
 add_library(${PROJECT_NAME} STATIC)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
-    rmdev
-    rmdev_unit_test
-    emdevif_stm32cubemx_support
+    emdevif
+    emdevif_unit_test
     emdevif_user_declares
     emdevif_test_framework
-    emdevif_stm32_peripheral
     printf
 )
+if (BUILD_RMDEV)
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        rmdev rmdev_unit_test
+    )
+    target_compile_definitions(${PROJECT_NAME} PUBLIC BUILD_RMDEV=1)
+
+    message("[${PROJECT_NAME}]: Will build and run the test for rmdev.")
+endif ()
 
 if (ENABLE_AFTER_UNIT_TEST_DEMO)
     target_link_libraries(${PROJECT_NAME} PRIVATE AfterUnitTestDemo)
