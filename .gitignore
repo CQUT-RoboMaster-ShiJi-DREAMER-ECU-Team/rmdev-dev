@@ -213,3 +213,4 @@ __pycache__/
 
 # ESP-IDF
 **/sdkconfig
+**/sdkconfig.old

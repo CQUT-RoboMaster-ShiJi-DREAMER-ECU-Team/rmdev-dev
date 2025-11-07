@@ -12,6 +12,8 @@ set(BOARD_NAME "" CACHE STRING "Set to choose run test on which board.")
 
 if (RMDEV_ENABLE_TESTS)
     enable_testing()
+    set(EMDEVIF_ENABLE_TESTS ON CACHE BOOL "" FORCE)
+    set(RMDEV_ENABLE_TESTS ON CACHE BOOL "" FORCE)
 endif ()
 
 add_library(printf STATIC)
@@ -41,6 +43,7 @@ foreach (_ _)
 
         include($ENV{IDF_PATH}/tools/cmake/project.cmake)
         idf_build_set_property(MINIMAL_BUILD ON)
+        set(SDKCONFIG_DEFAULTS "${boardDir}/${BOARD_NAME}/sdkconfig.defaults")
         project(rmdev_developing_or_testing_environment)
 
         message("In CMAKE_SOURCE_DIR >>>> EXTRA_COMPONENT_DIRS: ${EXTRA_COMPONENT_DIRS}")

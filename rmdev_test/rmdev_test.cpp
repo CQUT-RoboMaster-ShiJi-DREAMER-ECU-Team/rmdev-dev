@@ -16,7 +16,6 @@
 #include <string_view>
 
 #include "printf.h"
-#include "main.h"
 
 #include "emdevif_test_framework.h"
 
