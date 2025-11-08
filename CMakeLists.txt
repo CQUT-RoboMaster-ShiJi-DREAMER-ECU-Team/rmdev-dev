@@ -22,7 +22,14 @@ target_sources(printf PRIVATE libprintf/printf.c
 )
 target_compile_definitions(printf PRIVATE PRINTF_DISABLE_SUPPORT_EXPONENTIAL)
 
+#[==[
+# @function addCopyFinallyBinaryFileTarget(<finalBinaryFileProjectName> <finalBinaryFileName> <finalBinaryFileDir>)
+#
 # 用于新增一个构建目标，这个目标用于将生成的二进制文件拷贝到 bin 目录以便于调试工具指定路径
+# @param finalBinaryFileProjectName 生成这个二进制文件的目标名称
+# @param finalBinaryFileName 这个二进制文件的名称
+# @param finalBinaryFileDir 这个二进制文件所在的路径
+]==]
 function(addCopyFinallyBinaryFileTarget finalBinaryFileProjectName finalBinaryFileName finalBinaryFileDir)
     add_custom_command(
         TARGET ${finalBinaryFileProjectName} POST_BUILD
@@ -44,9 +51,9 @@ function(addCopyFinallyBinaryFileTarget finalBinaryFileProjectName finalBinaryFi
     )
 endfunction()
 
-set(boardDir "${CMAKE_CURRENT_LIST_DIR}")
+foreach (_ _)  # 这个 foreach 仅用于部分逻辑需要提前 break 跳出的需求
+    set(boardDir "${CMAKE_CURRENT_LIST_DIR}")
 
-foreach (_ _)
     if (PLATFORM_NAME MATCHES "stm32")
         set(boardDir ${boardDir}/Platforms/STM32)
 
