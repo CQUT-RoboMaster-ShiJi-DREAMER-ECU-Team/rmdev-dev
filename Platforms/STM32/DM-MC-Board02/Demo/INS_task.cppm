@@ -42,18 +42,18 @@ export EMDEVIF_NO_RETURN void insTask(void*)
 {
     using namespace emdevif;
 
-    const emdevif::Serial ins_result_serial{"INS result transmit serial"};
-    const emdevif::Serial ins_log_serial{"test transmit serial"};
+    static const emdevif::Serial ins_result_serial{"INS result transmit serial"};
+    static const emdevif::Serial ins_log_serial{"test transmit serial"};
 
-    const emdevif::Pwm bmi088_heat_pwm{"BMI088 heat PWM"};
-    rmdev::Pid bmi088_heat_ctrl_pid{{.kp = 0.5f, .ki = 0.0f, .kd = 0.0f}, 100.0f, 100.0f};
+    static const emdevif::Pwm bmi088_heat_pwm{"BMI088 heat PWM"};
+    static rmdev::Pid bmi088_heat_ctrl_pid{{.kp = 20.0f, .ki = 1.0f, .kd = 0.0f}, 100.0f, 75.0f};
 
-    rmdev::Bmi088 bmi088{Spi{"BMI088 communicate SPI"}, Gpio{"BMI088 SPI accel cs"}, Gpio{"BMI088 SPI gyro cs"}};
+    static rmdev::Bmi088 bmi088{Spi{"BMI088 communicate SPI"}, Gpio{"BMI088 SPI accel cs"}, Gpio{"BMI088 SPI gyro cs"}};
 
     bmi088_heat_pwm.enable();
     bmi088.deviceInit(true);
 
-    rmdev::Ins ins;
+    static rmdev::Ins ins;
     ins.init();
 
     char msg[64];
