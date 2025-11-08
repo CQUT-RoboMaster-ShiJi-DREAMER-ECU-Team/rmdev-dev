@@ -84,6 +84,7 @@ target_link_libraries(emdevif_user_declares PUBLIC
 # Remove wrong libob.a library dependency when using cpp files
 list(REMOVE_ITEM CMAKE_C_IMPLICIT_LINK_LIBRARIES ob)
 
+set(EMDEVIF_USE_STM32CUBEMX ON CACHE BOOL "" FORCE)
 add_subdirectory(
     ${CMAKE_SOURCE_DIR}/emdevif_collection/emdevif
     ${CMAKE_BINARY_DIR}/emdevif_collection/emdevif
@@ -93,3 +94,5 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/rmdev ${CMAKE_BINARY_DIR}/rmdev)
 target_compile_definitions(emdevif_system PUBLIC EMDEVIF_SYS_TICK_TYPE_UINT_BITS=32)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/rmdev_test ${CMAKE_BINARY_DIR}/rmdev_test)
+
+addCopyFinallyBinaryFileTarget(${PROJECT_NAME} "${PROJECT_NAME}.elf" ${CMAKE_CURRENT_BINARY_DIR})

@@ -22,6 +22,28 @@ target_sources(printf PRIVATE libprintf/printf.c
 )
 target_compile_definitions(printf PRIVATE PRINTF_DISABLE_SUPPORT_EXPONENTIAL)
 
+# 用于新增一个构建目标，这个目标用于将生成的二进制文件拷贝到 bin 目录以便于调试工具指定路径
+function(addCopyFinallyBinaryFileTarget finalBinaryFileProjectName finalBinaryFileName finalBinaryFileDir)
+    add_custom_command(
+        TARGET ${finalBinaryFileProjectName} POST_BUILD
+        COMMENT "Copy the binary file from cmake process binary dir to project_root/bin dir."
+        COMMAND ${CMAKE_COMMAND} -E
+            copy "${finalBinaryFileDir}/${finalBinaryFileName}"
+            "${CMAKE_SOURCE_DIR}/bin/${finalBinaryFileName}"
+        VERBATIM
+    )
+
+    set_property(DIRECTORY PROPERTY ADDITIONAL_CLEAN_FILES
+        "${CMAKE_SOURCE_DIR}/bin"
+    )
+
+    message("[${PROJECT_NAME}](function `addCopyFinallyBinaryFileTarget\'): \n\
+        finalBinaryFileProjectName: ${finalBinaryFileProjectName}\n\
+        finalBinaryFileName: ${finalBinaryFileName}\n\
+        finalBinaryFileDir: ${finalBinaryFileDir}"
+    )
+endfunction()
+
 set(boardDir "${CMAKE_CURRENT_LIST_DIR}")
 
 foreach (_ _)
