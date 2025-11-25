@@ -44,10 +44,10 @@ function(addCopyFinallyBinaryFileTarget finalBinaryFileProjectName finalBinaryFi
         "${CMAKE_SOURCE_DIR}/bin"
     )
 
-    message("[${PROJECT_NAME}](function `addCopyFinallyBinaryFileTarget\'): \n\
-        finalBinaryFileProjectName: ${finalBinaryFileProjectName}\n\
-        finalBinaryFileName: ${finalBinaryFileName}\n\
-        finalBinaryFileDir: ${finalBinaryFileDir}"
+    message(STATUS "[${PROJECT_NAME}](function `${CMAKE_CURRENT_FUNCTION}\'): \n"
+        "        finalBinaryFileProjectName: ${finalBinaryFileProjectName}\n"
+        "        finalBinaryFileName: ${finalBinaryFileName}\n"
+        "        finalBinaryFileDir: ${finalBinaryFileDir}"
     )
 endfunction()
 
@@ -75,7 +75,7 @@ foreach (_ _)  # 这个 foreach 仅用于部分逻辑需要提前 break 跳出�
         set(SDKCONFIG_DEFAULTS "${boardDir}/${BOARD_NAME}/sdkconfig.defaults")
         project(rmdev_developing_or_testing_environment)
 
-        message("In CMAKE_SOURCE_DIR >>>> EXTRA_COMPONENT_DIRS: ${EXTRA_COMPONENT_DIRS}")
+        message(STATUS "In CMAKE_SOURCE_DIR >>>> EXTRA_COMPONENT_DIRS: ${EXTRA_COMPONENT_DIRS}")
 
         break ()
     else ()
@@ -85,9 +85,10 @@ foreach (_ _)  # 这个 foreach 仅用于部分逻辑需要提前 break 跳出�
     project(rmdev_developing_or_testing_environment C CXX ASM)
 
     if (NOT (EXISTS ${boardDir}/${BOARD_NAME}))
-        message(FATAL_ERROR "Directory `${boardDir}/${BOARD_NAME}\' does not exist! \
-            This may be caused by an incorrect BOARD_NAME or this board have not been supported yet.")
+        message(FATAL_ERROR "Directory `${boardDir}/${BOARD_NAME}\' does not exist! "
+            "This may be caused by an incorrect BOARD_NAME or this board have not been supported yet."
+        )
     endif ()
     add_subdirectory(${boardDir}/${BOARD_NAME})
-    message("In CMAKE_SOURCE_DIR >>>> Board dir: ${boardDir}/${BOARD_NAME}")
+    message(STATUS "In CMAKE_SOURCE_DIR >>>> Board dir: ${boardDir}/${BOARD_NAME}")
 endforeach ()
