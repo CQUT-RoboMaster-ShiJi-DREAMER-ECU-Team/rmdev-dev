@@ -1,3 +1,0 @@
-CompileFlags:
-    Remove: [-f*, -m*]
-    Add: -Wno-unknown-warning-option -fmodules-ts
