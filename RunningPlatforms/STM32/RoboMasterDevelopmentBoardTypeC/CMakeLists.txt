@@ -47,7 +47,7 @@ add_subdirectory(
 # Add linked libraries
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     rmdev
-    rmdev_test
+    test_implement
 )
 
 if (RMDEV_ENABLE_TESTS)

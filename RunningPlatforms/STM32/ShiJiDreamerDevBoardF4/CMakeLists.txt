@@ -61,7 +61,7 @@ target_compile_options(CMSISDSP PRIVATE -ffast-math -fno-finite-math-only -Ofast
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     rmdev
-    rmdev_test
+    test_implement
 )
 
 # Remove wrong libob.a library dependency when using cpp files

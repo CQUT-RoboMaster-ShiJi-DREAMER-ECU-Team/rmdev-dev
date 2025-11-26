@@ -5,7 +5,7 @@ option(ENABLE_AFTER_UNIT_TEST_DEMO "Enable it to link lib \"AfterUnitTestDemo\" 
 to run demo program in this platform." OFF
 )
 
-project(rmdev_test C CXX)
+project(test_implement C CXX)
 
 add_library(${PROJECT_NAME} STATIC)
 
