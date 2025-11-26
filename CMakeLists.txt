@@ -16,11 +16,7 @@ if (RMDEV_ENABLE_TESTS)
     set(RMDEV_ENABLE_TESTS ON CACHE BOOL "" FORCE)
 endif ()
 
-add_library(printf STATIC)
-target_sources(printf PRIVATE libprintf/printf.c
-    PUBLIC FILE_SET header TYPE HEADERS BASE_DIRS libprintf/ FILES libprintf/printf.h
-)
-target_compile_definitions(printf PRIVATE PRINTF_DISABLE_SUPPORT_EXPONENTIAL)
+include(Packages/mpaland-printf.cmake)
 
 #[==[
 # @function addCopyFinallyBinaryFileTarget(<finalBinaryFileProjectName> <finalBinaryFileName> <finalBinaryFileDir>)
@@ -55,13 +51,13 @@ foreach (_ _)  # 这个 foreach 仅用于部分逻辑需要提前 break 跳出�
     set(boardDir "${CMAKE_CURRENT_LIST_DIR}")
 
     if (PLATFORM_NAME MATCHES "stm32")
-        set(boardDir ${boardDir}/Platforms/STM32)
+        set(boardDir ${boardDir}/RunningPlatforms/STM32)
 
         if (CMAKE_BUILD_TYPE STREQUAL "Debug")
             add_compile_definitions(USE_FULL_ASSERT=1)
         endif ()
     elseif (PLATFORM_NAME MATCHES "esp32")
-        set(boardDir ${boardDir}/Platforms/ESP32)
+        set(boardDir ${boardDir}/RunningPlatforms/ESP32)
 
         if (NOT (EXISTS ${boardDir}/${BOARD_NAME}))
             message(FATAL_ERROR "Directory `${boardDir}/${BOARD_NAME}\' does not exist! \

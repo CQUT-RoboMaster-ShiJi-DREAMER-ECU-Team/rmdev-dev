@@ -53,7 +53,10 @@ target_link_libraries(emdevif_user_declares PUBLIC emdevif_core
 
 set(CMSISCORE "${CMAKE_CURRENT_LIST_DIR}/Drivers/CMSIS" CACHE STRING "" FORCE)
 set(DISABLEFLOAT16 ON CACHE BOOL "" FORCE)
-add_subdirectory(${CMAKE_SOURCE_DIR}/CMSIS-DSP ${CMAKE_BINARY_DIR}/CMSIS-DSP)
+add_subdirectory(
+    ${CMAKE_SOURCE_DIR}/Packages/CMSIS-DSP
+    ${CMAKE_BINARY_DIR}/Packages/CMSIS-DSP
+)
 target_compile_options(CMSISDSP PRIVATE -ffast-math -fno-finite-math-only -Ofast)
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
@@ -64,6 +67,8 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
 # Remove wrong libob.a library dependency when using cpp files
 list(REMOVE_ITEM CMAKE_C_IMPLICIT_LINK_LIBRARIES ob)
 
+set(EMDEVIF_USE_STM32CUBEMX ON)
+set(EMDEVIF_FREERTOS_USE_STM32CUBEMX ON)
 add_subdirectory(
     ${CMAKE_SOURCE_DIR}/emdevif_collection/emdevif
     ${CMAKE_BINARY_DIR}/emdevif_collection/emdevif

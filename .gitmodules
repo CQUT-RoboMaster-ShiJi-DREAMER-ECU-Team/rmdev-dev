@@ -1,18 +1,18 @@
 [submodule "rmdev"]
 	path = rmdev
 	url = https://github.com/CQUT-RoboMaster-ShiJi-DREAMER-ECU-Team/rmdev.git
-[submodule "FreeRTOS-Kernel"]
-	path = FreeRTOS-Kernel
-	url = https://github.com/FreeRTOS/FreeRTOS-Kernel.git
-[submodule "libprintf"]
-	path = libprintf
-	url = https://github.com/mpaland/printf.git
-[submodule "CMSIS-DSP"]
-	path = CMSIS-DSP
-	url = https://github.com/ARM-software/CMSIS-DSP.git
 [submodule "emdevif_collection/emdevif"]
 	path = emdevif_collection/emdevif
 	url = https://github.com/CQUT-RoboMaster-ShiJi-DREAMER-ECU-Team/emdevif.git
 [submodule "emdevif_collection/emdevif_stm32_peripheral"]
 	path = emdevif_collection/emdevif_stm32_peripheral
 	url = https://github.com/CQUT-RoboMaster-ShiJi-DREAMER-ECU-Team/emdevif_stm32_peripheral.git
+[submodule "Packages/CMSIS-DSP"]
+	path = Packages/CMSIS-DSP
+	url = https://github.com/ARM-software/CMSIS-DSP.git
+[submodule "Packages/FreeRTOS-Kernel"]
+	path = Packages/FreeRTOS-Kernel
+	url = https://github.com/FreeRTOS/FreeRTOS-Kernel.git
+[submodule "Packages/mpaland-printf"]
+	path = Packages/mpaland-printf
+	url = https://github.com/mpaland/printf.git

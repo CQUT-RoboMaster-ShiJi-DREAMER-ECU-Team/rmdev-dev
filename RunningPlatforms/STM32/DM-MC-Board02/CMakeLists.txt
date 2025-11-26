@@ -13,12 +13,10 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Set the project name
-set(CMAKE_PROJECT_NAME RoboMasterDevelopmentBoardTypeC)
-
-#include("cmake/gcc-arm-none-eabi.cmake") # 应当预定义 CMAKE_TOOLCHAIN_FILE 变量
+set(CMAKE_PROJECT_NAME DM-MC-Board02)
 
 # Enable compile command to ease indexing with e.g. clangd
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
 # Core project settings
 project(${CMAKE_PROJECT_NAME})
@@ -55,9 +53,13 @@ if (RMDEV_ENABLE_TESTS)
 endif ()
 
 # For CMSIS-DSP
-add_library(CMSISDSP INTERFACE)
-target_link_directories(CMSISDSP INTERFACE ./Middlewares/ST/ARM/DSP/Lib/)
-target_link_libraries(CMSISDSP INTERFACE :libarm_cortexM4lf_math.a stm32cubemx)
+set(CMSISCORE "${CMAKE_CURRENT_LIST_DIR}/Drivers/CMSIS" CACHE STRING "" FORCE)
+set(DISABLEFLOAT16 ON CACHE BOOL "" FORCE)
+add_subdirectory(
+    ${CMAKE_SOURCE_DIR}/Packages/CMSIS-DSP
+    ${CMAKE_BINARY_DIR}/Packages/CMSIS-DSP
+)
+target_compile_options(CMSISDSP PRIVATE -ffast-math -fno-finite-math-only -Ofast)
 
 # For FreeRTOS-Kernel
 add_library(freertos_config INTERFACE)
@@ -68,7 +70,10 @@ target_compile_definitions(freertos_config INTERFACE projCOVERAGE_TEST=0)
 target_link_libraries(freertos_config INTERFACE emdevif_core)
 set(FREERTOS_HEAP "4" CACHE STRING "" FORCE)
 set(FREERTOS_PORT "GCC_ARM_CM4F" CACHE STRING "" FORCE)
-add_subdirectory(${CMAKE_SOURCE_DIR}/FreeRTOS-Kernel ${CMAKE_BINARY_DIR}/FreeRTOS-Kernel)
+add_subdirectory(
+    ${CMAKE_SOURCE_DIR}/Packages/FreeRTOS-Kernel
+    ${CMAKE_BINARY_DIR}/Packages/FreeRTOS-Kernel
+)
 
 set(RMDEV_ENABLED_DRIVER_LIST "BMI088" CACHE STRING "" FORCE)
 set(RMDEV_ENABLE_INS_MODULE ON CACHE BOOL "" FORCE)
@@ -85,11 +90,14 @@ target_link_libraries(emdevif_user_declares PUBLIC
 # Remove wrong libob.a library dependency when using cpp files
 list(REMOVE_ITEM CMAKE_C_IMPLICIT_LINK_LIBRARIES ob)
 
+set(EMDEVIF_USE_STM32CUBEMX ON CACHE BOOL "" FORCE)
 add_subdirectory(
     ${CMAKE_SOURCE_DIR}/emdevif_collection/emdevif
     ${CMAKE_BINARY_DIR}/emdevif_collection/emdevif
 )
 add_subdirectory(${CMAKE_SOURCE_DIR}/rmdev ${CMAKE_BINARY_DIR}/rmdev)
+
+target_compile_definitions(emdevif_system PUBLIC EMDEVIF_SYS_TICK_TYPE_UINT_BITS=32)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/rmdev_test ${CMAKE_BINARY_DIR}/rmdev_test)
 
