@@ -17,72 +17,45 @@ if (RMDEV_ENABLE_TESTS)
 endif ()
 
 include(Packages/mpaland-printf.cmake)
+include(utils.cmake)
 
-#[==[
-# @function addCopyFinallyBinaryFileTarget(<finalBinaryFileProjectName> <finalBinaryFileName> <finalBinaryFileDir>)
-#
-# 用于新增一个构建目标，这个目标用于将生成的二进制文件拷贝到 bin 目录以便于调试工具指定路径
-# @param finalBinaryFileProjectName 生成这个二进制文件的目标名称
-# @param finalBinaryFileName 这个二进制文件的名称
-# @param finalBinaryFileDir 这个二进制文件所在的路径
-]==]
-function(addCopyFinallyBinaryFileTarget finalBinaryFileProjectName finalBinaryFileName finalBinaryFileDir)
-    add_custom_command(
-        TARGET ${finalBinaryFileProjectName} POST_BUILD
-        COMMENT "Copy the binary file from cmake process binary dir to project_root/bin dir."
-        COMMAND ${CMAKE_COMMAND} -E
-            copy "${finalBinaryFileDir}/${finalBinaryFileName}"
-            "${CMAKE_SOURCE_DIR}/bin/${finalBinaryFileName}"
-        VERBATIM
-    )
+set(boardDir "${CMAKE_CURRENT_LIST_DIR}")
 
-    set_property(DIRECTORY PROPERTY ADDITIONAL_CLEAN_FILES
-        "${CMAKE_SOURCE_DIR}/bin"
-    )
+if (PLATFORM_NAME STREQUAL "stm32")
+    set(boardDir ${boardDir}/RunningPlatforms/STM32)
 
-    message(STATUS "[${PROJECT_NAME}](function `${CMAKE_CURRENT_FUNCTION}\'): \n"
-        "        finalBinaryFileProjectName: ${finalBinaryFileProjectName}\n"
-        "        finalBinaryFileName: ${finalBinaryFileName}\n"
-        "        finalBinaryFileDir: ${finalBinaryFileDir}"
-    )
-endfunction()
-
-foreach (_ _)  # 这个 foreach 仅用于部分逻辑需要提前 break 跳出的需求
-    set(boardDir "${CMAKE_CURRENT_LIST_DIR}")
-
-    if (PLATFORM_NAME MATCHES "stm32")
-        set(boardDir ${boardDir}/RunningPlatforms/STM32)
-
-        if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-            add_compile_definitions(USE_FULL_ASSERT=1)
-        endif ()
-    elseif (PLATFORM_NAME MATCHES "esp32")
-        set(boardDir ${boardDir}/RunningPlatforms/ESP32)
-
-        if (NOT (EXISTS ${boardDir}/${BOARD_NAME}))
-            message(FATAL_ERROR "Directory `${boardDir}/${BOARD_NAME}\' does not exist! \
-                This may be caused by an incorrect BOARD_NAME or this board have not been supported yet.")
-        endif ()
-        list(APPEND EXTRA_COMPONENT_DIRS "${boardDir}/${BOARD_NAME}/main")
-
-        include($ENV{IDF_PATH}/tools/cmake/project.cmake)
-        set(SDKCONFIG_DEFAULTS "${boardDir}/${BOARD_NAME}/sdkconfig.defaults")
-        project(rmdev_developing_or_testing_environment)
-
-        message(STATUS "In CMAKE_SOURCE_DIR >>>> EXTRA_COMPONENT_DIRS: ${EXTRA_COMPONENT_DIRS}")
-
-        break ()
-    else ()
-        message(FATAL_ERROR "Unknown platform name!")
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        add_compile_definitions(USE_FULL_ASSERT=1)
     endif ()
-
-    project(rmdev_developing_or_testing_environment C CXX ASM)
+elseif (PLATFORM_NAME STREQUAL "esp32")
+    set(boardDir ${boardDir}/RunningPlatforms/ESP32)
 
     if (NOT (EXISTS ${boardDir}/${BOARD_NAME}))
-        message(FATAL_ERROR "Directory `${boardDir}/${BOARD_NAME}\' does not exist! "
-            "This may be caused by an incorrect BOARD_NAME or this board have not been supported yet."
-        )
+        message(FATAL_ERROR "Directory `${boardDir}/${BOARD_NAME}\' does not exist! \
+                This may be caused by an incorrect BOARD_NAME or this board have not been supported yet.")
     endif ()
-    add_subdirectory(${boardDir}/${BOARD_NAME})
-    message(STATUS "In CMAKE_SOURCE_DIR >>>> Board dir: ${boardDir}/${BOARD_NAME}")
-endforeach ()
+    list(APPEND EXTRA_COMPONENT_DIRS "${boardDir}/${BOARD_NAME}/main")
+
+    include($ENV{IDF_PATH}/tools/cmake/project.cmake)
+    set(SDKCONFIG_DEFAULTS "${boardDir}/${BOARD_NAME}/sdkconfig.defaults")
+    project(rmdev_developing_or_testing_environment)
+
+    message(STATUS "In CMAKE_SOURCE_DIR >>>> EXTRA_COMPONENT_DIRS: ${EXTRA_COMPONENT_DIRS}")
+
+    return()
+else ()
+    message(FATAL_ERROR "Unknown platform named `${PLATFORM_NAME}\'. "
+        "Currently only \"stm32\" and \"esp32\" are supported."
+    )
+endif ()
+
+project(rmdev_developing_or_testing_environment C CXX ASM)
+
+if (NOT (EXISTS ${boardDir}/${BOARD_NAME}))
+    message(FATAL_ERROR "Directory `${boardDir}/${BOARD_NAME}\' does not exist! "
+        "This may be caused by an incorrect BOARD_NAME or this board have not been supported yet."
+    )
+endif ()
+add_subdirectory(${boardDir}/${BOARD_NAME})
+message(STATUS "In CMAKE_SOURCE_DIR >>>> Board dir: ${boardDir}/${BOARD_NAME}")
+

@@ -40,9 +40,11 @@ import emdevif.stm32Peripheral.hal.spi;
 
 export namespace test {
 
-void disableIrq() noexcept
+EMDEVIF_NO_RETURN void terminateImpl() noexcept
 {
     __disable_irq();
+    while (true) {
+    }
 }
 
 }  // namespace test

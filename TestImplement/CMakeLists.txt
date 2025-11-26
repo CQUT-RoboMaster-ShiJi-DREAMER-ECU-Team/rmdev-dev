@@ -2,18 +2,16 @@ cmake_minimum_required(VERSION 3.28)
 
 option(BUILD_RMDEV "Enabled it to build `rmdev\' and run the test for rmdev." ON)
 option(ENABLE_AFTER_UNIT_TEST_DEMO "Enable it to link lib \"AfterUnitTestDemo\" \
-to run demo program in this platform." OFF)
+to run demo program in this platform." OFF
+)
 
 project(rmdev_test C CXX)
 
 add_library(${PROJECT_NAME} STATIC)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
-    emdevif
-    emdevif_unit_test
-    emdevif_user_declares
-    emdevif_test_framework
-    printf
+    emdevif emdevif_unit_test emdevif_user_declares
+    emdevif_test_framework printf
 )
 if (BUILD_RMDEV)
     target_link_libraries(${PROJECT_NAME} PRIVATE
@@ -30,8 +28,10 @@ if (ENABLE_AFTER_UNIT_TEST_DEMO)
     message(STATUS "[${PROJECT_NAME}]: Enabled demo.")
 endif ()
 
-target_sources(${PROJECT_NAME}
-    PRIVATE rmdev_test.cpp
+if (DEFINED PLATFORM_NAME)
+    target_sources(${PROJECT_NAME}
+        PRIVATE "${PLATFORM_NAME}_test_impl.cpp"
 
-    PUBLIC FILE_SET header_file TYPE HEADERS FILES rmdev_test.h
-)
+        PUBLIC FILE_SET header_file TYPE HEADERS FILES rmdev_test.h
+    )
+endif ()

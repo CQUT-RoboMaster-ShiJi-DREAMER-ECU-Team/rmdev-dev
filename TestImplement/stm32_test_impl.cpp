@@ -1,8 +1,8 @@
 /**
- * @file rmdev_test.cpp
+ * @file stm32_test_impl.cpp
  * @author DuYicheng
  * @date 2025-07-30
- * @brief 测试函数的实现
+ * @brief STM32 测试函数的实现
  */
 
 #include "rmdev_test.h"
@@ -58,10 +58,13 @@ static void test_printf(const char* format, ...)
     test_tx_serial.transmit(false, {tx_ptr, static_cast<std::size_t>(len)}, emdevif::Serial::max_delay);
 }
 
+// 无需初始化，该函数可调用也可以不调用
+extern "C" void testInit(void* argument, ...) {}
+
 extern "C" EMDEVIF_NO_RETURN void testEntry(void)
 {
     emdevif::registerTerminateFunction([]() noexcept {
-        test::disableIrq();
+        test::terminateImpl();
         while (true) {
         }
     });

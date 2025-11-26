@@ -13,6 +13,7 @@
 
 EMDEVIF_EXTERN_C_BEGIN
 
+void testInit(void* argument, ...);
 EMDEVIF_NO_RETURN void testEntry(void);
 
 EMDEVIF_EXTERN_C_END
