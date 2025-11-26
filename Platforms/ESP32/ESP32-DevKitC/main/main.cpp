@@ -14,13 +14,14 @@
 #include "esp_flash.h"
 #include "esp_system.h"
 #include "driver/uart.h"
+#include "esp_log.h"
 
 #include "rmdev_test.h"
 
 static void uart2Init() noexcept
 {
     constexpr auto uart_buffer_size = (1024 * 2);
-    QueueHandle_t uart_queue;
+    static QueueHandle_t uart_queue;
     // Install UART driver using an event queue here
     ESP_ERROR_CHECK(uart_driver_install(UART_NUM_2, uart_buffer_size, uart_buffer_size, 10, &uart_queue, 0));
 
@@ -41,7 +42,10 @@ extern "C" void app_main(void)
 {
     uart2Init();
 
+    ESP_LOGI(__func__, "Init finished, begin enter to test.");
     testEntry();
+
+    return;
 
     printf("Hello world!\n");
 

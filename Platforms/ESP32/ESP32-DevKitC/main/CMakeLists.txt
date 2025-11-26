@@ -11,6 +11,7 @@ add_subdirectory(
 )
 
 target_compile_definitions(emdevif_system PUBLIC EMDEVIF_SYS_TICK_TYPE_UINT_BITS=32)
+target_compile_definitions(emdevif_logger PUBLIC EMDEVIF_LOGGER_DYNAMIC_CREATE=1)
 
 set(BUILD_RMDEV OFF CACHE BOOL "" FORCE)
 add_subdirectory(${CMAKE_SOURCE_DIR}/rmdev_test ${CMAKE_BINARY_DIR}/rmdev_test)
