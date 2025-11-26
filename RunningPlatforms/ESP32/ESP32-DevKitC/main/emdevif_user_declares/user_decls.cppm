@@ -10,7 +10,12 @@ module;
 
 #include "driver/uart.h"
 #include "sdkconfig.h"
+#include "esp_sleep.h"
+#include "esp_system.h"
+#include "esp_log.h"
+
 #include "emdevif/fatal_handler.h"
+#include "emdevif/attributes_and_useful_macros.h"
 
 export module emdevif.userDeclares;
 
@@ -20,10 +25,12 @@ import emdevif.peripheral.model.serial;
 
 export namespace test {
 
-// todo 改名，改为 terminate
-void disableIrq() noexcept
+EMDEVIF_NO_RETURN void terminateImpl() noexcept
 {
-    esp_system_abort("emdevif: Terminate function called.");
+    ESP_LOGW("emdevif", "Terminate function called.");
+
+    esp_sleep_disable_wakeup_source(ESP_SLEEP_WAKEUP_ALL);
+    esp_deep_sleep_start();
 }
 
 }  // namespace test
@@ -53,34 +60,5 @@ inline uint64_t getMicroseconds() noexcept
 }
 
 }  // namespace timeline
-
-namespace logger {
-
-inline std::size_t getTimeLine() noexcept
-{
-    constinit static std::size_t timeLine = 0;
-    return timeLine++;
-}
-
-static char buffer[512];
-static std::size_t buffer_head = 0;
-char* getBuffer() noexcept
-{
-    return buffer;
-}
-
-ErrorCode printLogMessage(const char* message) noexcept
-{
-    const auto ret = std::snprintf(buffer + buffer_head, std::size(buffer) - buffer_head, "%s", message);
-    if (ret < 0) {
-        EMDEVIF_FATAL_HANDLER("Failed to print log message");
-    }
-
-    buffer_head += ret;
-
-    return ErrorCode::Success;
-}
-
-}  // namespace logger
 
 }  // namespace emdevif::user_declares
