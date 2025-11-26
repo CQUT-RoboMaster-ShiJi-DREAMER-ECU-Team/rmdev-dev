@@ -67,11 +67,9 @@ foreach (_ _)  # 这个 foreach 仅用于部分逻辑需要提前 break 跳出�
             message(FATAL_ERROR "Directory `${boardDir}/${BOARD_NAME}\' does not exist! \
                 This may be caused by an incorrect BOARD_NAME or this board have not been supported yet.")
         endif ()
-        list(APPEND EXTRA_COMPONENT_DIRS "${boardDir}/${BOARD_NAME}")
         list(APPEND EXTRA_COMPONENT_DIRS "${boardDir}/${BOARD_NAME}/main")
 
         include($ENV{IDF_PATH}/tools/cmake/project.cmake)
-        idf_build_set_property(MINIMAL_BUILD ON)
         set(SDKCONFIG_DEFAULTS "${boardDir}/${BOARD_NAME}/sdkconfig.defaults")
         project(rmdev_developing_or_testing_environment)
 
