@@ -1,5 +1,13 @@
 cmake_minimum_required(VERSION 3.28)
 
+set(EMDEVIF_TEST_TEST_SOURCE_DIR_
+    "${CMAKE_CURRENT_LIST_DIR}/emdevif_collection/emdevif/test"
+    CACHE PATH
+    [[Path to emdevif test source directory. Used for cmake scripts to include the scripts in this directory.
+It's an internal variable, DO NOT MODIFY!]]
+    FORCE
+)
+
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_SCAN_FOR_MODULES ON)

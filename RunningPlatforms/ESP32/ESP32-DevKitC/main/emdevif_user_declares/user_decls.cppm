@@ -61,4 +61,23 @@ inline uint64_t getMicroseconds() noexcept
 
 }  // namespace timeline
 
+namespace logger {
+
+inline std::size_t getTimeLine() noexcept
+{
+    return 0;
+}
+
+char* getBuffer() noexcept
+{
+    return nullptr;
+}
+
+ErrorCode printLogMessage(const char* message) noexcept
+{
+    return ErrorCode::NotImplemented;
+}
+
+}  // namespace logger
+
 }  // namespace emdevif::user_declares
