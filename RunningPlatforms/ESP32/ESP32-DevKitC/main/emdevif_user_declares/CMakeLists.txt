@@ -9,7 +9,8 @@ target_sources(${PROJECT_NAME} PUBLIC
         user_decls.cppm
 )
 
-idf_component_get_property(uartLibName esp_driver_uart COMPONENT_ALIAS)
+idf_component_get_property(espIdfDriverUartLibName esp_driver_uart COMPONENT_ALIAS)
+message(STATUS "[${PROJECT_NAME}]: espIdfDriverUartLibName=\"${espIdfDriverUartLibName}\"")
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC emdevif_core

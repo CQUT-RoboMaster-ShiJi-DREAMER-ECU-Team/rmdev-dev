@@ -1,5 +1,5 @@
 idf_component_register(
-    SRCS "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
+    SRCS "main.cpp"
     PRIV_REQUIRES spi_flash esp_driver_uart
     INCLUDE_DIRS ""
 )

@@ -12,10 +12,10 @@
 
 static void uart2Init() noexcept
 {
-    constexpr auto uart_buffer_size = (1024 * 2);
-    static QueueHandle_t uart_queue;
-    // Install UART driver using an event queue here
-    ESP_ERROR_CHECK(uart_driver_install(UART_NUM_2, uart_buffer_size, uart_buffer_size, 10, &uart_queue, 0));
+    constexpr auto uart_buffer_size = 256;
+
+    static_assert(uart_buffer_size > UART_HW_FIFO_LEN(UART_NUM_2));
+    ESP_ERROR_CHECK(uart_driver_install(UART_NUM_2, uart_buffer_size, 0, 0, nullptr, 0));
 
     constexpr uart_port_t uart_num = UART_NUM_2;
     uart_config_t uart_config{.baud_rate = 115200,

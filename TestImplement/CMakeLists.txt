@@ -29,6 +29,12 @@ if (ENABLE_AFTER_UNIT_TEST_DEMO)
 endif ()
 
 if (DEFINED PLATFORM_NAME)
+    if (PLATFORM_NAME STREQUAL "esp32")
+        idf_component_get_property(espIdfLogLibName log COMPONENT_ALIAS)
+        message(STATUS "[${PROJECT_NAME}]: espIdfLogLibName=\"${espIdfLogLibName}\"")
+        target_link_libraries(${PROJECT_NAME} PRIVATE ${espIdfLogLibName})
+    endif ()
+    
     target_sources(${PROJECT_NAME}
         PRIVATE "${PLATFORM_NAME}_test_impl.cpp"
 

@@ -40,11 +40,17 @@ export namespace emdevif::user_declares {
 uart_port_t test_tx_uart = UART_NUM_2;
 emdevif::ErrorCode esp32_uart_transmit(bool, void* handle, std::span<const uint8_t> data, uint32_t)
 {
-    auto huart = static_cast<uart_port_t*>(handle);
-    const auto ret = uart_write_bytes(*huart, data.data(), data.size_bytes());
+    auto huart = *static_cast<uart_port_t*>(handle);
+    constexpr auto log_tag = "emdevif::user_declares esp32_uart_transmit";
+
+    ESP_LOGV(log_tag, "Pre: huart=%d, data.size_bytes()=%zu", static_cast<int>(huart), data.size_bytes());
+    const auto ret = uart_write_bytes(huart, data.data(), data.size_bytes());
     if (ret < 0) {
+        ESP_LOGW(log_tag, "Transmit failed. ErrorCode=%d", ret);
         return ErrorCode::OperationFail;
     }
+
+    ESP_LOGV(log_tag, "Transmit succeed.");
     return ErrorCode::Success;
 }
 emdevif::SerialModel::Instance test_tx_uart_model{.handle_ = &test_tx_uart, .transmit_function_ = esp32_uart_transmit};
