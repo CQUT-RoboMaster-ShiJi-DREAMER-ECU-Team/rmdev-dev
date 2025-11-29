@@ -15,6 +15,8 @@
 #include <limits>
 #include <string_view>
 
+static void test_printf(const char* format, ...) EMDEVIF_FORMAT_CHECK(printf, 1, 2);
+// printf.h 中设置了宏，会把 printf 换成 printf_，因此需要把这个函数的声明放到前面
 #include "printf.h"
 
 #include "emdevif_test_framework.h"
