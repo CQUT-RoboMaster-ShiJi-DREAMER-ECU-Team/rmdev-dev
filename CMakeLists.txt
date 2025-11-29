@@ -66,4 +66,3 @@ if (NOT (EXISTS ${boardDir}/${BOARD_NAME}))
 endif ()
 add_subdirectory(${boardDir}/${BOARD_NAME})
 message(STATUS "In CMAKE_SOURCE_DIR >>>> Board dir: ${boardDir}/${BOARD_NAME}")
-

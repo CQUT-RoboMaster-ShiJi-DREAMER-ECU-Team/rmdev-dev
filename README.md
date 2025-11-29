@@ -28,10 +28,32 @@ rmdev 的开发与测试环境
 
 ## 目前支持的平台
 
-* [STM32](./Platforms/STM32)
-    * [RoboMasterDevelopmentBoardTypeC](Platforms/STM32/RoboMasterDevelopmentBoardTypeC): [RoboMaster 开发板 C 型](https://www.robomaster.com/zh-CN/products/components/general/development-board-type-c) (
-      STM32F407IGH6TR, 外部高速晶振频率为 12MHz)
-    * [DM-MC-Board02](Platforms/STM32/DM-MC-Board02): [达妙科技 DM-MC-Board02 电机开发板](https://gitee.com/kit-miao/dm-mc02) (
-      STM32H723VGT6, 外部高速晶振频率为 24MHz)
-    * [ShiJiDreamerDevBoardF4](Platforms/STM32/ShiJiDreamerDevBoardF4): [RoboMaster 士继DREAMER 战队电控组](https://github.com/CQUT-RoboMaster-ShiJi-DREAMER-ECU-Team)
-      设计的一款基于 STM32F4 的开发板 (STM32F407VGT6, 外部高速晶振频率为 8MHz)
+* [STM32](./RunningPlatforms/STM32)
+    * [RoboMasterDevelopmentBoardTypeC](RunningPlatforms/STM32/RoboMasterDevelopmentBoardTypeC): [RoboMaster 开发板 C 型](https://www.robomaster.com/zh-CN/products/components/general/development-board-type-c)
+      (STM32F407IGH6TR, 外部高速晶振频率为 12MHz)<br>
+      接线：
+      ```
+      测试信息输出    -> USART6 - 外壳丝印为 UART1
+      姿态解算结果输出 -> USART1 - 外壳丝印为 UART2
+      ```
+    * [DM-MC-Board02](RunningPlatforms/STM32/DM-MC-Board02): [达妙科技 DM-MC-Board02 电机开发板](https://gitee.com/kit-miao/dm-mc02)
+      (STM32H723VGT6, 外部高速晶振频率为 24MHz)<br>
+      接线：
+      ```
+      测试信息输出    -> USART10
+      姿态解算结果输出 -> UART7
+      ```
+    * [ShiJiDreamerDevBoardF4](RunningPlatforms/STM32/ShiJiDreamerDevBoardF4): [RoboMaster 士继DREAMER 战队电控组](https://github.com/CQUT-RoboMaster-ShiJi-DREAMER-ECU-Team)
+      设计的一款基于 STM32F4 的开发板 (STM32F407VGT6, 外部高速晶振频率为 8MHz)<br>
+      接线：
+      ```
+      测试信息输出 -> USART1
+      ```
+* [ESP32](./RunningPlatforms/ESP32)
+    * [ESP32-DevKitC](RunningPlatforms/ESP32/ESP32-DevKitC): [ESP32-DevKitC 型开发板](https://www.espressif.com.cn/zh-hans/products/devkits/esp32-devkitc)
+      (ESP32 系列)<br>
+      接线：
+      ```
+      下载/监视信息 -> UART0 - 接 USB 口
+      测试信息输出  -> UART2 - Tx: GPIO4
+      ```

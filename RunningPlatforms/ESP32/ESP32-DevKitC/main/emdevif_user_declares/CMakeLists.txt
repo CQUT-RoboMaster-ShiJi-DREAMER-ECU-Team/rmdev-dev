@@ -14,5 +14,5 @@ message(STATUS "[${PROJECT_NAME}]: espIdfDriverUartLibName=\"${espIdfDriverUartL
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC emdevif_core
-    PRIVATE emdevif_compile_options emdevif_peripheral_model ${uartLibName}
+    PRIVATE emdevif_compile_options emdevif_peripheral_model ${espIdfDriverUartLibName}
 )
