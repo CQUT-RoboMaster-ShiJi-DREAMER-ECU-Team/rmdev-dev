@@ -69,10 +69,14 @@ list(REMOVE_ITEM CMAKE_C_IMPLICIT_LINK_LIBRARIES ob)
 
 set(EMDEVIF_USE_STM32CUBEMX ON)
 set(EMDEVIF_FREERTOS_USE_STM32CUBEMX ON)
+set(EMDEVIF_ENABLE_TESTS ON)
+set(EMDEVIF_FREERTOS_USE_STM32CUBEMX ON)
 add_subdirectory(
     ${CMAKE_SOURCE_DIR}/emdevif_collection/emdevif
     ${CMAKE_BINARY_DIR}/emdevif_collection/emdevif
 )
+
+set(RMDEV_ENABLE_TESTS ON)
 add_subdirectory(${CMAKE_SOURCE_DIR}/rmdev ${CMAKE_BINARY_DIR}/rmdev)
 
 target_compile_definitions(emdevif_system PUBLIC EMDEVIF_SYS_TICK_TYPE_UINT_BITS=32)
