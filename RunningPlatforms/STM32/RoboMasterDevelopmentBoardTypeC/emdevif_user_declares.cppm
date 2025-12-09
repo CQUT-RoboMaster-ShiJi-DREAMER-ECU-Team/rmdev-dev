@@ -1,7 +1,5 @@
 /**
  * @file emdevif_user_declares.cppm
- * @author DuYicheng
- * @date 2025-09-04
  * @brief emdevif 由用户实现的功能
  */
 

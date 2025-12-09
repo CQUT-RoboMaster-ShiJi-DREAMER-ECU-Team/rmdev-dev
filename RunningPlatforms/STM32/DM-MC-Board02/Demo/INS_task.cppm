@@ -1,7 +1,5 @@
 /**
  * @file INS_task.cppm
- * @author DuYicheng
- * @date 2025-10-15
  * @brief 姿态解算任务
  */
 
