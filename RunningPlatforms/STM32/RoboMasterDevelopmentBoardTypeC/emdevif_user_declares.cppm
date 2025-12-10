@@ -50,31 +50,31 @@ EMDEVIF_NO_RETURN void terminateImpl() noexcept
 export namespace emdevif::user_declares {
 
 constinit emdevif::SerialModel::Instance test_transmit_serial_model{
-    .handle_ = &huart6,
-    .transmit_function_ = emdevif::stm32hal::uartTransmitBlocking};
+    .handle = &huart6,
+    .transmit_function = emdevif::stm32hal::uartTransmitBlocking};
 
 constinit emdevif::SerialModel::Instance ins_result_transmit_serial_model{
-    .handle_ = &huart1,
-    .get_state_function_ = emdevif::stm32hal::uartGetState,
-    .transmit_function_ = emdevif::stm32hal::uartTransmitBlocking};
+    .handle = &huart1,
+    .get_state_function = emdevif::stm32hal::uartGetState,
+    .transmit_function = emdevif::stm32hal::uartTransmitBlocking};
 
 constinit emdevif::stm32hal::PwmHandle bmi088_heat_pwm_handle{&htim10, TIM_CHANNEL_1};
-constinit emdevif::PwmModel::Instance bmi088_heat_pwm_model{.handle_ = &bmi088_heat_pwm_handle,
-                                                            .enable_ = emdevif::stm32hal::pwmEnable,
-                                                            .disable_ = emdevif::stm32hal::pwmDisable,
-                                                            .setRatio_ = emdevif::stm32hal::pwmSetRatio};
+constinit emdevif::PwmModel::Instance bmi088_heat_pwm_model{.handle = &bmi088_heat_pwm_handle,
+                                                            .enable = emdevif::stm32hal::pwmEnable,
+                                                            .disable = emdevif::stm32hal::pwmDisable,
+                                                            .setRatio = emdevif::stm32hal::pwmSetRatio};
 
 constinit emdevif::SpiModel::Instance bmi088_comm_spi_model{
-    .handle_ = &hspi1,
-    .transmit_receive_function_ = emdevif::stm32hal::spiTransmitReceiveBlock};
+    .handle = &hspi1,
+    .transmit_receive_function = emdevif::stm32hal::spiTransmitReceiveBlock};
 
 emdevif::stm32hal::GpioHandle bmi088_accel_cs_gpio{CS1_ACCEL_GPIO_Port, CS1_ACCEL_Pin};
-constinit emdevif::GpioModel::Instance bmi088_accel_cs_gpio_model{.handle_ = &bmi088_accel_cs_gpio,
-                                                                  .write_function_ = stm32hal::gpioWrite};
+constinit emdevif::GpioModel::Instance bmi088_accel_cs_gpio_model{.handle = &bmi088_accel_cs_gpio,
+                                                                  .write_function = stm32hal::gpioWrite};
 
 emdevif::stm32hal::GpioHandle bmi088_gyro_cs_gpio{CS1_GYRO_GPIO_Port, CS1_GYRO_Pin};
-constinit emdevif::GpioModel::Instance bmi088_gyro_cs_gpio_model{.handle_ = &bmi088_gyro_cs_gpio,
-                                                                 .write_function_ = stm32hal::gpioWrite};
+constinit emdevif::GpioModel::Instance bmi088_gyro_cs_gpio_model{.handle = &bmi088_gyro_cs_gpio,
+                                                                 .write_function = stm32hal::gpioWrite};
 
 constexpr auto peripheral_handle_map =
     makeStaticMap<std::string_view, void*>({{"test transmit serial", &test_transmit_serial_model},

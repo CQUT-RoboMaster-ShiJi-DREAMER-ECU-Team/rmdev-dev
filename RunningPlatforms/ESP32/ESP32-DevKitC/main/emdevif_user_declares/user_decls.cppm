@@ -53,7 +53,7 @@ emdevif::ErrorCode esp32_uart_transmit(bool, void* handle, std::span<const uint8
     ESP_LOGV(log_tag, "Transmit succeed.");
     return ErrorCode::Success;
 }
-emdevif::SerialModel::Instance test_tx_uart_model{.handle_ = &test_tx_uart, .transmit_function_ = esp32_uart_transmit};
+emdevif::SerialModel::Instance test_tx_uart_model{.handle = &test_tx_uart, .transmit_function = esp32_uart_transmit};
 
 constexpr auto peripheral_handle_map =
     emdevif::makeStaticMap<std::string_view, void*>({{"test transmit serial", &test_tx_uart_model}});
