@@ -21,7 +21,7 @@ module;
 
 export module emdevif.userDeclares;
 
-import emdevif.container.map;
+import emdevif.container.arrayMap;
 import emdevif.errorHandler;
 
 import emdevif.sys.atomic;

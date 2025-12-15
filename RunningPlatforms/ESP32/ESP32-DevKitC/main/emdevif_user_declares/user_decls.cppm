@@ -20,7 +20,7 @@ module;
 export module emdevif.userDeclares;
 
 import emdevif.errorHandler;
-import emdevif.container.map;
+import emdevif.container.arrayMap;
 import emdevif.peripheral.model.serial;
 
 export namespace test {
