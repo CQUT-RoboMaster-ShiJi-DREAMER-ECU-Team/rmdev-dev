@@ -60,11 +60,14 @@ static void test_printf(const char* format, ...)
     test_tx_serial.transmit(false, {tx_ptr, static_cast<std::size_t>(len)}, emdevif::Serial::max_delay);
 }
 
-// 无需初始化，该函数可调用也可以不调用
-extern "C" void testInit(void* argument, ...) {}
+// ReSharper disable once CppParameterMayBeConstPtrOrRef
 
-extern "C" EMDEVIF_NO_RETURN void testEntry(void)
+// 需要在 HAL_Init 之前调用
+// 无需传递任何参数（第一个参数可以传空指针）
+extern "C" void testInit(void* argument, ...)
 {
+    EMDEVIF_UNUSED(argument);
+
     emdevif::registerTerminateFunction([]() noexcept {
         test::terminateImpl();
         while (true) {
@@ -92,7 +95,10 @@ extern "C" EMDEVIF_NO_RETURN void testEntry(void)
                     condition_name);
         test_printf("Message: %s" EMDEVIF_LINE_SEPARATOR, message);
     });
+}
 
+extern "C" EMDEVIF_NO_RETURN void testEntry(void)
+{
     emdevif::Logger::init();
     emdevif::Logger::registerVSPrintfFunction([](char* dst, const char* format, std::va_list args) {
         return ::vsnprintf(dst, std::numeric_limits<std::size_t>::max(), format, args);
@@ -104,9 +110,7 @@ extern "C" EMDEVIF_NO_RETURN void testEntry(void)
                                             .stack_size = DEFAULT_TASK_STACK_DEPTH},
                                            osStartDefaultTask,
                                            nullptr);
-    if (default_task.getHandle() == nullptr) {
-        EMDEVIF_FATAL_HANDLER("Failed to create default task.");
-    }
+    emdevif::terminateIfNullptr(default_task.getHandle());
 
     emdevif::Thread::startScheduler();
 

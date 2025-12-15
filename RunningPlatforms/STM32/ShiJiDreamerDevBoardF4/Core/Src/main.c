@@ -72,6 +72,8 @@ int main(void)
 
   /* USER CODE BEGIN 1 */
 
+  testInit(NULL);
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
