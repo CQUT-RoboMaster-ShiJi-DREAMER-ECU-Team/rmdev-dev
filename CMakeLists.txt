@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.28...4.0.2)
 
 set(EMDEVIF_TEST_TEST_SOURCE_DIR_
     "${CMAKE_CURRENT_LIST_DIR}/emdevif_collection/emdevif/test"
@@ -17,6 +17,12 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(RMDEV_ENABLE_TESTS "Enable test for rmdev" ON)
 set(PLATFORM_NAME "" CACHE STRING "Set to choose run test on which platform.")
 set(BOARD_NAME "" CACHE STRING "Set to choose run test on which board.")
+
+message(STATUS "CMAKE_CXX_COMPILER_ID=\"${CMAKE_CXX_COMPILER_ID}\"")
+if (NOT MSVC)
+    message(STATUS "Adding compile option: -fconcepts-diagnostics-depth=8")
+    add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-fconcepts-diagnostics-depth=8>)
+endif ()
 
 if (RMDEV_ENABLE_TESTS)
     enable_testing()

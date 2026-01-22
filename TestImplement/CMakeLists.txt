@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.28...4.0.2)
 
 option(BUILD_RMDEV "Enabled it to build `rmdev\' and run the test for rmdev." ON)
 option(ENABLE_AFTER_UNIT_TEST_DEMO "Enable it to link lib \"AfterUnitTestDemo\" \
