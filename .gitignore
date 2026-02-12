@@ -177,6 +177,13 @@ fabric.properties
 **/*.vsix
 
 # =================================================================================================
+# Visual Studio
+
+.vs/
+#out/  # 前面已经有了
+CMakeSettings.json
+
+# =================================================================================================
 # Copied from https://github.com/github/gitignore/blob/main/CMake.gitignore
 
 CMakeLists.txt.user
