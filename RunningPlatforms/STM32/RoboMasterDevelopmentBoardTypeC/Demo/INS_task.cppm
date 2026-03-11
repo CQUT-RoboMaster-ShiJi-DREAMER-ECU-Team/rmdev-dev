@@ -16,12 +16,12 @@ module;
 #include "FreeRTOS.h"
 #include "task.h"
 
-#include "emdevif/attributes_and_useful_macros.h"
-#include "emdevif/fatal_handler.h"
+#include "emdevif/core/attributes_and_useful_macros.h"
+#include "emdevif/core/fatal_handler.h"
 
 export module ins_task;
 
-import emdevif.errorHandler;
+import emdevif.core.error_handler;
 import emdevif.sys.thread;
 import emdevif.timeline;
 
@@ -31,9 +31,9 @@ import emdevif.peripheral.spi;
 import emdevif.peripheral.serial;
 
 import rmdev.driver.imu.bmi088;
-import rmdev.controlAlgorithm.pid;
+import rmdev.control_algorithm.pid;
 import rmdev.math;
-import rmdev.debugAssistance.vofa;
+import rmdev.debug_assistance.vofa;
 import rmdev.ins;
 
 export EMDEVIF_NO_RETURN void insTask(void*)
@@ -68,7 +68,7 @@ export EMDEVIF_NO_RETURN void insTask(void*)
 
         ins.insUpdate(imu_data);
 
-        EMDEVIF_SECTION(.ram_d1) static std::array<float, 10 + 1> imu_data_buffer;
+        EMDEVIF_DATA_SECTION(".ram_d1") static std::array<float, 10 + 1> imu_data_buffer;
 
         if (ins_result_serial.getStatus(false) == Serial::Ready) {
             imu_data_buffer = {imu_data.accel[0],

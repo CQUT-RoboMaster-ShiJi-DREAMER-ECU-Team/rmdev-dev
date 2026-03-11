@@ -16,19 +16,19 @@ module;
 #include "usart.h"
 #include "tim.h"
 
-#include "emdevif/fatal_handler.h"
+#include "emdevif/core/fatal_handler.h"
 
 export module emdevif.userDeclares;
 
-import emdevif.container.arrayMap;
-import emdevif.errorHandler;
+import emdevif.core.data_container.array_map;
+import emdevif.core.error_handler;
 import emdevif.sys.atomic;
 
 import emdevif.peripheral.model.pwm;
 import emdevif.peripheral.model.serial;
 
-import emdevif.stm32Peripheral.hal.pwm;
-import emdevif.stm32Peripheral.hal.usart;
+import emdevif.stm32_peripheral.hal.pwm;
+import emdevif.stm32_peripheral.hal.usart;
 
 export namespace test {
 

@@ -9,7 +9,7 @@
 #ifndef RMDEV_RMDEV_TEST_H
 #define RMDEV_RMDEV_TEST_H
 
-#include "emdevif/attributes_and_useful_macros.h"
+#include "emdevif/core/attributes_and_useful_macros.h"
 
 EMDEVIF_EXTERN_C_BEGIN
 

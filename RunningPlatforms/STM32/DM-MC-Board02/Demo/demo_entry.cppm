@@ -7,13 +7,12 @@ module;
 
 #include <cstdint>
 
-#include "emdevif/attributes_and_useful_macros.h"
-
-#include "emdevif/fatal_handler.h"
+#include "emdevif/core/attributes_and_useful_macros.h"
+#include "emdevif/core/fatal_handler.h"
 
 export module afterUnitTestDemo;
 
-import emdevif.errorHandler;
+import emdevif.core.error_handler;
 import emdevif.sys.thread;
 
 import ins_task;

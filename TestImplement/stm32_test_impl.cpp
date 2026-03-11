@@ -21,11 +21,11 @@ static void test_printf(const char* format, ...) EMDEVIF_FORMAT_CHECK(printf, 1,
 
 #include "emdevif_test_framework.h"
 
-#include "emdevif/attributes_and_useful_macros.h"
-#include "emdevif/fatal_handler.h"
-#include "emdevif/line_separator.h"
+#include "emdevif/core/attributes_and_useful_macros.h"
+#include "emdevif/core/fatal_handler.h"
+#include "emdevif/core/line_separator.h"
 
-import emdevif.errorHandler;
+import emdevif.core.error_handler;
 import emdevif.sys.thread;
 import emdevif.peripheral.serial;
 import emdevif.userDeclares;
@@ -99,10 +99,7 @@ extern "C" void testInit(void* argument, ...)
 
 extern "C" EMDEVIF_NO_RETURN void testEntry(void)
 {
-    emdevif::Logger::init();
-    emdevif::Logger::registerVSPrintfFunction([](char* dst, const char* format, std::va_list args) {
-        return ::vsnprintf(dst, std::numeric_limits<std::size_t>::max(), format, args);
-    });
+    emdevif::logger::init(::vsnprintf).terminateIfNotSucceed();
 
     default_task = emdevif::Thread::create({.name = "DefaultTask",
                                             .priority = emdevif::Thread::Priority::Max,

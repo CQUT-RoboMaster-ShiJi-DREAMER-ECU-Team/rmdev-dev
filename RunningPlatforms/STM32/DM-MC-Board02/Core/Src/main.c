@@ -29,7 +29,7 @@
 
 #include "rmdev_test.h"
 
-#include "emdevif/fatal_handler.h"
+#include "emdevif/core/fatal_handler.h"
 
 /* USER CODE END Includes */
 

@@ -50,6 +50,7 @@ target_link_libraries(emdevif_user_declares PUBLIC emdevif_core
     PRIVATE emdevif_stm32cubemx_support printf emdevif_stm32_peripheral
     emdevif_peripheral_model emdevif_system
 )
+target_compile_definitions(emdevif_user_declares PUBLIC EMDEVIF_USER_DECLARES_PROVIDE_MODULE)
 
 set(CMSISCORE "${CMAKE_CURRENT_LIST_DIR}/Drivers/CMSIS" CACHE STRING "" FORCE)
 set(DISABLEFLOAT16 ON CACHE BOOL "" FORCE)
@@ -74,6 +75,10 @@ set(EMDEVIF_FREERTOS_USE_STM32CUBEMX ON)
 add_subdirectory(
     ${CMAKE_SOURCE_DIR}/emdevif_collection/emdevif
     ${CMAKE_BINARY_DIR}/emdevif_collection/emdevif
+)
+
+target_compile_definitions(emdevif_logger PUBLIC
+    EMDEVIF_LOGGER_CONFIG_FILE="${CMAKE_CURRENT_LIST_DIR}/emdevif_logger_config.hpp"
 )
 
 set(RMDEV_ENABLE_TESTS ON)

@@ -7,16 +7,16 @@ module;
 
 #include <cstdint>
 
-#include "emdevif/attributes_and_useful_macros.h"
+#include "emdevif/core/attributes_and_useful_macros.h"
 
-#include "emdevif/fatal_handler.h"
+#include "emdevif/core/fatal_handler.h"
 
 export module afterUnitTestDemo;
 
-import emdevif.errorHandler;
+import emdevif.core.error_handler;
 import emdevif.sys.thread;
 import emdevif.peripheral.pwm;
-import emdevif.stm32Peripheral.hal.pwm;
+import emdevif.stm32_peripheral.hal.pwm;
 
 export EMDEVIF_NO_RETURN void demoEntry() noexcept
 {

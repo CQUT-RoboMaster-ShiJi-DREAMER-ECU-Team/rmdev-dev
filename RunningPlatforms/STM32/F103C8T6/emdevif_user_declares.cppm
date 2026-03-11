@@ -16,12 +16,12 @@ module;
 #include "main.h"
 #include "usart.h"
 
-#include "emdevif/fatal_handler.h"
+#include "emdevif/core/fatal_handler.h"
 
 export module emdevif.userDeclares;
 
-import emdevif.container.arrayMap;
-import emdevif.errorHandler;
+import emdevif.core.data_container.array_map;
+import emdevif.core.error_handler;
 
 import emdevif.peripheral.model.serial;
 

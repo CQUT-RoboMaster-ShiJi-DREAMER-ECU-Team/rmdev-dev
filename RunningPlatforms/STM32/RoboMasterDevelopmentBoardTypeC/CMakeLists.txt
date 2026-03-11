@@ -84,6 +84,7 @@ target_link_libraries(emdevif_user_declares PUBLIC
     emdevif_stm32_peripheral
     PRIVATE emdevif_compile_options emdevif_peripheral_model
 )
+target_compile_definitions(emdevif_user_declares PUBLIC EMDEVIF_USER_DECLARES_PROVIDE_MODULE=1)
 
 # Remove wrong libob.a library dependency when using cpp files
 list(REMOVE_ITEM CMAKE_C_IMPLICIT_LINK_LIBRARIES ob)

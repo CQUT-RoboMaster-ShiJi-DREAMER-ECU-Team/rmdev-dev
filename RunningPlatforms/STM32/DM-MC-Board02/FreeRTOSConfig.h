@@ -43,7 +43,7 @@
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
 
-#include "emdevif/fatal_handler.h"
+#include "emdevif/core/fatal_handler.h"
 
 /******************************************************************************/
 /* Hardware description related definitions. **********************************/

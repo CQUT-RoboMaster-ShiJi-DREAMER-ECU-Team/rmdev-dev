@@ -46,7 +46,7 @@
 /* USER CODE BEGIN Includes */
 /* Section where include file can be added */
 
-#include "emdevif/fatal_handler.h"
+#include "emdevif/core/fatal_handler.h"
 
 /* USER CODE END Includes */
 
