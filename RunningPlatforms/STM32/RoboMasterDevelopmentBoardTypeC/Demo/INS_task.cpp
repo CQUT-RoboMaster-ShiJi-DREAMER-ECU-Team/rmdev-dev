@@ -1,9 +1,9 @@
 /**
- * @file INS_task.cppm
+ * @file INS_task.cpp
  * @brief 姿态解算任务
  */
 
-module;
+#include "INS_task.hpp"
 
 #include <cstdint>
 #include <cstring>
@@ -11,32 +11,28 @@ module;
 #include <algorithm>
 #include <span>
 
-#include "printf.h"
-
 #include "FreeRTOS.h"
 #include "task.h"
 
 #include "emdevif/core/attributes_and_useful_macros.h"
 #include "emdevif/core/fatal_handler.h"
 
-export module ins_task;
+#include "emdevif/core/error_handler.hpp"
+#include "emdevif/system/thread.hpp"
+#include "emdevif/timeline.hpp"
+#include "emdevif/peripheral/pwm.hpp"
+#include "emdevif/peripheral/serial.hpp"
+#include "emdevif/peripheral/gpio.hpp"
+#include "emdevif/peripheral/spi.hpp"
+#include "rmdev/driver/bmi088.hpp"
+#include "rmdev/control_algorithm/pid.hpp"
+#include "rmdev/math.hpp"
+#include "rmdev/debug_assistance/vofa.hpp"
+#include "rmdev/ins.hpp"
 
-import emdevif.core.error_handler;
-import emdevif.sys.thread;
-import emdevif.timeline;
+#include "printf.h"
 
-import emdevif.peripheral.pwm;
-import emdevif.peripheral.gpio;
-import emdevif.peripheral.spi;
-import emdevif.peripheral.serial;
-
-import rmdev.driver.imu.bmi088;
-import rmdev.control_algorithm.pid;
-import rmdev.math;
-import rmdev.debug_assistance.vofa;
-import rmdev.ins;
-
-export EMDEVIF_NO_RETURN void insTask(void*)
+EMDEVIF_NO_RETURN void insTask(void*)
 {
     using namespace emdevif;
 

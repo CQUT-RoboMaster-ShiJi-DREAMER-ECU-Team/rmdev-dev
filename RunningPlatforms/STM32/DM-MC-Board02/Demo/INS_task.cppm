@@ -22,7 +22,7 @@ module;
 export module ins_task;
 
 import emdevif.core.error_handler;
-import emdevif.sys.thread;
+import emdevif.system.thread;
 import emdevif.timeline;
 
 import emdevif.peripheral.pwm;

@@ -15,27 +15,39 @@
 #include <limits>
 #include <string_view>
 
-static void test_printf(const char* format, ...) EMDEVIF_FORMAT_CHECK(printf, 1, 2);
-// printf.h 中设置了宏，会把 printf 换成 printf_，因此需要把这个函数的声明放到前面
-#include "printf.h"
-
 #include "emdevif_test_framework.h"
 
 #include "emdevif/core/attributes_and_useful_macros.h"
 #include "emdevif/core/fatal_handler.h"
 #include "emdevif/core/line_separator.h"
 
+static void test_printf(const char* format, ...) EMDEVIF_FORMAT_CHECK(printf, 1, 2);
+
+#if (defined(EMDEVIF_USE_MODULES) && EMDEVIF_USE_MODULES)
 import emdevif.core.error_handler;
-import emdevif.sys.thread;
+import emdevif.system.thread;
 import emdevif.peripheral.serial;
 import emdevif.userDeclares;
 import emdevif.logger;
-
-#ifdef ENABLE_AFTER_UNIT_TEST_DEMO
-import afterUnitTestDemo;
+#else
+    #include "emdevif/core/error_handler.hpp"
+    #include "emdevif/system/thread.hpp"
+    #include "emdevif/peripheral/serial.hpp"
+    #include "emdevif/user_declares.hpp"
+    #include "emdevif/logger.hpp"
 #endif
 
-emdevif::Serial test_tx_serial{"test transmit serial"};
+#include "printf.h"
+
+#ifdef ENABLE_AFTER_UNIT_TEST_DEMO
+    #if (defined(EMDEVIF_USE_MODULES) && EMDEVIF_USE_MODULES)
+import afterUnitTestDemo;
+    #else
+#include "demo_entry.hpp"
+    #endif
+#endif
+
+static emdevif::Serial test_tx_serial{"test transmit serial"};
 
 static char printf_buffer[512];
 

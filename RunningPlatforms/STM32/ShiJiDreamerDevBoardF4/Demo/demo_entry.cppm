@@ -14,7 +14,7 @@ module;
 export module afterUnitTestDemo;
 
 import emdevif.core.error_handler;
-import emdevif.sys.thread;
+import emdevif.system.thread;
 import emdevif.peripheral.pwm;
 import emdevif.stm32_peripheral.hal.pwm;
 

@@ -24,7 +24,7 @@ export module emdevif.userDeclares;
 import emdevif.core.data_container.array_map;
 import emdevif.core.error_handler;
 
-import emdevif.sys.atomic;
+import emdevif.system.atomic;
 
 import emdevif.peripheral.model.gpio;
 import emdevif.peripheral.model.pwm;

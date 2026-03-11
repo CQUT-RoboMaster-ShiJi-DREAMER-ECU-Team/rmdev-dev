@@ -35,10 +35,11 @@ add_subdirectory(cmake/stm32cubemx)
 
 add_subdirectory(Demo)
 
-set(ENABLE_AFTER_UNIT_TEST_DEMO ON CACHE BOOL "" FORCE)
+set(ENABLE_AFTER_UNIT_TEST_DEMO ON CACHE INTERNAL "" FORCE)
+set(EMDEVIF_USE_CPP_MODULES OFF CACHE INTERNAL "" FORCE)
 
-set(EMDEVIF_DEVICE_ENABLED_PERIPHERAL_LIST "GPIO;USART;SPI;PWM" CACHE STRING "" FORCE)
-set(EMDEVIF_STM32_PERIPHERAL_DRIVER        "HAL;HAL;HAL;HAL" CACHE STRING "" FORCE)
+set(EMDEVIF_DEVICE_ENABLED_PERIPHERAL_LIST "GPIO;USART;SPI;PWM" CACHE INTERNAL "" FORCE)
+set(EMDEVIF_STM32_PERIPHERAL_DRIVER        "HAL;HAL;HAL;HAL" CACHE INTERNAL "" FORCE)
 add_subdirectory(
     ${CMAKE_SOURCE_DIR}/emdevif_collection/emdevif_stm32_peripheral
     ${CMAKE_BINARY_DIR}/emdevif_collection/emdevif_stm32_peripheral
@@ -66,25 +67,22 @@ target_sources(freertos_config INTERFACE
 )
 target_compile_definitions(freertos_config INTERFACE projCOVERAGE_TEST=0)
 target_link_libraries(freertos_config INTERFACE emdevif_core)
-set(FREERTOS_HEAP "4" CACHE STRING "" FORCE)
-set(FREERTOS_PORT "GCC_ARM_CM4F" CACHE STRING "" FORCE)
+set(FREERTOS_HEAP "4" CACHE INTERNAL "" FORCE)
+set(FREERTOS_PORT "GCC_ARM_CM4F" CACHE INTERNAL "" FORCE)
 add_subdirectory(
     ${CMAKE_SOURCE_DIR}/Packages/FreeRTOS-Kernel
     ${CMAKE_BINARY_DIR}/Packages/FreeRTOS-Kernel
 )
 
-set(RMDEV_ENABLED_DRIVER_LIST "BMI088" CACHE STRING "" FORCE)
-set(RMDEV_ENABLE_INS_MODULE ON CACHE BOOL "" FORCE)
+set(RMDEV_ENABLED_DRIVER_LIST "BMI088" CACHE INTERNAL "" FORCE)
+set(RMDEV_ENABLE_INS_MODULE ON CACHE INTERNAL "" FORCE)
 
-add_library(emdevif_user_declares STATIC)
-target_sources(emdevif_user_declares
-    PUBLIC FILE_SET saefiu7gsuy7a TYPE CXX_MODULES FILES emdevif_user_declares.cppm)
-target_link_libraries(emdevif_user_declares PUBLIC
+add_library(emdevif_user_declares INTERFACE)
+target_include_directories(emdevif_user_declares INTERFACE inc)
+target_link_libraries(emdevif_user_declares INTERFACE
     emdevif_stm32cubemx_support emdevif_core printf emdevif_system
-    emdevif_stm32_peripheral
-    PRIVATE emdevif_compile_options emdevif_peripheral_model
+    emdevif_stm32_peripheral emdevif_compile_options emdevif_peripheral_model
 )
-target_compile_definitions(emdevif_user_declares PUBLIC EMDEVIF_USER_DECLARES_PROVIDE_MODULE=1)
 
 # Remove wrong libob.a library dependency when using cpp files
 list(REMOVE_ITEM CMAKE_C_IMPLICIT_LINK_LIBRARIES ob)

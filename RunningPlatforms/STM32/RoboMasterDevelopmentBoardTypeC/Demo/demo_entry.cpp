@@ -1,23 +1,21 @@
 /**
- * @file demo_entry.cppm
+ * @file demo_entry.cpp
  * @brief 单元测试结束后的演示程序
  */
 
-module;
+#include "demo_entry.hpp"
 
 #include <cstdint>
 
 #include "emdevif/core/attributes_and_useful_macros.h"
 #include "emdevif/core/fatal_handler.h"
 
-export module afterUnitTestDemo;
+#include "emdevif/core/error_handler.hpp"
+#include "emdevif/system/thread.hpp"
 
-import emdevif.core.error_handler;
-import emdevif.sys.thread;
+#include "INS_task.hpp"
 
-import ins_task;
-
-export EMDEVIF_NO_RETURN void demoEntry() noexcept
+EMDEVIF_NO_RETURN void demoEntry() noexcept
 {
     using namespace emdevif;
 
