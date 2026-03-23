@@ -88,15 +88,6 @@ namespace timeline {
 
 emdevif::atomic<uint32_t> overflow_count = 0;
 
-extern "C" void TIM5_IRQHandler(void)
-{
-    if (LL_TIM_IsActiveFlag_UPDATE(TIM5)) {
-        overflow_count.fetch_add(1, emdevif::memory_order::release);
-
-        LL_TIM_ClearFlag_UPDATE(TIM5);
-    }
-}
-
 inline uint64_t getMicroseconds() noexcept
 {
     return static_cast<uint64_t>(overflow_count.load(emdevif::memory_order::acquire)) *
@@ -106,9 +97,24 @@ inline uint64_t getMicroseconds() noexcept
 
 }  // namespace timeline
 
-namespace logger {
+}  // namespace emdevif::user_declares
 
-inline std::size_t getTimeLine() noexcept
+namespace {
+
+extern "C" void TIM5_IRQHandler(void)
+{
+    if (LL_TIM_IsActiveFlag_UPDATE(TIM5)) {
+        emdevif::user_declares::timeline::overflow_count.fetch_add(1, emdevif::memory_order::release);
+
+        LL_TIM_ClearFlag_UPDATE(TIM5);
+    }
+}
+
+}  // namespace
+
+namespace emdevif::user_declares::logger {
+
+export inline std::size_t getTimeLine() noexcept
 {
     constinit static std::size_t timeLine = 0;
     return timeLine++;
@@ -116,12 +122,12 @@ inline std::size_t getTimeLine() noexcept
 
 static char buffer[512];
 static std::size_t buffer_head = 0;
-char* getBuffer() noexcept
+export char* getBuffer() noexcept
 {
     return buffer;
 }
 
-ErrorCode printLogMessage(const char* message) noexcept
+export ErrorCode printLogMessage(const char* message) noexcept
 {
     const auto ret = ::snprintf(buffer + buffer_head, std::size(buffer) - buffer_head, "%s", message);
     if (ret < 0) {
@@ -133,6 +139,4 @@ ErrorCode printLogMessage(const char* message) noexcept
     return ErrorCode::Success;
 }
 
-}  // namespace logger
-
-}  // namespace emdevif::user_declares
+}  // namespace emdevif::user_declares::logger

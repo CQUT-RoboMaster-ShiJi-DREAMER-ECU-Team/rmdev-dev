@@ -30,7 +30,7 @@ import emdevif.peripheral.gpio;
 import emdevif.peripheral.spi;
 import emdevif.peripheral.serial;
 
-import rmdev.driver.imu.bmi088;
+import rmdev.driver.bmi088;
 import rmdev.control_algorithm.pid;
 import rmdev.math;
 import rmdev.debug_assistance.vofa;
