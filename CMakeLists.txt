@@ -8,9 +8,14 @@ It's an internal variable, DO NOT MODIFY!]]
     FORCE
 )
 
+if (NOT (PLATFORM_NAME STREQUAL "esp32"))
+    project(rmdev_developing_or_testing_environment C CXX ASM)
+endif ()
+
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_SCAN_FOR_MODULES ON)
+
+set(CMAKE_CXX_SCAN_FOR_MODULES "${EMDEVIF_USE_CPP_MODULES}" CACHE INTERNAL "" FORCE)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -32,6 +37,12 @@ endif ()
 
 include(Packages/mpaland-printf.cmake)
 include(utils.cmake)
+
+set(MP_UNITS_BUILD_INSTALL OFF CACHE INTERNAL "" FORCE)
+set(MP_UNITS_BUILD_CXX_MODULES OFF CACHE INTERNAL "" FORCE)
+set(MP_UNITS_API_CONTRACTS "NONE" CACHE INTERNAL "" FORCE)
+set(MP_UNITS_API_FREESTANDING OFF CACHE INTERNAL "" FORCE)
+add_subdirectory(Packages/mp-units/src)
 
 set(boardDir "${CMAKE_CURRENT_LIST_DIR}")
 
@@ -62,8 +73,6 @@ else ()
         "Currently only \"stm32\" and \"esp32\" are supported."
     )
 endif ()
-
-project(rmdev_developing_or_testing_environment C CXX ASM)
 
 if (NOT (EXISTS ${boardDir}/${BOARD_NAME}))
     message(FATAL_ERROR "Directory `${boardDir}/${BOARD_NAME}\' does not exist! "
