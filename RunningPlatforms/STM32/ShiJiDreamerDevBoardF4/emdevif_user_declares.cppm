@@ -18,7 +18,7 @@ module;
 
 #include "emdevif/core/fatal_handler.h"
 
-export module emdevif.userDeclares;
+export module emdevif.user_declares;
 
 import emdevif.core.data_container.array_map;
 import emdevif.core.error_handler;
@@ -78,22 +78,24 @@ inline uint64_t getMicroseconds() noexcept
 
 }  // namespace timeline
 
-export namespace logger {
+}  // namespace emdevif::user_declares
 
-inline std::size_t getTimeLine() noexcept
+namespace emdevif::user_declares::logger {
+
+constinit std::size_t timeLine = 0;
+export inline std::size_t getTimeLine() noexcept
 {
-    constinit static std::size_t timeLine = 0;
     return timeLine++;
 }
 
 static char buffer[512];
 static std::size_t buffer_head = 0;
-char* getBuffer() noexcept
+export char* getBuffer() noexcept
 {
     return buffer;
 }
 
-ErrorCode printLogMessage(const char* message) noexcept
+export ErrorCode printLogMessage(const char* message) noexcept
 {
     const auto ret = ::snprintf(buffer + buffer_head, std::size(buffer) - buffer_head, "%s", message);
     if (ret < 0) {
@@ -105,6 +107,4 @@ ErrorCode printLogMessage(const char* message) noexcept
     return ErrorCode::Success;
 }
 
-}  // namespace logger
-
-}  // namespace emdevif::user_declares
+}  // namespace emdevif::user_declares::logger

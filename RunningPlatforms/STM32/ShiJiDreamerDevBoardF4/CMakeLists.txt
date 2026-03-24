@@ -32,8 +32,8 @@ add_subdirectory(cmake/stm32cubemx)
 
 target_link_libraries(FreeRTOS PUBLIC emdevif_core)
 
-set(EMDEVIF_DEVICE_ENABLED_PERIPHERAL_LIST "USART;PWM" CACHE STRING "" FORCE)
-set(EMDEVIF_STM32_PERIPHERAL_DRIVER        "HAL;HAL" CACHE STRING "" FORCE)
+set(EMDEVIF_DEVICE_ENABLED_PERIPHERAL_LIST "USART;PWM" CACHE INTERNAL "" FORCE)
+set(EMDEVIF_STM32_PERIPHERAL_DRIVER        "HAL;HAL" CACHE INTERNAL "" FORCE)
 add_subdirectory(
     ${CMAKE_SOURCE_DIR}/emdevif_collection/emdevif_stm32_peripheral
     ${CMAKE_BINARY_DIR}/emdevif_collection/emdevif_stm32_peripheral
@@ -41,7 +41,7 @@ add_subdirectory(
 
 add_subdirectory(Demo)
 
-set(ENABLE_AFTER_UNIT_TEST_DEMO ON CACHE BOOL "" FORCE)
+set(ENABLE_AFTER_UNIT_TEST_DEMO ON CACHE INTERNAL "" FORCE)
 
 add_library(emdevif_user_declares STATIC)
 target_sources(emdevif_user_declares
@@ -50,10 +50,10 @@ target_link_libraries(emdevif_user_declares PUBLIC emdevif_core
     PRIVATE emdevif_stm32cubemx_support printf emdevif_stm32_peripheral
     emdevif_peripheral_model emdevif_system
 )
-target_compile_definitions(emdevif_user_declares PUBLIC EMDEVIF_USER_DECLARES_PROVIDE_MODULE)
+target_compile_definitions(emdevif_user_declares PUBLIC EMDEVIF_USER_DECLARES_PROVIDE_MODULE=1)
 
-set(CMSISCORE "${CMAKE_CURRENT_LIST_DIR}/Drivers/CMSIS" CACHE STRING "" FORCE)
-set(DISABLEFLOAT16 ON CACHE BOOL "" FORCE)
+set(CMSISCORE "${CMAKE_CURRENT_LIST_DIR}/Drivers/CMSIS" CACHE INTERNAL "" FORCE)
+set(DISABLEFLOAT16 ON CACHE INTERNAL "" FORCE)
 add_subdirectory(
     ${CMAKE_SOURCE_DIR}/Packages/CMSIS-DSP
     ${CMAKE_BINARY_DIR}/Packages/CMSIS-DSP
@@ -82,6 +82,7 @@ target_compile_definitions(emdevif_logger PUBLIC
 )
 
 set(RMDEV_ENABLE_TESTS ON)
+set(RMDEV_ENABLED_DRIVER_LIST "DJIMotor" CACHE INTERNAL "" FORCE)
 add_subdirectory(${CMAKE_SOURCE_DIR}/rmdev ${CMAKE_BINARY_DIR}/rmdev)
 
 target_compile_definitions(emdevif_system PUBLIC EMDEVIF_SYS_TICK_TYPE_UINT_BITS=32)

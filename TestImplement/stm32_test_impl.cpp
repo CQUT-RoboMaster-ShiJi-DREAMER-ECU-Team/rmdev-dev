@@ -27,7 +27,7 @@ static void test_printf(const char* format, ...) EMDEVIF_FORMAT_CHECK(printf, 1,
 import emdevif.core.error_handler;
 import emdevif.system.thread;
 import emdevif.peripheral.serial;
-import emdevif.userDeclares;
+import emdevif.user_declares;
 import emdevif.logger;
 #else
     #include "emdevif/core/error_handler.hpp"

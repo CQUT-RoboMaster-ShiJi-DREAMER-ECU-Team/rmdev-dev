@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.28...4.0.2)
+cmake_minimum_required(VERSION 3.28...4.2.0)
 
 set(EMDEVIF_TEST_TEST_SOURCE_DIR_
     "${CMAKE_CURRENT_LIST_DIR}/emdevif_collection/emdevif/test"
@@ -38,11 +38,15 @@ endif ()
 include(Packages/mpaland-printf.cmake)
 include(utils.cmake)
 
-set(MP_UNITS_BUILD_INSTALL OFF CACHE INTERNAL "" FORCE)
-set(MP_UNITS_BUILD_CXX_MODULES OFF CACHE INTERNAL "" FORCE)
-set(MP_UNITS_API_CONTRACTS "NONE" CACHE INTERNAL "" FORCE)
-set(MP_UNITS_API_FREESTANDING OFF CACHE INTERNAL "" FORCE)
-add_subdirectory(Packages/mp-units/src)
+block (SCOPE_FOR POLICIES)
+    cmake_policy(VERSION 3.28...4.0.2)
+
+    set(MP_UNITS_BUILD_INSTALL OFF CACHE INTERNAL "" FORCE)
+    set(MP_UNITS_BUILD_CXX_MODULES OFF CACHE INTERNAL "" FORCE)
+    set(MP_UNITS_API_CONTRACTS "NONE" CACHE INTERNAL "" FORCE)
+    set(MP_UNITS_API_FREESTANDING OFF CACHE INTERNAL "" FORCE)
+    add_subdirectory(Packages/mp-units/src)
+endblock ()
 
 set(boardDir "${CMAKE_CURRENT_LIST_DIR}")
 

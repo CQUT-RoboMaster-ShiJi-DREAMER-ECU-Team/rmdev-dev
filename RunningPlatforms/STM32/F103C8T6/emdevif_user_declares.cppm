@@ -18,7 +18,7 @@ module;
 
 #include "emdevif/core/fatal_handler.h"
 
-export module emdevif.userDeclares;
+export module emdevif.user_declares;
 
 import emdevif.core.data_container.array_map;
 import emdevif.core.error_handler;

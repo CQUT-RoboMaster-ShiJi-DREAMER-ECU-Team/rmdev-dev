@@ -1,32 +1,57 @@
 # rmdev_developing_or_testing_environment
 
-rmdev 的开发与测试环境
+`rmdev` 与 `emdevif` 的开发/测试集成环境仓库。
 
-为了便于 [rmdev](https://github.com/CQUT-RoboMaster-ShiJi-DREAMER-ECU-Team/rmdev)
-以及 [emdevif](https://github.com/CQUT-RoboMaster-ShiJi-DREAMER-ECU-Team/emdevif.git) 的开发与测试而创建的仓库。
+本仓库用于：
 
-由于 rmdev 以及 emdevif 都是库，没有办法直接运行，因此需要一个环境来进行开发与测试。
+- 在真实板级工程上联调 `rmdev`、`emdevif`
+- 运行与平台相关/无关的测试入口
+- 验证跨平台构建（STM32 / ESP32）
 
-**本仓库重在开发与测试，并不适合作为最终产品的代码仓库使用，也不建议参考本仓库的结构来组织您的工程。**
+> 该仓库定位是“开发与测试环境”，不是量产产品工程模板。
 
-## 路径说明
+## 仓库结构
 
-* `rmdev`、`emdevif_collection/*`: 两个子模块分别为 rmdev 以及 emdevif 的代码仓库。
-* `rmdev_test`: 运行 rmdev 的测试的工程（与平台无关的测试）。
-* `Platforms`: 存放各大平台的工程，内部以该平台下的不同开发板进行划分，每个开发板下包含该开发板的工程代码以及主函数。
-* 其他: 第三方库或脚本。
+- `rmdev`、`emdevif_collection/*`：核心库子模块
+- `RunningPlatforms/`：平台与板级工程（按平台/开发板划分）
+- `TestImplement/`：跨平台测试实现与测试入口适配
+- `Packages/`：第三方依赖（本仓库集成使用）
 
-通俗地讲，`rmdev_test` 存放各个平台共有的逻辑，而 `Platforms` 下的各个开发板路径内则存放与具体平台相关的代码。
+## 快速开始
 
-## 配置
+### 1) 拉取子模块
 
-| CMake 缓存变量         | 类型     | 默认值  | 说明                               |
-|--------------------|--------|------|----------------------------------|
-| RMDEV_ENABLE_TESTS | Bool   | ON   | 是否启用 rmdev 的测试工程                 |
-| PLATFORM_NAME      | String | `""` | 平台名称，取值在 `Platforms` 路径中的文件夹名称中选 |
-| BOARD_NAME         | String | `""` | 开发板名称，取值在所选平台路径中的开发板的文件夹名称中选     |
+```bash
+git submodule update --init --recursive
+```
 
-## 目前支持的平台
+### 2) 选择平台与开发板配置
+
+CMake 变量：
+
+| 变量                   | 类型     |  默认值 | 说明                                                        |
+|----------------------|--------|-----:|-----------------------------------------------------------|
+| `RMDEV_ENABLE_TESTS` | Bool   | `ON` | 是否启用 `rmdev` 测试。如果只测试 emdevif 而不测试 rmdev 时，可以将这个变量设置为 OFF |
+| `PLATFORM_NAME`      | String | `""` | 平台名：`stm32` / `esp32`                                     |
+| `BOARD_NAME`         | String | `""` | 具体开发板目录名                                                  |
+
+### 3) 示例命令
+
+STM32：
+
+```bash
+cmake -S . -B build -DPLATFORM_NAME=stm32 -DBOARD_NAME=RoboMasterDevelopmentBoardTypeC -DCMAKE_TOOLCHAIN_FILE=RunningPlatforms/STM32/RoboMasterDevelopmentBoardTypeC/cmake/gcc-arm-none-eabi.cmake
+cmake --build build
+```
+
+ESP32（需已安装 ESP-IDF）：
+
+```bash
+idf.py -DPLATFORM_NAME=esp32 -DBOARD_NAME=ESP32-DevKitC
+idf.py build
+```
+
+## 当前支持平台
 
 * [STM32](./RunningPlatforms/STM32)
     * [RoboMasterDevelopmentBoardTypeC](RunningPlatforms/STM32/RoboMasterDevelopmentBoardTypeC): [RoboMaster 开发板 C 型](https://www.robomaster.com/zh-CN/products/components/general/development-board-type-c)

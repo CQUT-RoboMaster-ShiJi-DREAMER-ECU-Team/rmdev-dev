@@ -29,7 +29,7 @@
 import emdevif.errorHandler;
 import emdevif.sys.thread;
 import emdevif.peripheral.serial;
-import emdevif.userDeclares;
+import emdevif.user_declares;
 import emdevif.logger;
 
 #ifdef ENABLE_AFTER_UNIT_TEST_DEMO
