@@ -52,12 +52,16 @@ target_link_libraries(emdevif_user_declares PUBLIC emdevif_core
 )
 target_compile_definitions(emdevif_user_declares PUBLIC EMDEVIF_USER_DECLARES_PROVIDE_MODULE=1)
 
-set(CMSISCORE "${CMAKE_CURRENT_LIST_DIR}/Drivers/CMSIS" CACHE INTERNAL "" FORCE)
-set(DISABLEFLOAT16 ON CACHE INTERNAL "" FORCE)
-add_subdirectory(
-    ${CMAKE_SOURCE_DIR}/Packages/CMSIS-DSP
-    ${CMAKE_BINARY_DIR}/Packages/CMSIS-DSP
+CPMAddPackage(
+    NAME CMSIS-DSP
+    GITHUB_REPOSITORY ARM-software/CMSIS-DSP
+    GIT_TAG v1.17.0
+    VERSION 1.17.0
+    OPTIONS "CMSISCORE ${CMAKE_CURRENT_LIST_DIR}/Drivers/CMSIS" "DISABLEFLOAT16 ON"
 )
+if (NOT CMSIS-DSP_ADDED)
+    message(FATAL_ERROR "[${PROJECT_NAME}]: CPM: Failed to add package `CMSIS-DSP`")
+endif ()
 target_compile_options(CMSISDSP PRIVATE -ffast-math -fno-finite-math-only -Ofast)
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE

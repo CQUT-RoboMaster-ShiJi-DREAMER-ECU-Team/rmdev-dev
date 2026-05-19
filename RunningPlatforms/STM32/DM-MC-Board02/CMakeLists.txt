@@ -53,12 +53,16 @@ if (RMDEV_ENABLE_TESTS)
 endif ()
 
 # For CMSIS-DSP
-set(CMSISCORE "${CMAKE_CURRENT_LIST_DIR}/Drivers/CMSIS" CACHE STRING "" FORCE)
-set(DISABLEFLOAT16 ON CACHE BOOL "" FORCE)
-add_subdirectory(
-    ${CMAKE_SOURCE_DIR}/Packages/CMSIS-DSP
-    ${CMAKE_BINARY_DIR}/Packages/CMSIS-DSP
+CPMAddPackage(
+    NAME CMSIS-DSP
+    GITHUB_REPOSITORY ARM-software/CMSIS-DSP
+    GIT_TAG v1.17.0
+    VERSION 1.17.0
+    OPTIONS "CMSISCORE ${CMAKE_CURRENT_LIST_DIR}/Drivers/CMSIS" "DISABLEFLOAT16 ON"
 )
+if (NOT CMSIS-DSP_ADDED)
+    message(FATAL_ERROR "[${PROJECT_NAME}]: CPM: Failed to add package `CMSIS-DSP`")
+endif ()
 target_compile_options(CMSISDSP PRIVATE -ffast-math -fno-finite-math-only -Ofast)
 
 # For FreeRTOS-Kernel
@@ -68,12 +72,16 @@ target_sources(freertos_config INTERFACE
 )
 target_compile_definitions(freertos_config INTERFACE projCOVERAGE_TEST=0)
 target_link_libraries(freertos_config INTERFACE emdevif_core)
-set(FREERTOS_HEAP "4" CACHE STRING "" FORCE)
-set(FREERTOS_PORT "GCC_ARM_CM4F" CACHE STRING "" FORCE)
-add_subdirectory(
-    ${CMAKE_SOURCE_DIR}/Packages/FreeRTOS-Kernel
-    ${CMAKE_BINARY_DIR}/Packages/FreeRTOS-Kernel
+CPMAddPackage(
+    NAME FreeRTOS-Kernel
+    GITHUB_REPOSITORY FreeRTOS/FreeRTOS-Kernel
+    GIT_TAG V11.3.0
+    VERSION 11.3.0
+    OPTIONS "FREERTOS_HEAP 4" "FREERTOS_PORT GCC_ARM_CM4F"
 )
+if (NOT FreeRTOS-Kernel_ADDED)
+    message(FATAL_ERROR "[${PROJECT_NAME}]: CPM: Failed to add package `FreeRTOS-Kernel`")
+endif ()
 
 set(RMDEV_ENABLED_DRIVER_LIST "BMI088;DJIMotor" CACHE STRING "" FORCE)
 set(RMDEV_ENABLE_INS_MODULE ON CACHE BOOL "" FORCE)

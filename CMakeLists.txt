@@ -35,18 +35,10 @@ if (RMDEV_ENABLE_TESTS)
     set(RMDEV_ENABLE_TESTS ON CACHE BOOL "" FORCE)
 endif ()
 
-include(Packages/mpaland-printf.cmake)
-include(utils.cmake)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
-block (SCOPE_FOR POLICIES)
-    cmake_policy(VERSION 3.28...4.0.2)
-
-    set(MP_UNITS_BUILD_INSTALL OFF CACHE INTERNAL "" FORCE)
-    set(MP_UNITS_BUILD_CXX_MODULES OFF CACHE INTERNAL "" FORCE)
-    set(MP_UNITS_API_CONTRACTS "NONE" CACHE INTERNAL "" FORCE)
-    set(MP_UNITS_API_FREESTANDING OFF CACHE INTERNAL "" FORCE)
-    add_subdirectory(Packages/mp-units/src)
-endblock ()
+include(utils)
+include(add_packages)
 
 set(boardDir "${CMAKE_CURRENT_LIST_DIR}")
 

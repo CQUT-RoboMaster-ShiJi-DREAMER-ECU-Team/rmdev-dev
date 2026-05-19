@@ -7,15 +7,3 @@
 [submodule "emdevif_collection/emdevif_stm32_peripheral"]
 	path = emdevif_collection/emdevif_stm32_peripheral
 	url = https://github.com/CQUT-RoboMaster-ShiJi-DREAMER-ECU-Team/emdevif_stm32_peripheral.git
-[submodule "Packages/CMSIS-DSP"]
-	path = Packages/CMSIS-DSP
-	url = https://github.com/ARM-software/CMSIS-DSP.git
-[submodule "Packages/FreeRTOS-Kernel"]
-	path = Packages/FreeRTOS-Kernel
-	url = https://github.com/FreeRTOS/FreeRTOS-Kernel.git
-[submodule "Packages/mpaland-printf"]
-	path = Packages/mpaland-printf
-	url = https://github.com/mpaland/printf.git
-[submodule "Packages/mp-units"]
-	path = Packages/mp-units
-	url = https://github.com/mpusz/mp-units.git

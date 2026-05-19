@@ -67,12 +67,16 @@ target_sources(freertos_config INTERFACE
 )
 target_compile_definitions(freertos_config INTERFACE projCOVERAGE_TEST=0)
 target_link_libraries(freertos_config INTERFACE emdevif_core)
-set(FREERTOS_HEAP "4" CACHE INTERNAL "" FORCE)
-set(FREERTOS_PORT "GCC_ARM_CM4F" CACHE INTERNAL "" FORCE)
-add_subdirectory(
-    ${CMAKE_SOURCE_DIR}/Packages/FreeRTOS-Kernel
-    ${CMAKE_BINARY_DIR}/Packages/FreeRTOS-Kernel
+CPMAddPackage(
+    NAME FreeRTOS-Kernel
+    GITHUB_REPOSITORY FreeRTOS/FreeRTOS-Kernel
+    GIT_TAG V11.3.0
+    VERSION 11.3.0
+    OPTIONS "FREERTOS_HEAP 4" "FREERTOS_PORT GCC_ARM_CM4F"
 )
+if (NOT FreeRTOS-Kernel_ADDED)
+    message(FATAL_ERROR "[${PROJECT_NAME}]: CPM: Failed to add package `FreeRTOS-Kernel`")
+endif ()
 
 set(RMDEV_ENABLED_DRIVER_LIST "BMI088" CACHE INTERNAL "" FORCE)
 set(RMDEV_ENABLE_INS_MODULE ON CACHE INTERNAL "" FORCE)
