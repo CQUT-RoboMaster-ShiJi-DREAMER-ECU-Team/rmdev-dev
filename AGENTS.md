@@ -3,16 +3,123 @@
 ## 仓库定位
 该仓库是 `rmdev` 与 `emdevif` 的开发/测试集成环境，不是最终产品工程模板。
 
-## 主要职责
-- 组织跨平台（STM32/ESP32）构建与联调。
-- 汇总子模块并提供板级测试入口。
-- 维护 `RunningPlatforms/` 与 `TestImplement/` 的一致性。
+## 仓库结构
+
+```
+rmdev_developing_or_testing_environment/
+├── rmdev/                        # 子模块：电控算法/驱动聚合库（有独立 AGENTS.md）
+├── emdevif_collection/
+│   ├── emdevif/                  # 子模块：嵌入式通用接口抽象（有独立 AGENTS.md）
+│   └── emdevif_stm32_peripheral/ # 子模块：emdevif 的 STM32 外设扩展（有独立 AGENTS.md）
+├── RunningPlatforms/             # 平台与板级工程（按平台/开发板划分）
+│   ├── STM32/                    #   STM32 板卡工程（CubeMX + CMake）
+│   └── ESP32/                    #   ESP32 板卡工程（ESP-IDF）
+├── TestImplement/                # 跨平台测试实现与测试入口适配
+├── cmake/                        # CMake 辅助脚本（utils、add_packages、get_cpm）
+└── bin/                          # 构建产物自动拷贝目标
+```
+
+### 子模块层级
+三个子模块各有独立 AGENTS.md，修改库逻辑时应遵循对应模块的约束：
+
+- [rmdev/AGENTS.md](rmdev/AGENTS.md) — 算法/模型/驱动模块的裁剪、接口与验证要求
+- [emdevif/AGENTS.md](emdevif_collection/emdevif/AGENTS.md) — core/logger/peripheral/system/timeline/util 各模块约束，含 C++20 Modules 双路径验证
+- [emdevif_stm32_peripheral/AGENTS.md](emdevif_collection/emdevif_stm32_peripheral/AGENTS.md) — HAL/LL 适配与驱动选择路径
+
+## 构建系统
+
+### 顶层 CMake 流程
+根 `CMakeLists.txt` 根据 `PLATFORM_NAME` 选择入口：
+
+- `stm32`：进入 `RunningPlatforms/STM32/${BOARD_NAME}`，使用 GCC ARM 工具链
+- `esp32`：委托 ESP-IDF 构建系统，需已安装 ESP-IDF 环境
+
+第三方依赖通过 CPM 管理（`cmake/add_packages.cmake`），目前引入 `mpaland/printf` 和 `mpusz/mp-units`。
+
+### 关键 CMake 变量
+
+| 变量 | 类型 | 默认 | 说明 |
+|---|---|---|---|
+| `PLATFORM_NAME` | String | `""` | `stm32` 或 `esp32` |
+| `BOARD_NAME` | String | `""` | 开发板目录名（如 `DM-MC-Board02`） |
+| `RMDEV_ENABLE_TESTS` | Bool | `ON` | 是否构建并运行 rmdev 测试 |
+| `EMDEVIF_USE_CPP_MODULES` | Bool | 由子模块决定 | C++20 Modules 路径开关，变更后需验证 ON/OFF 两条路径 |
+
+### 构建示例
+
+STM32（需要 toolchain file）：
+```bash
+cmake -S . -B build -DPLATFORM_NAME=stm32 -DBOARD_NAME=RoboMasterDevelopmentBoardTypeC \
+  -DCMAKE_TOOLCHAIN_FILE=RunningPlatforms/STM32/RoboMasterDevelopmentBoardTypeC/cmake/gcc-arm-none-eabi.cmake
+cmake --build build
+```
+
+ESP32（需已安装 ESP-IDF）：
+```bash
+idf.py -DPLATFORM_NAME=esp32 -DBOARD_NAME=ESP32-DevKitC build
+```
+
+### cmake-build-* 目录
+根目录下的 `cmake-build-debug-*` / `cmake-build-release-*` 是 CLion 生成的 out-of-tree 构建目录，由 `.gitignore` 排除，不要手动编辑其中的文件。
+
+## 测试入口契约
+
+`TestImplement/` 暴露两个 C 链接函数，板级启动代码必须调用：
+
+```c
+// 初始化（STM32 在 HAL_Init 前调用，ESP32 可调用也可不调用）
+void testInit(void* argument, ...);
+
+// 进入测试循环（创建 RTOS 任务并启动调度器 / 直接执行）
+EMDEVIF_NO_RETURN void testEntry(void);
+```
+
+板级工程负责提供 `testInit` / `testEntry` 的调用时机，测试实现本身根据 `PLATFORM_NAME` 编译 `stm32_test_impl.cpp` 或 `esp32_test_impl.cpp`。
+
+## 新增板卡 / 平台
+
+### 新增 STM32 板卡
+在 `RunningPlatforms/STM32/` 下创建以板卡名命名的目录，提供：
+
+- `cmake/gcc-arm-none-eabi.cmake` — 工具链文件
+- `Core/` — CubeMX 生成的 HAL 初始化代码（含 `main` 中调用 `testInit` / `testEntry`）
+- `Drivers/` — HAL 库
+- `CMakeLists.txt` — 板级 CMake
+
+可参考现有板卡（如 `RoboMasterDevelopmentBoardTypeC`）的结构。
+
+### 新增 ESP32 板卡
+在 `RunningPlatforms/ESP32/` 下创建目录，提供：
+
+- `main/` — ESP-IDF 组件（含 CMakeLists.txt 和测试入口）
+- `sdkconfig.defaults` — 默认 Kconfig 覆盖
+
+然后在 README 中补充板卡接线说明。
+
+### 新增平台（如 RP2040）
+需要在根 `CMakeLists.txt` 的 `if/elseif/else` 分支中新增平台判断逻辑，并在 `RunningPlatforms/` 下创建对应平台目录。
+
+## 关键配置文件
+
+| 文件 | 作用 |
+|---|---|
+| `.clang-format` / `.clang-tidy` | C/C++ 代码风格与静态检查规则 |
+| `.clangd` | LSP 配置（后台索引与补全） |
+| `ftdi.cfg` / `stlink.cfg` / `daplink.cfg` | OpenOCD 调试器配置文件 |
+| `FreeMaster_DM-MC-02_DemoWatcher.pmpx` | FreeMaster 运行时变量监视配置 |
+| `cmake/utils.cmake` | `addCopyFinallyBinaryFileTarget`：构建后将二进制自动拷贝到 `bin/` |
+
+## C++20 Modules 注意
+
+代码同时支持 `#include` 和 `import` 两种导入方式，通过 `EMDEVIF_USE_CPP_MODULES` 切换。emdevif 子模块的 AGENTS.md 要求验证 ON/OFF 两条构建路径。在本仓库做集成验证时，至少覆盖一条 Modules 开启路径和一条关闭路径。
 
 ## 修改约束
 - 优先在对应子模块中修复库逻辑；本仓库只做集成与验证层调整。
-- 不修改 `Packages/` 和 `emdevif_collection/emdevif/core/depends/` 第三方代码。
+- 不修改 `emdevif_collection/emdevif/core/depends/` 第三方代码。
 - 与平台无关的测试逻辑放在 `TestImplement/`，平台相关逻辑放在 `RunningPlatforms/`。
+- `.agents/` 目录下的智能体规则与技能文档优先于其他历史路径。
 
 ## 验证建议
 - 使用 `PLATFORM_NAME` 与 `BOARD_NAME` 选择目标平台进行构建。
 - 变更板级逻辑后，至少在对应板级配置完成一次构建验证。
+- 变更涉及 `TestImplement/` 时，至少验证一个 STM32 板卡和一个 ESP32 板卡的构建。
