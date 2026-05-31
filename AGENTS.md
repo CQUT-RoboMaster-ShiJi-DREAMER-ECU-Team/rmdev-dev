@@ -118,6 +118,7 @@ EMDEVIF_NO_RETURN void testEntry(void);
 - 不修改 `emdevif_collection/emdevif/core/depends/` 第三方代码。
 - 与平台无关的测试逻辑放在 `TestImplement/`，平台相关逻辑放在 `RunningPlatforms/`。
 - `.agents/` 目录下的智能体规则与技能文档优先于其他历史路径。
+- 遇到已有的不符合 Doxygen 注释规范的代码时，不要强制修改格式，应先询问用户是否需要修改。
 
 ## 验证建议
 - 使用 `PLATFORM_NAME` 与 `BOARD_NAME` 选择目标平台进行构建。
