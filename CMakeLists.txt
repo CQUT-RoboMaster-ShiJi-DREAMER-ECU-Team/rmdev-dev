@@ -9,7 +9,7 @@ It's an internal variable, DO NOT MODIFY!]]
 )
 
 if (NOT (PLATFORM_NAME STREQUAL "esp32"))
-    project(rmdev_developing_or_testing_environment C CXX ASM)
+    project(rmdev-dev C CXX ASM)
 endif ()
 
 set(CMAKE_C_STANDARD 11)
@@ -59,7 +59,7 @@ elseif (PLATFORM_NAME STREQUAL "esp32")
 
     include($ENV{IDF_PATH}/tools/cmake/project.cmake)
     set(SDKCONFIG_DEFAULTS "${boardDir}/${BOARD_NAME}/sdkconfig.defaults")
-    project(rmdev_developing_or_testing_environment)
+    project(rmdev-dev)
 
     message(STATUS "In CMAKE_SOURCE_DIR >>>> EXTRA_COMPONENT_DIRS: ${EXTRA_COMPONENT_DIRS}")
 

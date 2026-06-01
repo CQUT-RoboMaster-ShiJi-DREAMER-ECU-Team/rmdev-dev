@@ -1,4 +1,4 @@
-# rmdev_developing_or_testing_environment
+# rmdev-dev
 
 `rmdev` 与 `emdevif` 的开发/测试集成环境仓库。
 

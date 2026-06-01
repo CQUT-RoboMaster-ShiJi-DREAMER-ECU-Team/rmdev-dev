@@ -6,7 +6,7 @@
 ## 仓库结构
 
 ```
-rmdev_developing_or_testing_environment/
+rmdev-dev/
 ├── rmdev/                        # 子模块：电控算法/驱动聚合库（有独立 AGENTS.md）
 ├── emdevif_collection/
 │   ├── emdevif/                  # 子模块：嵌入式通用接口抽象（有独立 AGENTS.md）
