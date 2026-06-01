@@ -113,12 +113,30 @@ EMDEVIF_NO_RETURN void testEntry(void);
 
 代码同时支持 `#include` 和 `import` 两种导入方式，通过 `EMDEVIF_USE_CPP_MODULES` 切换。emdevif 子模块的 AGENTS.md 要求验证 ON/OFF 两条构建路径。在本仓库做集成验证时，至少覆盖一条 Modules 开启路径和一条关闭路径。
 
+## 项目技能
+
+本项目的技能文件存放在 `.agents/skills/` 目录下。
+
+### `cpp-lib-headers-modules-both-supports`
+
+指导如何设计 C++ 库使其同时支持头文件（`#include`）和 C++20 模块（`import`）两种使用方式，涵盖纯头文件库、组件依赖、带源文件的库等场景。
+具体模式参见技能目录下的 SKILL.md。
+
 ## 修改约束
 - 优先在对应子模块中修复库逻辑；本仓库只做集成与验证层调整。
 - 不修改 `emdevif_collection/emdevif/core/depends/` 第三方代码。
 - 与平台无关的测试逻辑放在 `TestImplement/`，平台相关逻辑放在 `RunningPlatforms/`。
-- `.agents/` 目录下的智能体规则与技能文档优先于其他历史路径。
+- `.agents/` 目录下的智能体规则与技能文档优先于其他历史路径；项目技能统一存放在 `.agents/skills/` 下。
 - 遇到已有的不符合 Doxygen 注释规范的代码时，不要强制修改格式，应先询问用户是否需要修改。
+
+## Git 提交规范
+
+- 仅当用户明确要求提交时才执行 `git commit`，不要因检测到暂存区有修改而自动提交。
+- 提交信息第一行为一句简洁的总结，基于最近一次提交与当前变更之间的差异概括。
+- 若变更较复杂，可在第一行后空一行，以 `- ` 开头的条目补充原因、内容和影响；简单变更可省略。
+- 提交信息每行首字母大写，不以句号结尾，不使用 Markdown 语法。
+- 最后一行标注 AI 辅助信息，格式为 `Assisted-by: 供应商:模型 工具`。vim、git、vscode 等基础工具无需标注。
+- 多行提交信息使用多个 `-m` 参数分行，不要用 `\n` 内嵌换行。
 
 ## 验证建议
 - 使用 `PLATFORM_NAME` 与 `BOARD_NAME` 选择目标平台进行构建。
