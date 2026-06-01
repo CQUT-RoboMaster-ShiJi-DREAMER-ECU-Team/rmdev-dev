@@ -129,13 +129,21 @@ EMDEVIF_NO_RETURN void testEntry(void);
 - `.agents/` 目录下的智能体规则与技能文档优先于其他历史路径；项目技能统一存放在 `.agents/skills/` 下。
 - 遇到已有的不符合 Doxygen 注释规范的代码时，不要强制修改格式，应先询问用户是否需要修改。
 
-## Git 提交规范
+## Git 提交规范（对所有子模块都适用）
 
+- 提交信息统一使用中文，清晰描述变更内容和原因。
 - 仅当用户明确要求提交时才执行 `git commit`，不要因检测到暂存区有修改而自动提交。
 - 提交信息第一行为一句简洁的总结，基于最近一次提交与当前变更之间的差异概括。
 - 若变更较复杂，可在第一行后空一行，以 `- ` 开头的条目补充原因、内容和影响；简单变更可省略。
 - 提交信息每行首字母大写，不以句号结尾，不使用 Markdown 语法。
-- 最后一行标注 AI 辅助信息，格式为 `Assisted-by: 供应商:模型 工具`。vim、git、vscode 等基础工具无需标注。
+- 最后一行标注 AI 辅助信息，格式为 `Assisted-by: AGENT_NAME:MODEL_VERSION [TOOL1] [TOOL2]...`。
+  - AGENT_NAME：你使用的 AI 工具、框架或智能体的名称（例如 Claude, Copilot, Codex 等）。
+  - MODEL_VERSION：具体调用的模型版本（例如 claude-3-opus, gpt-4 等）。
+  - `[TOOL1]` `[TOOL2]`（可选）：搭配使用的专业代码分析工具（例如 coccinelle, sparse, smatch, clang-tidy 等）。
+  - 示例：
+    - `Assisted-by: Codex:ChatGPT-4.5`
+    - `Assisted-by: OpenCode:deepseek-v4-pro clang-tidy`
+    - `Assisted-by: Claude:claude-3-opus coccinelle sparse`
 - 多行提交信息使用多个 `-m` 参数分行，不要用 `\n` 内嵌换行。
 
 ## 验证建议
