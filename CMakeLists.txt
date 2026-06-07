@@ -35,10 +35,8 @@ if (RMDEV_ENABLE_TESTS)
     set(RMDEV_ENABLE_TESTS ON CACHE BOOL "" FORCE)
 endif ()
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
-
-include(utils)
-include(add_packages)
+include(cmake/utils.cmake)
+include(cmake/add_packages.cmake)
 
 set(boardDir "${CMAKE_CURRENT_LIST_DIR}")
 
