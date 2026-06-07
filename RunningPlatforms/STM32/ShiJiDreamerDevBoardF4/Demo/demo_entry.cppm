@@ -23,7 +23,7 @@ export EMDEVIF_NO_RETURN void demoEntry() noexcept
     using namespace emdevif;
 
     Thread breathing_light_thread = Thread::create(
-        {.name = "breathingLight", .priority = Thread::Priority::BelowNormal, .stack_size = 128},
+        {.name = "breathingLight", .priority = ThreadPriority::BelowNormal, .stack_size = 128},
         [](void*) noexcept {
             const emdevif::Pwm pwm{"breathing light pwm"};
 

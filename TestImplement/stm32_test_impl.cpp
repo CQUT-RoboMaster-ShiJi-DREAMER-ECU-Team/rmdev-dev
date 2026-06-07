@@ -52,7 +52,7 @@ static emdevif::Serial test_tx_serial{"test transmit serial"};
 static char printf_buffer[512];
 
 static constexpr auto DEFAULT_TASK_STACK_DEPTH = 1024U;
-static emdevif::Thread::StaticInstance<DEFAULT_TASK_STACK_DEPTH> default_task_static_instance;
+static emdevif::ThreadStaticInstance<DEFAULT_TASK_STACK_DEPTH> default_task_static_instance;
 static emdevif::Thread default_task;
 
 EMDEVIF_NO_RETURN static void osStartDefaultTask(void* arguments);
@@ -114,7 +114,7 @@ extern "C" EMDEVIF_NO_RETURN void testEntry(void)
     emdevif::logger::init(::vsnprintf).terminateIfNotSucceed();
 
     default_task = emdevif::Thread::create({.name = "DefaultTask",
-                                            .priority = emdevif::Thread::Priority::Max,
+                                            .priority = emdevif::ThreadPriority::Max,
                                             .static_instance = &default_task_static_instance,
                                             .stack_size = DEFAULT_TASK_STACK_DEPTH},
                                            osStartDefaultTask,
