@@ -47,14 +47,32 @@ rmdev-dev/
 
 ### 构建示例
 
-STM32（需要 toolchain file）：
+STM32（通过 `CMakePresets.json`，所有预设均已内置工具链、平台与板卡参数）：
+
 ```bash
-cmake -S . -B build -DPLATFORM_NAME=stm32 -DBOARD_NAME=RoboMasterDevelopmentBoardTypeC \
-  -DCMAKE_TOOLCHAIN_FILE=RunningPlatforms/STM32/RoboMasterDevelopmentBoardTypeC/cmake/gcc-arm-none-eabi.cmake
-cmake --build build
+# 配置
+cmake --preset RoboMasterDevelopmentBoardTypeC
+# 构建（默认 Debug）
+cmake --build --preset RoboMasterDevelopmentBoardTypeC-Debug
+# 或构建 Release
+cmake --build --preset RoboMasterDevelopmentBoardTypeC-Release
+# 列出所有可用预设
+cmake --list-presets
 ```
 
-ESP32（需已安装 ESP-IDF）：
+可用的 configure 预设：
+
+| 预设名 | 对应板卡 |
+|---|---|
+| `RoboMasterDevelopmentBoardTypeC` | RoboMaster 开发板 C 型 (STM32F407IGHx) |
+| `ShiJiDreamerDevBoardF4` | 士继 DREAMER 开发板 (STM32F407VGT6) |
+| `DM-MC-Board02` | 达妙 DM-MC-Board02 (STM32H723VGT6) |
+| `F103C8T6` | STM32F103C8T6 最小系统板 |
+
+每个 configure 预设均有对应的 `-Debug` / `-Release` build 预设。
+
+ESP32（需已安装 ESP-IDF，不使用 CMake preset）：
+
 ```bash
 idf.py -DPLATFORM_NAME=esp32 -DBOARD_NAME=ESP32-DevKitC build
 ```
@@ -103,6 +121,7 @@ EMDEVIF_NO_RETURN void testEntry(void);
 
 | 文件 | 作用 |
 |---|---|
+| `CMakePresets.json` | CMake 预设（统一管理各板卡的 generator、工具链与构建类型） |
 | `.clang-format` / `.clang-tidy` | C/C++ 代码风格与静态检查规则 |
 | `.clangd` | LSP 配置（后台索引与补全） |
 | `ftdi.cfg` / `stlink.cfg` / `daplink.cfg` | OpenOCD 调试器配置文件 |
@@ -147,6 +166,6 @@ EMDEVIF_NO_RETURN void testEntry(void);
 - 多行提交信息使用多个 `-m` 参数分行，不要用 `\n` 内嵌换行。
 
 ## 验证建议
-- 使用 `PLATFORM_NAME` 与 `BOARD_NAME` 选择目标平台进行构建。
-- 变更板级逻辑后，至少在对应板级配置完成一次构建验证。
+- 使用 `cmake --preset <板卡名>` 配置，`cmake --build --preset <板卡名>-Debug` 构建。
+- 变更板级逻辑后，至少在对应板卡配置完成一次构建验证。
 - 变更涉及 `TestImplement/` 时，至少验证一个 STM32 板卡和一个 ESP32 板卡的构建。

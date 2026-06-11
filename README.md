@@ -8,7 +8,7 @@
 - 运行与平台相关/无关的测试入口
 - 验证跨平台构建（STM32 / ESP32）
 
-> 该仓库定位是“开发与测试环境”，不是量产产品工程模板。
+> 该仓库定位是"开发与测试环境"，不是量产产品工程模板。
 
 ## 仓库结构
 
@@ -16,6 +16,7 @@
 - `RunningPlatforms/`：平台与板级工程（按平台/开发板划分）
 - `TestImplement/`：跨平台测试实现与测试入口适配
 - `Packages/`：第三方依赖（本仓库集成使用）
+- `CMakePresets.json`：CMake 预设（统一管理各板卡的构建参数）
 
 ## 快速开始
 
@@ -35,20 +36,34 @@ CMake 变量：
 | `PLATFORM_NAME`      | String | `""` | 平台名：`stm32` / `esp32`                                     |
 | `BOARD_NAME`         | String | `""` | 具体开发板目录名                                                  |
 
-### 3) 示例命令
+### 3) 构建
 
-STM32：
+**STM32（通过 CMakePresets.json）**
+
+使用 `cmake --list-presets` 查看所有可用预设，然后选择对应板卡：
+
+| 预设名 | 对应板卡 |
+|---|---|
+| `RoboMasterDevelopmentBoardTypeC` | RoboMaster 开发板 C 型 (STM32F407IGHx) |
+| `ShiJiDreamerDevBoardF4` | 士继 DREAMER 开发板 (STM32F407VGT6) |
+| `DM-MC-Board02` | 达妙 DM-MC-Board02 (STM32H723VGT6) |
+| `F103C8T6` | STM32F103C8T6 最小系统板 |
+
+每个 configure 预设均有对应的 `-Debug` / `-Release` build 预设。
 
 ```bash
-cmake -S . -B build -DPLATFORM_NAME=stm32 -DBOARD_NAME=RoboMasterDevelopmentBoardTypeC -DCMAKE_TOOLCHAIN_FILE=RunningPlatforms/STM32/RoboMasterDevelopmentBoardTypeC/cmake/gcc-arm-none-eabi.cmake
-cmake --build build
+# 配置（以 RoboMasterDevelopmentBoardTypeC 为例）
+cmake --preset RoboMasterDevelopmentBoardTypeC
+# 构建 Debug
+cmake --build --preset RoboMasterDevelopmentBoardTypeC-Debug
+# 构建 Release
+cmake --build --preset RoboMasterDevelopmentBoardTypeC-Release
 ```
 
-ESP32（需已安装 ESP-IDF）：
+**ESP32（需已安装 ESP-IDF）**
 
 ```bash
-idf.py -DPLATFORM_NAME=esp32 -DBOARD_NAME=ESP32-DevKitC
-idf.py build
+idf.py -DPLATFORM_NAME=esp32 -DBOARD_NAME=ESP32-DevKitC build
 ```
 
 ## 当前支持平台

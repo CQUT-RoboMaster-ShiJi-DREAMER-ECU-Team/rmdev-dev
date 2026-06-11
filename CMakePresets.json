@@ -1,0 +1,95 @@
+{
+    "version": 6,
+    "configurePresets": [
+        {
+            "name": "default-stm32",
+            "hidden": true,
+            "generator": "Ninja Multi-Config",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "toolchainFile": "${sourceDir}/RunningPlatforms/STM32/${presetName}/cmake/gcc-arm-none-eabi.cmake",
+            "cacheVariables": {
+                "PLATFORM_NAME": "stm32",
+                "BOARD_NAME": "${presetName}",
+                "CMAKE_MESSAGE_LOG_LEVEL": "TRACE",
+                "CMAKE_OBJECT_PATH_MAX": "512"
+            },
+            "warnings": {
+                "dev": true
+            }
+        },
+        {
+            "name": "RoboMasterDevelopmentBoardTypeC",
+            "inherits": "default-stm32",
+            "displayName": "RoboMasterDevelopmentBoardTypeC (STM32F407IGHx)",
+            "description": "RoboMaster Development Board Type C"
+        },
+        {
+            "name": "ShiJiDreamerDevBoardF4",
+            "inherits": "default-stm32",
+            "displayName": "ShiJiDreamerDevBoardF4",
+            "description": "ShiJi Dreamer Dev Board F4"
+        },
+        {
+            "name": "DM-MC-Board02",
+            "inherits": "default-stm32",
+            "displayName": "DM-MC-Board02",
+            "description": "DM-MC-Board02"
+        },
+        {
+            "name": "F103C8T6",
+            "inherits": "default-stm32",
+            "displayName": "F103C8T6",
+            "description": "STM32F103C8T6 Minimum System Board"
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "RoboMasterDevelopmentBoardTypeC-Debug",
+            "displayName": "RoboMasterDevelopmentBoardTypeC Debug",
+            "configurePreset": "RoboMasterDevelopmentBoardTypeC",
+            "configuration": "Debug"
+        },
+        {
+            "name": "RoboMasterDevelopmentBoardTypeC-Release",
+            "displayName": "RoboMasterDevelopmentBoardTypeC Release",
+            "configurePreset": "RoboMasterDevelopmentBoardTypeC",
+            "configuration": "Release"
+        },
+        {
+            "name": "ShiJiDreamerDevBoardF4-Debug",
+            "displayName": "ShiJiDreamerDevBoardF4 Debug",
+            "configurePreset": "ShiJiDreamerDevBoardF4",
+            "configuration": "Debug"
+        },
+        {
+            "name": "ShiJiDreamerDevBoardF4-Release",
+            "displayName": "ShiJiDreamerDevBoardF4 Release",
+            "configurePreset": "ShiJiDreamerDevBoardF4",
+            "configuration": "Release"
+        },
+        {
+            "name": "DM-MC-Board02-Debug",
+            "displayName": "DM-MC-Board02 Debug",
+            "configurePreset": "DM-MC-Board02",
+            "configuration": "Debug"
+        },
+        {
+            "name": "DM-MC-Board02-Release",
+            "displayName": "DM-MC-Board02 Release",
+            "configurePreset": "DM-MC-Board02",
+            "configuration": "Release"
+        },
+        {
+            "name": "F103C8T6-Debug",
+            "displayName": "F103C8T6 Debug",
+            "configurePreset": "F103C8T6",
+            "configuration": "Debug"
+        },
+        {
+            "name": "F103C8T6-Release",
+            "displayName": "F103C8T6 Release",
+            "configurePreset": "F103C8T6",
+            "configuration": "Release"
+        }
+    ]
+}
