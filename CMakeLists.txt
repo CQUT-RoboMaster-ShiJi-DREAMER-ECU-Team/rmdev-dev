@@ -23,9 +23,10 @@ option(RMDEV_ENABLE_TESTS "Enable test for rmdev" ON)
 set(PLATFORM_NAME "" CACHE STRING "Set to choose run test on which platform.")
 set(BOARD_NAME "" CACHE STRING "Set to choose run test on which board.")
 
-message(STATUS "CMAKE_CXX_COMPILER_ID=\"${CMAKE_CXX_COMPILER_ID}\"")
+message(DEBUG "CMAKE_TOOLCHAIN_FILE: ${CMAKE_TOOLCHAIN_FILE}")
+message(DEBUG "CMAKE_CXX_COMPILER_ID=\"${CMAKE_CXX_COMPILER_ID}\"")
 if (NOT MSVC)
-    message(STATUS "Adding compile option: -fconcepts-diagnostics-depth=8")
+    message(DEBUG "Adding compile option: -fconcepts-diagnostics-depth=8")
     add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-fconcepts-diagnostics-depth=8>)
 endif ()
 

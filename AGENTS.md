@@ -124,9 +124,7 @@ EMDEVIF_NO_RETURN void testEntry(void);
 | `CMakePresets.json` | CMake 预设（统一管理各板卡的 generator、工具链与构建类型） |
 | `.clang-format` / `.clang-tidy` | C/C++ 代码风格与静态检查规则 |
 | `.clangd` | LSP 配置（后台索引与补全） |
-| `ftdi.cfg` / `stlink.cfg` / `daplink.cfg` | OpenOCD 调试器配置文件 |
 | `FreeMaster_DM-MC-02_DemoWatcher.pmpx` | FreeMaster 运行时变量监视配置 |
-| `cmake/utils.cmake` | `addCopyFinallyBinaryFileTarget`：构建后将二进制自动拷贝到 `bin/` |
 
 ## C++20 Modules 注意
 
