@@ -89,8 +89,9 @@ set(RMDEV_ENABLE_TESTS ON)
 set(RMDEV_ENABLED_DRIVER_LIST "DJIMotor" CACHE INTERNAL "" FORCE)
 add_subdirectory(${CMAKE_SOURCE_DIR}/rmdev ${CMAKE_BINARY_DIR}/rmdev)
 
+target_compile_definitions(emdevif_core PUBLIC EMDEVIF_CORE_DATA_CONTAINER_MESSAGE_QUEUE_TIMEOUT_TYPE_BITS=32)
 target_compile_definitions(emdevif_system PUBLIC EMDEVIF_SYS_TICK_TYPE_UINT_BITS=32)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/TestImplement ${CMAKE_BINARY_DIR}/TestImplement)
 
-addCopyFinallyBinaryFileTarget(${PROJECT_NAME} "${PROJECT_NAME}.elf" ${CMAKE_CURRENT_BINARY_DIR})
+addCopyFinallyBinaryFileTarget(${PROJECT_NAME} "${PROJECT_NAME}.elf" "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")

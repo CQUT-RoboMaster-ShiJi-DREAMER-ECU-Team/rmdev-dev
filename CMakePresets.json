@@ -1,5 +1,5 @@
 {
-    "version": 6,
+    "version": 10,
     "configurePresets": [
         {
             "name": "default-stm32",
@@ -10,8 +10,7 @@
             "cacheVariables": {
                 "PLATFORM_NAME": "stm32",
                 "BOARD_NAME": "${presetName}",
-                "CMAKE_MESSAGE_LOG_LEVEL": "TRACE",
-                "CMAKE_OBJECT_PATH_MAX": "512"
+                "CMAKE_MESSAGE_LOG_LEVEL": "TRACE"
             },
             "warnings": {
                 "dev": true
@@ -22,6 +21,8 @@
             "inherits": "default-stm32",
             "displayName": "RoboMasterDevelopmentBoardTypeC (STM32F407IGHx)",
             "description": "RoboMaster Development Board Type C",
+            "$comment": "The name of current presets is too long, so use abbreviation to avoid the path is too long on Windows.",
+            "binaryDir": "${sourceDir}/build/RM-CBoard",
             "cacheVariables": {
                 "EMDEVIF_USE_CPP_MODULES": "OFF"
             }
@@ -31,6 +32,7 @@
             "inherits": "default-stm32",
             "displayName": "ShiJiDreamerDevBoardF4",
             "description": "ShiJi Dreamer Dev Board F4",
+            "binaryDir": "${sourceDir}/build/SJDreamerF4",
             "cacheVariables": {
                 "EMDEVIF_USE_CPP_MODULES": "ON"
             }

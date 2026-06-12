@@ -78,7 +78,6 @@ if (NOT FreeRTOS-Kernel_ADDED)
     message(FATAL_ERROR "[${PROJECT_NAME}]: CPM: Failed to add package `FreeRTOS-Kernel`")
 endif ()
 
-set(RMDEV_ENABLED_DRIVER_LIST "BMI088" CACHE INTERNAL "" FORCE)
 set(RMDEV_ENABLE_INS_MODULE ON CACHE INTERNAL "" FORCE)
 
 add_library(emdevif_user_declares INTERFACE)
@@ -99,9 +98,11 @@ add_subdirectory(
 )
 
 set(RMDEV_ENABLE_TESTS ON)
-set(RMDEV_ENABLED_DRIVER_LIST "DJIMotor" CACHE INTERNAL "" FORCE)
+set(RMDEV_ENABLED_DRIVER_LIST "BMI088;DJIMotor" CACHE INTERNAL "" FORCE)
 add_subdirectory(${CMAKE_SOURCE_DIR}/rmdev ${CMAKE_BINARY_DIR}/rmdev)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/TestImplement ${CMAKE_BINARY_DIR}/TestImplement)
 
-addCopyFinallyBinaryFileTarget(${PROJECT_NAME} "${PROJECT_NAME}.elf" ${CMAKE_CURRENT_BINARY_DIR})
+target_compile_definitions(emdevif_core PUBLIC EMDEVIF_CORE_DATA_CONTAINER_MESSAGE_QUEUE_TIMEOUT_TYPE_BITS=64)
+
+addCopyFinallyBinaryFileTarget(${PROJECT_NAME} "${PROJECT_NAME}.elf" "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.28...4.2.0)
+cmake_minimum_required(VERSION 3.31...4.2.0)
 
 set(EMDEVIF_TEST_TEST_SOURCE_DIR_
     "${CMAKE_CURRENT_LIST_DIR}/emdevif_collection/emdevif/test"
