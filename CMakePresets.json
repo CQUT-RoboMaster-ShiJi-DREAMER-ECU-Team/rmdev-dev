@@ -21,25 +21,37 @@
             "name": "RoboMasterDevelopmentBoardTypeC",
             "inherits": "default-stm32",
             "displayName": "RoboMasterDevelopmentBoardTypeC (STM32F407IGHx)",
-            "description": "RoboMaster Development Board Type C"
+            "description": "RoboMaster Development Board Type C",
+            "cacheVariables": {
+                "EMDEVIF_USE_CPP_MODULES": "OFF"
+            }
         },
         {
             "name": "ShiJiDreamerDevBoardF4",
             "inherits": "default-stm32",
             "displayName": "ShiJiDreamerDevBoardF4",
-            "description": "ShiJi Dreamer Dev Board F4"
+            "description": "ShiJi Dreamer Dev Board F4",
+            "cacheVariables": {
+                "EMDEVIF_USE_CPP_MODULES": "ON"
+            }
         },
         {
             "name": "DM-MC-Board02",
             "inherits": "default-stm32",
             "displayName": "DM-MC-Board02",
-            "description": "DM-MC-Board02"
+            "description": "DM-MC-Board02",
+            "cacheVariables": {
+                "EMDEVIF_USE_CPP_MODULES": "ON"
+            }
         },
         {
             "name": "F103C8T6",
             "inherits": "default-stm32",
             "displayName": "F103C8T6",
-            "description": "STM32F103C8T6 Minimum System Board"
+            "description": "STM32F103C8T6 Minimum System Board",
+            "cacheVariables": {
+                "EMDEVIF_USE_CPP_MODULES": "ON"
+            }
         }
     ],
     "buildPresets": [
