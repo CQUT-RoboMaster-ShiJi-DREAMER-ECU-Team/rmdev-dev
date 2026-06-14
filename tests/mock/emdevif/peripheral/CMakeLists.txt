@@ -1,0 +1,3 @@
+add_executable(emdevif_peripheral_test peripheral_handle_map_test.cpp peripheral_model_test.cpp)
+target_link_libraries(emdevif_peripheral_test PRIVATE emdevif_core)
+add_test(NAME emdevif_peripheral_test COMMAND emdevif_peripheral_test)

@@ -1,0 +1,3 @@
+add_executable(emdevif_logger_test logger_test.cpp)
+target_link_libraries(emdevif_logger_test PRIVATE emdevif_logger emdevif_core)
+add_test(NAME emdevif_logger_test COMMAND emdevif_logger_test)
