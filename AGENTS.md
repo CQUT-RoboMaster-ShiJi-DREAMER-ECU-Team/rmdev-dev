@@ -19,12 +19,7 @@ rmdev-dev/
 │       ├── CMakeLists.txt        # GoogleTest CPM 集成与测试注册
 │       ├── emdevif/              # emdevif 各模块测试（镜像源目录结构）
 │       └── rmdev/                # rmdev 各模块测试（镜像源目录结构）
-├── RunningPlatforms/             # 平台与板级工程（按平台/开发板划分）
-│   ├── STM32/                    #   STM32 板卡工程（CubeMX + CMake）
-│   └── ESP32/                    #   ESP32 板卡工程（ESP-IDF）
-├── TestImplement/                # 跨平台测试实现与测试入口适配
-├── cmake/                        # CMake 辅助脚本（utils、add_packages、get_cpm）
-└── bin/                          # 构建产物自动拷贝目标
+└── cmake/                        # CMake 辅助脚本（utils、add_packages、get_cpm）
 ```
 
 ### 子模块层级
@@ -52,11 +47,19 @@ rmdev-dev/
 |---------------------------|--------|--------------------------|-------------------------------------------------|
 | `TEST_PLATFORM`           | String | `"mock"`                 | 见前文                                             |
 | `EMDEVIF_USE_CPP_MODULES` | Bool   | 由 `CMakePresets.json` 决定 | C++20 Modules 路径开关，变更后需验证 ON/OFF 两条路径           |
-| `TEST_ENABLE_EXCEPTIONS`  | Bool   | `ON`                     | C++ 异常开关（宿主测试路径），关闭时测试中异常相关用例通过 `GTEST_SKIP` 跳过 |
+| `TEST_ENABLE_EXCEPTIONS`  | Bool   | `OFF`                    | C++ 异常开关（宿主测试路径），`CMakeLists.txt` 中默认关闭，Preset 可显式开启；关闭时测试中异常相关用例通过 `GTEST_SKIP` 跳过 |
 
 ### 宿主单元测试
 
-在 Windows/Linux/macOS 上使用 GoogleTest 进行单元测试，覆盖 emdevif 和 rmdev 的核心模块。
+在 Windows/Linux/macOS 上使用 GoogleTest 进行单元测试。
+
+当前已覆盖：
+
+- `emdevif/core` 的核心能力
+- `rmdev/debug_assistance`
+- `rmdev/message_manager`
+
+`emdevif` 的 `logger`、`timeline`、`system`、`peripheral` 以及 `rmdev` 的 `rmdev_math`、`rmdev_control_algorithm`、`rmdev_kinematic_solution`、`rmdev_device_model`、`rmdev_ins` 和各驱动模块的测试将在后续补充。
 
 ```bash
 # 列出所有可用预设
