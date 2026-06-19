@@ -1,7 +1,11 @@
 #include "host_test_pch.hpp"
 #include <cstdint>
 #include <vector>
-#include "rmdev/debug_assistance/vofa.hpp"
+#if EMDEVIF_USE_MODULES
+    import rmdev.debug_assistance.vofa;
+#else
+    #include "rmdev/debug_assistance/vofa.hpp"
+#endif
 using namespace rmdev::debug_assistance::vofa;
 
 TEST(VOFATest, FrameTail) {

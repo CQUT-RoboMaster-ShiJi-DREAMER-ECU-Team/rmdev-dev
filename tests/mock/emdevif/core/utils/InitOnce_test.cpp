@@ -1,7 +1,15 @@
 #include "host_test_pch.hpp"
 #include <string>
-#include "emdevif/core/utils/init_once.hpp"
-#include "emdevif/core/error_handler.hpp"
+#if EMDEVIF_USE_MODULES
+    import emdevif.core.utils.init_once;
+#else
+    #include "emdevif/core/utils/init_once.hpp"
+#endif
+#if EMDEVIF_USE_MODULES
+    import emdevif.core.error_handler;
+#else
+    #include "emdevif/core/error_handler.hpp"
+#endif
 using namespace emdevif;
 
 TEST(InitOnceTest, DefaultAndInit) {

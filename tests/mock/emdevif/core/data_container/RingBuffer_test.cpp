@@ -1,7 +1,11 @@
 #include "host_test_pch.hpp"
 #include <array>
 #include <algorithm>
-#include "emdevif/core/data_container/ring_buffer.hpp"
+#if EMDEVIF_USE_MODULES
+    import emdevif.core.data_container.ring_buffer;
+#else
+    #include "emdevif/core/data_container/ring_buffer.hpp"
+#endif
 using namespace emdevif;
 
 TEST(RingUnsignedTest, IncrementWrap) {

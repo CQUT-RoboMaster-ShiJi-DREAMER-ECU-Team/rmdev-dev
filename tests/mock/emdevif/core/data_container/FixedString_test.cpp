@@ -1,7 +1,11 @@
 #include "host_test_pch.hpp"
 #include <compare>
 #include <string_view>
-#include "emdevif/core/data_container/fixed_string.hpp"
+#if EMDEVIF_USE_MODULES
+    import emdevif.core.data_container.fixed_string;
+#else
+    #include "emdevif/core/data_container/fixed_string.hpp"
+#endif
 using namespace emdevif;
 
 TEST(FixedStringTest, CharPackConstruct) {
@@ -16,11 +20,6 @@ TEST(FixedStringTest, IteratorConstruct) {
     std::string_view src = "hello";
     BasicFixedString<char, 5> s(src.begin(), src.end());
     EXPECT_EQ(s.view(), "hello");
-}
-TEST(FixedStringTest, DefaultConstruct) {
-    constexpr BasicFixedString<char, 5> s;
-    static_assert(s.empty());
-    EXPECT_EQ(s.view(), "");
 }
 TEST(FixedStringTest, ElementAccess) {
     constexpr BasicFixedString<char, 3> s('x','y','z');

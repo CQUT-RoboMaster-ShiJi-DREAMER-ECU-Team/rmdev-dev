@@ -1,8 +1,16 @@
 #include "host_test_pch.hpp"
 #include <memory>
 #include "MockQueue.hpp"
-#include "rmdev/message_manager/subscriber.hpp"
-#include "rmdev/message_manager/topic.hpp"
+#if EMDEVIF_USE_MODULES
+    import rmdev.message_manager.subscriber;
+#else
+    #include "rmdev/message_manager/subscriber.hpp"
+#endif
+#if EMDEVIF_USE_MODULES
+    import rmdev.message_manager.topic;
+#else
+    #include "rmdev/message_manager/topic.hpp"
+#endif
 using namespace rmdev;
 using namespace emdevif;
 

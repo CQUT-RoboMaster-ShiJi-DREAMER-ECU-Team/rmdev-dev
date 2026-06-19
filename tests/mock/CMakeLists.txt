@@ -1,0 +1,60 @@
+cmake_minimum_required(VERSION 3.31...4.2.0)
+
+# Non-GoogleTest tests (independent executables)
+add_subdirectory(emdevif/core/error_handler)
+
+# GoogleTest via CPM
+CPMFindPackage(
+    NAME googletest
+    GITHUB_REPOSITORY google/googletest
+    GIT_TAG v1.17.0
+    VERSION 1.17.0
+    OPTIONS "BUILD_GMOCK OFF" "INSTALL_GTEST OFF"
+)
+if (NOT googletest_ADDED)
+    message(FATAL_ERROR "CPM: Failed to add package `googletest`")
+endif ()
+
+add_executable(host_gtest
+    # emdevif core
+    emdevif/core/concepts_test.cpp
+    emdevif/core/data_container/ArrayMap_test.cpp
+    emdevif/core/data_container/FixedString_test.cpp
+    emdevif/core/data_container/MessageQueue_test.cpp
+    emdevif/core/data_container/RingBuffer_test.cpp
+    emdevif/core/endian_test.cpp
+    emdevif/core/integer_suffix_test.cpp
+    emdevif/core/resource_guard/resource_guard_test.cpp
+    emdevif/core/type_traits/type_traits_test.cpp
+    emdevif/core/utils/BitInt_test.cpp
+    emdevif/core/utils/InitOnce_test.cpp
+    emdevif/core/utils/When_test.cpp
+
+    # rmdev
+    rmdev/debug_assistance/VOFA_test.cpp
+    rmdev/message_manager/Subscriber_test.cpp
+    rmdev/message_manager/Topic_test.cpp
+)
+
+target_include_directories(host_gtest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_precompile_headers(host_gtest PRIVATE host_test_pch.hpp)
+
+target_link_libraries(host_gtest PRIVATE
+    gtest_main
+    emdevif_core
+
+    rmdev_message_manager
+    rmdev_debug_assistance
+)
+
+if (NOT TEST_ENABLE_EXCEPTIONS)
+    if (NOT MSVC)
+        target_compile_options(host_gtest PRIVATE -fno-exceptions -fno-rtti)
+    else ()
+        target_compile_options(host_gtest PRIVATE /EHs- /GR-)
+    endif ()
+endif ()
+
+# CTest registration
+add_test(NAME host_gtest COMMAND host_gtest)
+set_tests_properties(host_gtest PROPERTIES DEPENDS emdevif_core_error_handler_test)

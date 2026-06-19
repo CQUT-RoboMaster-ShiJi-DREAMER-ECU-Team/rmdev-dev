@@ -1,7 +1,11 @@
 #include "host_test_pch.hpp"
 #include <cstdint>
 #include <limits>
-#include "emdevif/core/utils/bit_int.hpp"
+#if EMDEVIF_USE_MODULES
+    import emdevif.core.utils.bit_int;
+#else
+    #include "emdevif/core/utils/bit_int.hpp"
+#endif
 using namespace emdevif;
 
 TEST(BitIntTest, StdSizes) {

@@ -1,6 +1,7 @@
 # AGENTS.md
 
 ## 仓库定位
+
 该仓库是 `rmdev` 与 `emdevif` 的开发/测试集成环境，不是最终产品工程模板。
 
 ## 仓库结构
@@ -11,6 +12,13 @@ rmdev-dev/
 ├── emdevif_collection/
 │   ├── emdevif/                  # 子模块：嵌入式通用接口抽象（有独立 AGENTS.md）
 │   └── emdevif_stm32_peripheral/ # 子模块：emdevif 的 STM32 外设扩展（有独立 AGENTS.md）
+├── tests/                        # 宿主单元测试
+│   ├── CMakeLists.txt
+│   └── mock/
+│       ├── host_test_pch.hpp     # 预编译头（GoogleTest）
+│       ├── CMakeLists.txt        # GoogleTest CPM 集成与测试注册
+│       ├── emdevif/              # emdevif 各模块测试（镜像源目录结构）
+│       └── rmdev/                # rmdev 各模块测试（镜像源目录结构）
 ├── RunningPlatforms/             # 平台与板级工程（按平台/开发板划分）
 │   ├── STM32/                    #   STM32 板卡工程（CubeMX + CMake）
 │   └── ESP32/                    #   ESP32 板卡工程（ESP-IDF）
@@ -20,6 +28,7 @@ rmdev-dev/
 ```
 
 ### 子模块层级
+
 三个子模块各有独立 AGENTS.md，修改库逻辑时应遵循对应模块的约束：
 
 - [rmdev/AGENTS.md](rmdev/AGENTS.md) — 算法/模型/驱动模块的裁剪、接口与验证要求
@@ -29,102 +38,55 @@ rmdev-dev/
 ## 构建系统
 
 ### 顶层 CMake 流程
-根 `CMakeLists.txt` 根据 `PLATFORM_NAME` 选择入口：
 
-- `stm32`：进入 `RunningPlatforms/STM32/${BOARD_NAME}`，使用 GCC ARM 工具链
-- `esp32`：委托 ESP-IDF 构建系统，需已安装 ESP-IDF 环境
+根 `CMakeLists.txt` 根据 `TEST_PLATFORM` 选择入口：
 
-第三方依赖通过 CPM 管理（`cmake/add_packages.cmake`），目前引入 `mpaland/printf` 和 `mpusz/mp-units`。
+- `TEST_PLATFORM=mock`：宿主单元测试模式，进入 `tests/`，不依赖平台/板卡
+- 其他 `TEST_PLATFORM`：暂时未实现，后续添加相关功能
+
+第三方依赖通过 CPM 管理（`cmake/add_packages.cmake`），目前引入 `mpaland/printf` 和 `mpusz/mp-units`。测试依赖 `google/googletest`。
 
 ### 关键 CMake 变量
 
-| 变量 | 类型 | 默认 | 说明 |
-|---|---|---|---|
-| `PLATFORM_NAME` | String | `""` | `stm32` 或 `esp32` |
-| `BOARD_NAME` | String | `""` | 开发板目录名（如 `DM-MC-Board02`） |
-| `RMDEV_ENABLE_TESTS` | Bool | `ON` | 是否构建并运行 rmdev 测试 |
-| `EMDEVIF_USE_CPP_MODULES` | Bool | 由子模块决定 | C++20 Modules 路径开关，变更后需验证 ON/OFF 两条路径 |
+| 变量                        | 类型     | 默认                       | 说明                                              |
+|---------------------------|--------|--------------------------|-------------------------------------------------|
+| `TEST_PLATFORM`           | String | `"mock"`                 | 见前文                                             |
+| `EMDEVIF_USE_CPP_MODULES` | Bool   | 由 `CMakePresets.json` 决定 | C++20 Modules 路径开关，变更后需验证 ON/OFF 两条路径           |
+| `TEST_ENABLE_EXCEPTIONS`  | Bool   | `ON`                     | C++ 异常开关（宿主测试路径），关闭时测试中异常相关用例通过 `GTEST_SKIP` 跳过 |
 
-### 构建示例
+### 宿主单元测试
 
-STM32（通过 `CMakePresets.json`，所有预设均已内置工具链、平台与板卡参数）：
+在 Windows/Linux/macOS 上使用 GoogleTest 进行单元测试，覆盖 emdevif 和 rmdev 的核心模块。
 
 ```bash
-# 配置
-cmake --preset RoboMasterDevelopmentBoardTypeC
-# 构建（默认 Debug）
-cmake --build --preset RoboMasterDevelopmentBoardTypeC-Debug
-# 或构建 Release
-cmake --build --preset RoboMasterDevelopmentBoardTypeC-Release
 # 列出所有可用预设
 cmake --list-presets
+
+# 配置（4 选 1）
+cmake --preset HostTestModulesExceptions
+cmake --preset HostTestModulesNoexceptions
+cmake --preset HostTestHeadersExceptions
+cmake --preset HostTestHeadersNoexceptions
+
+# Debug 构建并运行测试
+cmake --build --preset HostTestModulesExceptions --config Debug
+ctest --preset HostTestModulesExceptions -C Debug
+
+# Release 构建并运行测试
+cmake --build --preset HostTestModulesExceptions --config Release
+ctest --preset HostTestModulesExceptions -C Release
 ```
 
-可用的 configure 预设：
+### 宿主测试 Preset 表
 
-| 预设名 | 对应板卡 |
-|---|---|
-| `RoboMasterDevelopmentBoardTypeC` | RoboMaster 开发板 C 型 (STM32F407IGHx) |
-| `ShiJiDreamerDevBoardF4` | 士继 DREAMER 开发板 (STM32F407VGT6) |
-| `DM-MC-Board02` | 达妙 DM-MC-Board02 (STM32H723VGT6) |
-| `F103C8T6` | STM32F103C8T6 最小系统板 |
+| Preset 名 | EMDEVIF_USE_CPP_MODULES | TEST_ENABLE_EXCEPTIONS |
+|---|---|---|
+| `HostTestModulesExceptions` | ON | ON |
+| `HostTestModulesNoexceptions` | ON | OFF |
+| `HostTestHeadersExceptions` | OFF | ON |
+| `HostTestHeadersNoexceptions` | OFF | OFF |
 
-每个 configure 预设均有对应的 `-Debug` / `-Release` build 预设。
-
-ESP32（需已安装 ESP-IDF，不使用 CMake preset）：
-
-```bash
-idf.py -DPLATFORM_NAME=esp32 -DBOARD_NAME=ESP32-DevKitC build
-```
-
-### cmake-build-* 目录
-根目录下的 `cmake-build-debug-*` / `cmake-build-release-*` 是 CLion 生成的 out-of-tree 构建目录，由 `.gitignore` 排除，不要手动编辑其中的文件。
-
-## 测试入口契约
-
-`TestImplement/` 暴露两个 C 链接函数，板级启动代码必须调用：
-
-```c
-// 初始化（STM32 在 HAL_Init 前调用，ESP32 可调用也可不调用）
-void testInit(void* argument, ...);
-
-// 进入测试循环（创建 RTOS 任务并启动调度器 / 直接执行）
-EMDEVIF_NO_RETURN void testEntry(void);
-```
-
-板级工程负责提供 `testInit` / `testEntry` 的调用时机，测试实现本身根据 `PLATFORM_NAME` 编译 `stm32_test_impl.cpp` 或 `esp32_test_impl.cpp`。
-
-## 新增板卡 / 平台
-
-### 新增 STM32 板卡
-在 `RunningPlatforms/STM32/` 下创建以板卡名命名的目录，提供：
-
-- `cmake/gcc-arm-none-eabi.cmake` — 工具链文件
-- `Core/` — CubeMX 生成的 HAL 初始化代码（含 `main` 中调用 `testInit` / `testEntry`）
-- `Drivers/` — HAL 库
-- `CMakeLists.txt` — 板级 CMake
-
-可参考现有板卡（如 `RoboMasterDevelopmentBoardTypeC`）的结构。
-
-### 新增 ESP32 板卡
-在 `RunningPlatforms/ESP32/` 下创建目录，提供：
-
-- `main/` — ESP-IDF 组件（含 CMakeLists.txt 和测试入口）
-- `sdkconfig.defaults` — 默认 Kconfig 覆盖
-
-然后在 README 中补充板卡接线说明。
-
-### 新增平台（如 RP2040）
-需要在根 `CMakeLists.txt` 的 `if/elseif/else` 分支中新增平台判断逻辑，并在 `RunningPlatforms/` 下创建对应平台目录。
-
-## 关键配置文件
-
-| 文件 | 作用 |
-|---|---|
-| `CMakePresets.json` | CMake 预设（统一管理各板卡的 generator、工具链与构建类型） |
-| `.clang-format` / `.clang-tidy` | C/C++ 代码风格与静态检查规则 |
-| `.clangd` | LSP 配置（后台索引与补全） |
-| `FreeMaster_DM-MC-02_DemoWatcher.pmpx` | FreeMaster 运行时变量监视配置 |
+每个 configure preset 通过 Ninja Multi-Config 同时支持 Debug 和 Release 两种构建配置。
 
 ## C++20 Modules 注意
 
@@ -140,16 +102,15 @@ EMDEVIF_NO_RETURN void testEntry(void);
 具体模式参见技能目录下的 SKILL.md。
 
 ## 修改约束
+
 - 优先在对应子模块中修复库逻辑；本仓库只做集成与验证层调整。
-- 不修改 `emdevif_collection/emdevif/core/depends/` 第三方代码。
-- 与平台无关的测试逻辑放在 `TestImplement/`，平台相关逻辑放在 `RunningPlatforms/`。
+- 测试逻辑放在 `tests/mock/`。
 - `.agents/` 目录下的智能体规则与技能文档优先于其他历史路径；项目技能统一存放在 `.agents/skills/` 下。
 - 遇到已有的不符合 Doxygen 注释规范的代码时，不要强制修改格式，应先询问用户是否需要修改。
 
 ## Git 提交规范（对所有子模块都适用）
 
 - 提交信息统一使用中文，清晰描述变更内容和原因。
-- 仅当用户明确要求提交时才执行 `git commit`，不要因检测到暂存区有修改而自动提交。
 - 提交信息第一行为一句简洁的总结，基于最近一次提交与当前变更之间的差异概括。
 - 若变更较复杂，可在第一行后空一行，以 `- ` 开头的条目补充原因、内容和影响；简单变更可省略。
 - 提交信息每行首字母大写，不以句号结尾，不使用 Markdown 语法。
@@ -162,8 +123,3 @@ EMDEVIF_NO_RETURN void testEntry(void);
     - `Assisted-by: OpenCode:deepseek-v4-pro clang-tidy`
     - `Assisted-by: Claude:claude-3-opus coccinelle sparse`
 - 多行提交信息使用多个 `-m` 参数分行，不要用 `\n` 内嵌换行。
-
-## 验证建议
-- 使用 `cmake --preset <板卡名>` 配置，`cmake --build --preset <板卡名>-Debug` 构建。
-- 变更板级逻辑后，至少在对应板卡配置完成一次构建验证。
-- 变更涉及 `TestImplement/` 时，至少验证一个 STM32 板卡和一个 ESP32 板卡的构建。

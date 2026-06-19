@@ -1,8 +1,16 @@
 #include "host_test_pch.hpp"
 #include <memory>
 #include "MockQueue.hpp"
-#include "rmdev/message_manager/topic.hpp"
-#include "rmdev/message_manager/subscriber.hpp"
+#if EMDEVIF_USE_MODULES
+    import rmdev.message_manager.topic;
+#else
+    #include "rmdev/message_manager/topic.hpp"
+#endif
+#if EMDEVIF_USE_MODULES
+    import rmdev.message_manager.subscriber;
+#else
+    #include "rmdev/message_manager/subscriber.hpp"
+#endif
 using namespace rmdev;
 using namespace emdevif;
 
@@ -13,7 +21,7 @@ TEST(TopicTest, Construction) {
 }
 TEST(TopicTest, AddSubscriber) {
     Topic<MockQueue<int,5>, std::allocator> topic{"test"};
-    auto sub = topic.addSubscriber();
+    [[maybe_unused]] auto sub = topic.addSubscriber();
     EXPECT_EQ(topic.getQueueListInstance().size(), 1u);
 }
 TEST(TopicTest, PushAndPop) {

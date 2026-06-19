@@ -4,8 +4,16 @@
 #ifdef __cpp_exceptions
 #include <stdexcept>
 #endif
-#include "emdevif/core/resource_guard.hpp"
-#include "emdevif/core/error_handler.hpp"
+#if EMDEVIF_USE_MODULES
+    import emdevif.core.resource_guard;
+#else
+    #include "emdevif/core/resource_guard.hpp"
+#endif
+#if EMDEVIF_USE_MODULES
+    import emdevif.core.error_handler;
+#else
+    #include "emdevif/core/error_handler.hpp"
+#endif
 using namespace emdevif;
 
 static int g_cnt = 0;

@@ -1,7 +1,11 @@
 #include "host_test_pch.hpp"
 #include <cstdint>
 #include <type_traits>
-#include "emdevif/core/integer_suffix.hpp"
+#if EMDEVIF_USE_MODULES
+    import emdevif.core.integer_suffix;
+#else
+    #include "emdevif/core/integer_suffix.hpp"
+#endif
 using namespace emdevif::literals::integer_literals;
 
 TEST(IntegerSuffixTest, Unsigned) {

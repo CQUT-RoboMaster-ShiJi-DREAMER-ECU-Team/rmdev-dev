@@ -1,6 +1,10 @@
 #include "host_test_pch.hpp"
 #include <cstdint>
-#include "emdevif/core/endian.hpp"
+#if EMDEVIF_USE_MODULES
+    import emdevif.core.endian;
+#else
+    #include "emdevif/core/endian.hpp"
+#endif
 using namespace emdevif;
 
 TEST(EndianTest, ByteSwapUint16) {

@@ -3,8 +3,16 @@
 #include <cstdint>
 #include <vector>
 #include <string_view>
-#include "emdevif/core/error_handler.hpp"
-#include "emdevif/core/data_container/message_queue.hpp"
+#if EMDEVIF_USE_MODULES
+    import emdevif.core.error_handler;
+#else
+    #include "emdevif/core/error_handler.hpp"
+#endif
+#if EMDEVIF_USE_MODULES
+    import emdevif.core.data_container.message_queue;
+#else
+    #include "emdevif/core/data_container/message_queue.hpp"
+#endif
 
 template<typename T, size_t N=8>
 struct MockQueue {

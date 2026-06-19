@@ -1,3 +1,6 @@
+
 add_executable(emdevif_core_error_handler_test error_handler_test.cpp)
+
 target_link_libraries(emdevif_core_error_handler_test PRIVATE emdevif_core)
+
 add_test(NAME emdevif_core_error_handler_test COMMAND emdevif_core_error_handler_test)

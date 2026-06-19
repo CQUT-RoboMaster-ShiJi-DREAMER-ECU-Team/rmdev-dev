@@ -3,7 +3,11 @@
 #include <concepts>
 #include <compare>
 #include <limits>
-#include "emdevif/core/concepts.hpp"
+#if EMDEVIF_USE_MODULES
+    import emdevif.core.concepts;
+#else
+    #include "emdevif/core/concepts.hpp"
+#endif
 using namespace emdevif;
 
 class CustomArith {

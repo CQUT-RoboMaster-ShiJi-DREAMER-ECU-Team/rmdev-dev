@@ -1,6 +1,10 @@
 #include "host_test_pch.hpp"
 #include <string_view>
-#include "emdevif/core/utils/when.hpp"
+#if EMDEVIF_USE_MODULES
+    import emdevif.core.utils.when;
+#else
+    #include "emdevif/core/utils/when.hpp"
+#endif
 using namespace emdevif;
 
 TEST(WhenTest, BasicMatching) {

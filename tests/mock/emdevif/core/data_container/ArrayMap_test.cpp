@@ -2,8 +2,16 @@
 #include <cstring>
 #include <string_view>
 #include <array>
-#include "emdevif/core/integer_suffix.hpp"
-#include "emdevif/core/data_container/array_map.hpp"
+#if EMDEVIF_USE_MODULES
+    import emdevif.core.integer_suffix;
+#else
+    #include "emdevif/core/integer_suffix.hpp"
+#endif
+#if EMDEVIF_USE_MODULES
+    import emdevif.core.data_container.array_map;
+#else
+    #include "emdevif/core/data_container/array_map.hpp"
+#endif
 using namespace emdevif;
 
 namespace {
