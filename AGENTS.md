@@ -46,7 +46,7 @@ rmdev-dev/
 | 变量                        | 类型     | 默认                       | 说明                                              |
 |---------------------------|--------|--------------------------|-------------------------------------------------|
 | `TEST_PLATFORM`           | String | `"mock"`                 | 见前文                                             |
-| `EMDEVIF_USE_CPP_MODULES` | Bool   | 由 `CMakePresets.json` 决定 | C++20 Modules 路径开关，变更后需验证 ON/OFF 两条路径           |
+| `EMDEVIF_USE_CPP_MODULES` | Bool   | `ON`                     | `emdevif` 子模块自身默认 `ON`；本仓库 `CMakePresets.json` 显式覆盖以覆盖 Modules ON/OFF 两条验证路径 |
 | `TEST_ENABLE_EXCEPTIONS`  | Bool   | `OFF`                    | C++ 异常开关（宿主测试路径），`CMakeLists.txt` 中默认关闭，Preset 可显式开启；关闭时测试中异常相关用例通过 `GTEST_SKIP` 跳过 |
 
 ### 宿主单元测试
@@ -111,6 +111,15 @@ ctest --preset HostTestModulesExceptions -C Release
 - `.agents/` 目录下的智能体规则与技能文档优先于其他历史路径；项目技能统一存放在 `.agents/skills/` 下。
 - 遇到已有的不符合 Doxygen 注释规范的代码时，不要强制修改格式，应先询问用户是否需要修改。
 
+## 多仓库协作流程
+
+`rmdev-dev` 是集成与验证环境，库逻辑的日常开发应在对应子模块的独立仓库完成：
+
+1. **库逻辑改动**：优先在子模块独立仓库（如 `emdevif.git`、`rmdev_math.git`、`rmdev_driver_BMI088.git`）提交并验证；
+2. **同步到集成环境**：子模块改动合并后，及时同步到 `rmdev-dev` 并运行宿主测试，确保集成路径无回归；
+3. **集成层改动**：仅当改动涉及 `rmdev-dev` 自身的构建脚本、测试框架、文档聚合或 CI 配置时，才直接在 `rmdev-dev` 提交；
+4. **子模块聚合层**：`rmdev` 与 `emdevif_collection/*` 在本仓库中作为子模块引入，如需调整其 `CMakeLists.txt`、`.gitmodules` 或聚合结构，按第 3 条处理。
+
 ## Git 提交规范（对所有子模块都适用）
 
 - 提交信息统一使用中文，清晰描述变更内容和原因。
@@ -121,8 +130,10 @@ ctest --preset HostTestModulesExceptions -C Release
   - AGENT_NAME：你使用的 AI 工具、框架或智能体的名称（例如 Claude, Copilot, Codex 等）。
   - MODEL_VERSION：具体调用的模型版本（例如 claude-3-opus, gpt-4 等）。
   - `[TOOL1]` `[TOOL2]`（可选）：搭配使用的专业代码分析工具（例如 coccinelle, sparse, smatch, clang-tidy 等）。
+  - 若 `MODEL_VERSION` 包含空格，需用英文双引号将其包裹，例如 `"K2.7 Code"`。
   - 示例：
     - `Assisted-by: Codex:ChatGPT-4.5`
     - `Assisted-by: OpenCode:deepseek-v4-pro clang-tidy`
     - `Assisted-by: Claude:claude-3-opus coccinelle sparse`
+    - `Assisted-by: Kimi Code:"K2.7 Code"`
 - 多行提交信息使用多个 `-m` 参数分行，不要用 `\n` 内嵌换行。
