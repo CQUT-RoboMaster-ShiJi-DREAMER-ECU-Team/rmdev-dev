@@ -2,7 +2,7 @@
 
 ## 目标
 
-将当前的"宏嵌入导出"模式（通过 `EMDEVIF_MODULE_EXPORT` 在头文件中嵌入 `export` 关键字）重构为"选择性重导出"模式（头文件为纯 C++ 代码，`.cppm` 中使用 `export namespace { using }` 选择性导出符号）。
+将当前的"宏嵌入导出"模式（通过 `EMDEVIF_MODULE_EXPORT` 在头文件中嵌入 `export` 关键字）重构为"隐式包含"模式（头文件为纯 C++ 代码且无条件包含所有依赖，`.cppm` 中使用 `export namespace { using }` 选择性导出符号）。
 
 ## 模式对比
 
@@ -27,7 +27,7 @@ import other.module;
 #include "lib.hpp"                       // 头文件在模块管辖范围内被包含
 ```
 
-### 新模式（选择性重导出）
+### 新模式（隐式包含）
 
 ```
 // lib.hpp
@@ -35,18 +35,15 @@ import other.module;
 #ifndef LIB_HPP
 #define LIB_HPP
 #include <cstddef>                       // 标准库头文件无条件包含
-#ifndef EMDEVIF_MODULE_INTERFACE_UNIT
-  #include "other_project.hpp"           // 仅项目模块依赖需要守卫
-#endif
+#include "other_project.hpp"             // 项目头文件无条件包含（隐式）
 namespace lib { /* 声明，无 export 宏 */ }
 #endif
 
 // lib.cppm
 module;
-#define EMDEVIF_MODULE_INTERFACE_UNIT    // 在包含头文件之前定义
 #include "lib.hpp"                       // 头文件在全局模块段被包含
 export module lib;
-import other.module;
+// 无需 import 项目模块，依赖已由头文件隐式包含
 export namespace lib {                   // 选择性导出
     using ::lib::func;
     using ::lib::Type;
@@ -59,11 +56,12 @@ export namespace lib {                   // 选择性导出
 |------|---------|--------|
 | 头文件中的 export | 通过 `EMDEVIF_MODULE_EXPORT` 宏嵌入 | 无 export，头文件是纯 C++ |
 | 头文件中标准库 `#include` | 被 `#ifndef EMDEVIF_MODULE_INTERFACE_UNIT` 守卫 | 无条件包含 |
-| 头文件中项目头文件 `#include` | 被守卫 | 仍需守卫（会与 `import` 冲突） |
+| 头文件中项目头文件 `#include` | 被守卫 | 无条件包含（隐式） |
 | `#include "lib.hpp"` 位置 | 在 `export module` 之后（模块管辖范围） | 在 `export module` 之前（全局模块段） |
+| `.cppm` 中项目依赖导入 | `import other.module` | 不存在，依赖由头文件隐式包含 |
 | 导出控制 | 头文件中标记 `EMDEVIF_MODULE_EXPORT` | `.cppm` 中 `using` 声明选择性导出 |
 | `detail` 命名空间 | 不标记 `EMDEVIF_MODULE_EXPORT` | 不在 `export namespace` 中列出 |
-| `config.hpp` | 定义 `EMDEVIF_MODULE_EXPORT` 等宏 | 不再需要 export 相关宏 |
+| `config.hpp` | 定义 `EMDEVIF_MODULE_EXPORT` 等宏和 `EMDEVIF_MODULE_INTERFACE_UNIT` | 不再需要 export 相关宏 |
 
 ## 变更范围统计
 
@@ -90,8 +88,8 @@ export namespace lib {                   // 选择性导出
 ### 0.1 配置头文件
 
 移除 `EMDEVIF_MODULE_EXPORT`、`EMDEVIF_MODULE_EXPORT_BEGIN`、`EMDEVIF_MODULE_EXPORT_END` 宏定义。
+移除 `EMDEVIF_MODULE_INTERFACE_UNIT` 相关逻辑。
 保留 `EMDEVIF_USE_MODULES` 定义（供 `.cpp` 源文件使用）。
-说明 `EMDEVIF_MODULE_INTERFACE_UNIT` 由 `.cppm` 文件定义，用于守卫项目头文件依赖。
 
 ### 0.2 纯头文件库
 
@@ -103,10 +101,7 @@ export namespace lib {                   // 选择性导出
 #define LIB_HPP
 
 #include <cstddef>                        // 标准库头文件：无条件包含
-
-#ifndef EMDEVIF_MODULE_INTERFACE_UNIT
-#include "lib/b.hpp"                      // 项目模块依赖：守卫
-#endif
+#include "lib/b.hpp"                      // 项目模块依赖：无条件包含（隐式）
 
 namespace lib::detail {
     // 不导出的实现细节
@@ -126,12 +121,11 @@ namespace lib {
 ```cpp
 module;
 
-#define EMDEVIF_MODULE_INTERFACE_UNIT     // 在 #include 之前定义
 #include "lib.hpp"                        // 头文件在全局模块段
 
 export module lib;
 
-import lib.b;                             // 导入项目模块依赖
+// 无需 import 项目模块，依赖已由头文件隐式包含
 
 export namespace lib {                    // 选择性导出
     using ::lib::func;
@@ -152,10 +146,7 @@ export namespace lib {                    // 选择性导出
 #define LIB_A_HPP
 
 #include <cstddef>
-
-#ifndef EMDEVIF_MODULE_INTERFACE_UNIT
-#include "lib/b.hpp"                      // 仅在头文件模式下包含
-#endif
+#include "lib/b.hpp"                      // 无条件包含（隐式）
 
 namespace lib {
     void funcA();
@@ -169,12 +160,11 @@ namespace lib {
 ```cpp
 module;
 
-#define EMDEVIF_MODULE_INTERFACE_UNIT
 #include "lib/a.hpp"
 
 export module lib.a;
 
-import lib.b;                             // 模块依赖用 import
+// 无需 import lib.b，依赖已由头文件隐式包含
 
 export namespace lib {
     using ::lib::funcA;
@@ -200,19 +190,10 @@ import emdevif.core.error_handler;        // import 替代 #include
 // 实现代码...
 ```
 
-### 0.5 守卫规则总结
+### 0.5 隐式包含规则总结
 
-在 `.hpp` 文件中，`#include` 指令的守卫规则：
-
-| 包含类型 | 示例 | 是否需要 `#ifndef EMDEVIF_MODULE_INTERFACE_UNIT` 守卫 |
-|---------|------|------|
-| C++ 标准库 | `<cstddef>`, `<type_traits>` | **不需要**（可在全局模块段无条件包含） |
-| C 标准库 | `<cstdint>`, `<cstdarg>` | **不需要** |
-| 第三方库 | `<mp-units/...>`, `<boost/...>` | **不需要** |
-| 项目 C 风格头文件 | `"emdevif/core/fatal_handler.h"` | **不需要** |
-| 项目宏头文件 | `"emdevif/core/simplify_decl_macros.hpp"` | **不需要** |
-| 项目 C++ 头文件（有对应模块） | `"emdevif/core/concepts.hpp"` | **需要**（必须用 `import` 替代） |
-| 同模块子头文件 | `"rmdev/driver/dji_motor/can_address.hpp"` | **不需要**（同一模块，总是包含） |
+在 `.hpp` 文件中，所有 `#include` 均无条件包含，不再使用 `EMDEVIF_MODULE_INTERFACE_UNIT` 守卫。
+`.cppm` 文件不再 `import` 项目模块，项目依赖完全由头文件的 `#include` 隐式提供。
 
 ---
 
@@ -223,6 +204,7 @@ import emdevif.core.error_handler;        // import 替代 #include
 **文件：** `emdevif/core/inc/emdevif/core/detail/config.hpp`
 
 移除 `EMDEVIF_MODULE_EXPORT`、`EMDEVIF_MODULE_EXPORT_BEGIN`、`EMDEVIF_MODULE_EXPORT_END` 宏定义。
+移除 `EMDEVIF_MODULE_INTERFACE_UNIT` 相关逻辑。
 保留 `EMDEVIF_USE_MODULES` 默认值定义。
 
 新内容：
@@ -245,38 +227,10 @@ import emdevif.core.error_handler;        // import 替代 #include
 
 1. **移除** `#include "emdevif/core/detail/config.hpp"`（不再需要 export 宏）
 2. **移除** 所有 `EMDEVIF_MODULE_EXPORT`、`EMDEVIF_MODULE_EXPORT_BEGIN`、`EMDEVIF_MODULE_EXPORT_END` 使用
-3. **将标准库 `#include` 移出守卫**：`<cstddef>`、`<cstdint>`、`<type_traits>`、`<concepts>`、`<compare>`、`<limits>`、`<source_location>`、`<exception>`、`<array>`、`<span>`、`<utility>`、`<tuple>`、`<initializer_list>`、`<string_view>`、`<vector>`、`<memory>`、`<algorithm>`、`<numbers>`、`<cstdarg>`、`<cstring>`、`<cmath>`、`<bit>` 等全部标准库头文件
-4. **将 C 风格项目头文件移出守卫**：`"emdevif/core/fatal_handler.h"`、`"emdevif/core/attributes_and_useful_macros.h"`、`"emdevif/core/simplify_decl_macros.hpp"` 等
-5. **将第三方库头文件移出守卫**：`<mp-units/...>`、`<boost/pfr.hpp>` 等
-6. **保留守卫**：仅对具有对应模块的项目 C++ 头文件保留 `#ifndef EMDEVIF_MODULE_INTERFACE_UNIT` 守卫
-7. **同模块子头文件不守卫**：如 `can_address.hpp`、`class_dji_motor.hpp` 等同模块内部子头文件
+3. **移除** 所有 `#ifndef EMDEVIF_MODULE_INTERFACE_UNIT` / `#endif` 守卫块，使所有 `#include` 成为无条件包含
+4. **移除** `#define EMDEVIF_MODULE_INTERFACE_UNIT` 的任何引用
 
-需要守卫的项目头文件对照表（按模块）：
-
-| 当前头文件 | 对应模块 | 在哪些 .hpp 中被包含 |
-|-----------|---------|-------------------|
-| `"emdevif/core/concepts.hpp"` | `emdevif.core.concepts` | `error_code.hpp`, `motor.hpp`, `vofa.hpp` 等大量文件 |
-| `"emdevif/core/error_handler.hpp"` | `emdevif.core.error_handler` | `endian.hpp`, `vofa.hpp`, `thread.hpp` 等 |
-| `"emdevif/core/type_traits.hpp"` | `emdevif.core.type_traits` | 部分文件 |
-| `"emdevif/core/endian.hpp"` | `emdevif.core.endian` | `vofa.hpp` 等 |
-| `"emdevif/core/data_container/message_queue.hpp"` | `emdevif.core.data_container.message_queue` | `topic.hpp`, `subscriber.hpp` |
-| `"emdevif/peripheral/model/gpio.hpp"` | `emdevif.peripheral.model.gpio` | `peripheral/gpio.hpp` |
-| `"emdevif/peripheral/model/can.hpp"` | `emdevif.peripheral.model.can` | `peripheral/can.hpp`, `dji_motor.hpp` |
-| `"emdevif/peripheral/model/serial.hpp"` | `emdevif.peripheral.model.serial` | `peripheral/serial.hpp` |
-| `"emdevif/peripheral/model/spi.hpp"` | `emdevif.peripheral.model.spi` | `peripheral/spi.hpp` |
-| `"emdevif/peripheral/model/pwm.hpp"` | `emdevif.peripheral.model.pwm` | `peripheral/pwm.hpp` |
-| `"emdevif/peripheral/model/timer.hpp"` | `emdevif.peripheral.model.timer` | `peripheral/timer.hpp` |
-| `"emdevif/peripheral/peripheral_handle_map.hpp"` | `emdevif.peripheral.peripheral_handle_map` | 多个 peripheral 实现头文件 |
-| `"emdevif/peripheral/gpio.hpp"` | `emdevif.peripheral.gpio` | `bmi088.hpp` |
-| `"emdevif/peripheral/can.hpp"` | `emdevif.peripheral.can` | `dji_motor.hpp` |
-| `"emdevif/timeline.hpp"` | `emdevif.timeline` | `ins_base.hpp` 等 |
-| `"emdevif/system/thread.hpp"` | `emdevif.system.thread` | 部分文件 |
-| `"rmdev/device_model/motor.hpp"` | `rmdev.device_model.motor` | `dji_motor.hpp` 等 |
-| `"rmdev/math.hpp"` | `rmdev.math` | `pid.hpp` 等 |
-| `"rmdev/matrix.hpp"` | `rmdev.matrix` | `OmniWheelInvSolver.hpp` 等 |
-| `"rmdev/message_manager/subscriber.hpp"` | `rmdev.message_manager.subscriber` | `topic.hpp` |
-| `"rmdev/device_model/sensor/imu.hpp"` | `rmdev.device_model.sensor.imu` | `bmi088.hpp`, `ins_base.hpp` 等 |
-| `"rmdev/kinematic_solution/chassis/FourWheelChassisSolver.hpp"` | `rmdev.kinematic_solution.chassis.FourWheelChassisSolver` | `OmniWheelInvSolver.hpp` |
+不再需要守卫，所有 `#include` 均为无条件包含。
 
 ### 1.3 重构 emdevif `.inl` 文件
 
@@ -300,11 +254,11 @@ import emdevif.core.error_handler;        // import 替代 #include
 对每个 `.cppm` 文件执行以下变更：
 
 1. **移除** 全局模块段中单独的标准库 `#include`（它们现在由 `.hpp` 包含）
-2. **将** `#define EMDEVIF_MODULE_INTERFACE_UNIT` 移到 `#include "lib.hpp"` 之前
-3. **将** `#include "lib.hpp"` 移到 `export module` 之前（全局模块段）
+2. **将** `#include "lib.hpp"` 移到 `export module` 之前（全局模块段）
+3. **移除** `#define EMDEVIF_MODULE_INTERFACE_UNIT`（不再需要）
 4. **移除** clang pragma（`#pragma clang diagnostic ignored "-Winclude-angled-in-module-purview"`），因为标准库头文件现在在全局模块段被包含，不再产生警告
-5. **添加** `export namespace` 块，包含 `using` 声明，选择性导出符号
-6. **保留** `import` 语句用于项目模块依赖
+5. **移除** `import` 语句（项目模块依赖已由头文件隐式包含）
+6. **添加** `export namespace` 块，包含 `using` 声明，选择性导出符号
 
 #### `.cppm` 新模板
 
@@ -316,13 +270,11 @@ import emdevif.core.error_handler;        // import 替代 #include
 
 module;
 
-#define EMDEVIF_MODULE_INTERFACE_UNIT
-
 #include "path/to/xxx.hpp"
 
 export module emdevif.xxx;
 
-import emdevif.other_module;
+// 无需 import 项目模块，依赖已由头文件隐式包含
 
 export namespace emdevif {
     using ::emdevif::Symbol1;
@@ -389,8 +341,8 @@ export import emdevif.core.utils.when;
 
 1. **移除** `#include "emdevif/core/detail/config.hpp"`
 2. **移除** 所有 `EMDEVIF_MODULE_EXPORT` 使用
-3. **将标准库和 C 风格头文件移出守卫**
-4. **保留** 对 emdevif 和 rmdev 模块依赖的守卫
+3. **移除** 所有 `#ifndef EMDEVIF_MODULE_INTERFACE_UNIT` / `#endif` 守卫块，使所有 `#include` 成为无条件包含
+4. **移除** `#define EMDEVIF_MODULE_INTERFACE_UNIT` 的任何引用
 
 受影响的 rmdev `.hpp` 文件列表：
 
@@ -530,7 +482,7 @@ ctest --preset HostTestHeadersNoexceptions -C Debug
 2. **Modules OFF 路径**：确保头文件直接 `#include` 可以正常工作
 3. **异常开关**：确保 `TEST_ENABLE_EXCEPTIONS` 仍能正确控制
 4. **detail 命名空间**：确保不导出的符号在模块模式下不可见
-5. **跨模块依赖**：确保 `import` 链正常工作
+5. **隐式包含依赖**：确保 `#include` 链完整，所有依赖通过头文件隐式覆盖
 
 ---
 
@@ -587,34 +539,34 @@ ctest --preset HostTestHeadersNoexceptions -C Debug
 | 文件 | 变更类型 |
 |------|---------|
 | `core/inc/emdevif/core/detail/config.hpp` | 简化：移除 export 宏 |
-| `core/inc/emdevif/core/concepts.hpp` | 移除 export 宏，标准库移出守卫 |
-| `core/inc/emdevif/core/endian.hpp` | 移除 export 宏，标准库移出守卫 |
-| `core/inc/emdevif/core/integer_suffix.hpp` | 移除 export 宏，标准库移出守卫 |
+| `core/inc/emdevif/core/concepts.hpp` | 移除 export 宏，移除所有守卫 |
+| `core/inc/emdevif/core/endian.hpp` | 移除 export 宏，移除所有守卫 |
+| `core/inc/emdevif/core/integer_suffix.hpp` | 移除 export 宏，移除所有守卫 |
 | `core/inc/emdevif/core/type_traits.hpp` | 聚合，无变更 |
-| `core/inc/emdevif/core/type_traits/misc.hpp` | 移除 export 宏，标准库移出守卫 |
-| `core/inc/emdevif/core/type_traits/tuple_style.hpp` | 移除 BEGIN/END 块，标准库移出守卫 |
+| `core/inc/emdevif/core/type_traits/misc.hpp` | 移除 export 宏，移除所有守卫 |
+| `core/inc/emdevif/core/type_traits/tuple_style.hpp` | 移除 BEGIN/END 块，移除所有守卫 |
 | `core/inc/emdevif/core/error_handler.hpp` | 聚合，无变更 |
-| `core/inc/emdevif/core/error_handler/fatal_handler.hpp` | 移除 export 宏（10处），标准库+C头文件移出守卫 |
-| `core/inc/emdevif/core/error_handler/error_code.hpp` | 移除 namespace 级 export 宏，标准库移出守卫，保留 concepts.hpp 守卫 |
+| `core/inc/emdevif/core/error_handler/fatal_handler.hpp` | 移除 export 宏（10处），移除所有守卫 |
+| `core/inc/emdevif/core/error_handler/error_code.hpp` | 移除 namespace 级 export 宏，移除所有守卫 |
 | `core/inc/emdevif/core/utils.hpp` | 聚合，无变更 |
-| `core/inc/emdevif/core/utils/when.hpp` | 移除 BEGIN/END 块和 export 宏，标准库移出守卫 |
-| `core/inc/emdevif/core/utils/init_once.hpp` | 移除 export 宏，标准库移出守卫 |
+| `core/inc/emdevif/core/utils/when.hpp` | 移除 BEGIN/END 块和 export 宏，移除所有守卫 |
+| `core/inc/emdevif/core/utils/init_once.hpp` | 移除 export 宏，移除所有守卫 |
 | `core/inc/emdevif/core/utils/bit_int.hpp` | 聚合，可能无变更 |
 | `core/inc/emdevif/core/utils/bit_int/basic_config.hpp` | 移除 export 宏（2处） |
-| `core/inc/emdevif/core/utils/bit_int/unsigned_bit_int.hpp` | 移除 export 宏，标准库移出守卫 |
-| `core/inc/emdevif/core/utils/bit_int/signed_bit_int.hpp` | 移除 export 宏，标准库移出守卫 |
+| `core/inc/emdevif/core/utils/bit_int/unsigned_bit_int.hpp` | 移除 export 宏，移除所有守卫 |
+| `core/inc/emdevif/core/utils/bit_int/signed_bit_int.hpp` | 移除 export 宏，移除所有守卫 |
 | `core/inc/emdevif/core/resource_guard.hpp` | 聚合，无变更 |
-| `core/inc/emdevif/core/resource_guard/defer.hpp` | 移除 export 宏，标准库移出守卫 |
-| `core/inc/emdevif/core/resource_guard/init_guard.hpp` | 移除 export 宏，标准库移出守卫 |
-| `core/inc/emdevif/core/resource_guard/lock_guard.hpp` | 移除 export 宏，标准库移出守卫 |
-| `core/inc/emdevif/core/resource_guard/try_finally.hpp` | 移除 export 宏，标准库移出守卫 |
-| `core/inc/emdevif/core/data_container/ring_buffer.hpp` | 移除 export 宏，标准库移出守卫 |
-| `core/inc/emdevif/core/data_container/message_queue.hpp` | 移除 export 宏，标准库移出守卫 |
-| `core/inc/emdevif/core/data_container/fixed_string.hpp` | 移除 export 宏，标准库移出守卫 |
+| `core/inc/emdevif/core/resource_guard/defer.hpp` | 移除 export 宏，移除所有守卫 |
+| `core/inc/emdevif/core/resource_guard/init_guard.hpp` | 移除 export 宏，移除所有守卫 |
+| `core/inc/emdevif/core/resource_guard/lock_guard.hpp` | 移除 export 宏，移除所有守卫 |
+| `core/inc/emdevif/core/resource_guard/try_finally.hpp` | 移除 export 宏，移除所有守卫 |
+| `core/inc/emdevif/core/data_container/ring_buffer.hpp` | 移除 export 宏，移除所有守卫 |
+| `core/inc/emdevif/core/data_container/message_queue.hpp` | 移除 export 宏，移除所有守卫 |
+| `core/inc/emdevif/core/data_container/fixed_string.hpp` | 移除 export 宏，移除所有守卫 |
 | `core/inc/emdevif/core/data_container/array_map.hpp` | 聚合，可能无变更 |
-| `core/inc/emdevif/core/data_container/array_map/array_map.hpp` | 移除 export 宏（2处），标准库移出守卫 |
-| `core/inc/emdevif/core/data_container/array_map/basic_array_map.hpp` | 移除守卫，标准库移出守卫 |
-| `core/inc/emdevif/core/data_container/array_map/static_map.hpp` | 移除 export 宏，标准库移出守卫 |
+| `core/inc/emdevif/core/data_container/array_map/array_map.hpp` | 移除 export 宏（2处），移除所有守卫 |
+| `core/inc/emdevif/core/data_container/array_map/basic_array_map.hpp` | 移除所有守卫 |
+| `core/inc/emdevif/core/data_container/array_map/static_map.hpp` | 移除 export 宏，移除所有守卫 |
 | `core/modules/concepts.cppm` | 重构：头文件移入全局模块段，添加 export namespace |
 | `core/modules/endian.cppm` | 同上 |
 | `core/modules/integer_suffix.cppm` | 同上 |
@@ -643,10 +595,10 @@ ctest --preset HostTestHeadersNoexceptions -C Debug
 | `logger/inc/emdevif/logger.hpp` | 聚合，条件包含子头文件，无 export 宏，需检查 |
 | `logger/inc/emdevif/logger/config.hpp` | 包含 emdevif config，可能需微调 |
 | `logger/inc/emdevif/logger/config_values.hpp` | 移除 export 宏 |
-| `logger/inc/emdevif/logger/sync_async_interface.hpp` | 移除 export 宏，标准库移出守卫 |
+| `logger/inc/emdevif/logger/sync_async_interface.hpp` | 移除 export 宏，移除所有守卫 |
 | `logger/inc/emdevif/logger/sync.hpp` | 移除守卫，可能需重构 |
 | `logger/inc/emdevif/logger/async.hpp` | 移除守卫，可能需重构 |
-| `logger/inc/emdevif/logger/external_impl.hpp` | 移除 export 宏，守卫处理 |
+| `logger/inc/emdevif/logger/external_impl.hpp` | 移除 export 宏，移除所有守卫 |
 | `logger/logger.cppm` | 重构 |
 | `logger/src/logger.cpp` | 检查，可能微调 |
 
@@ -654,28 +606,28 @@ ctest --preset HostTestHeadersNoexceptions -C Debug
 
 | 文件 | 变更类型 |
 |------|---------|
-| `timeline/inc/emdevif/timeline.hpp` | 移除 export 宏，守卫处理 |
+| `timeline/inc/emdevif/timeline.hpp` | 移除 export 宏，移除所有守卫 |
 | `timeline/timeline.cppm` | 重构 |
 
 ### emdevif/system
 
 | 文件 | 变更类型 |
 |------|---------|
-| `system/inc/emdevif/system/atomic.hpp` | 移除 export 宏，标准库移出守卫 |
-| `system/inc/emdevif/system/sys_message_slot.hpp` | 移除 export 宏，标准库移出守卫 |
-| `system/inc/emdevif/system/thread.hpp` | 移除 export 宏，标准库移出守卫 |
-| `system/inc/emdevif/system/sys_queue.hpp` | 移除 export 宏，标准库移出守卫 |
-| `system/inc/emdevif/system/semaphore.hpp` | 移除 export 宏，标准库移出守卫 |
-| `system/inc/emdevif/system/mutex.hpp` | 移除 export 宏，标准库移出守卫 |
-| `system/inc/emdevif/system/heap.hpp` | 移除 export 宏，标准库移出守卫 |
-| `system/inc/emdevif/system/event_group.hpp` | 移除 export 宏，标准库移出守卫 |
+| `system/inc/emdevif/system/atomic.hpp` | 移除 export 宏，移除所有守卫 |
+| `system/inc/emdevif/system/sys_message_slot.hpp` | 移除 export 宏，移除所有守卫 |
+| `system/inc/emdevif/system/thread.hpp` | 移除 export 宏，移除所有守卫 |
+| `system/inc/emdevif/system/sys_queue.hpp` | 移除 export 宏，移除所有守卫 |
+| `system/inc/emdevif/system/semaphore.hpp` | 移除 export 宏，移除所有守卫 |
+| `system/inc/emdevif/system/mutex.hpp` | 移除 export 宏，移除所有守卫 |
+| `system/inc/emdevif/system/heap.hpp` | 移除 export 宏，移除所有守卫 |
+| `system/inc/emdevif/system/event_group.hpp` | 移除 export 宏，移除所有守卫 |
 | `system/inc/emdevif/system_impl/thread.inl` | 移除 export 宏 |
 | `system/inc/emdevif/system_impl/sys_queue.inl` | 移除 export 宏 |
 | `system/inc/emdevif/system_impl/semaphore.inl` | 移除 export 宏（2处） |
 | `system/inc/emdevif/system_impl/mutex.inl` | 移除 export 宏 |
 | `system/inc/emdevif/system_impl/heap.inl` | 移除 export 宏 |
 | `system/inc/emdevif/system_impl/event_group_implements.inl` | 移除 BEGIN/END 块 |
-| `system/inc/emdevif/system_impl/event_group_definitions.hpp` | 守卫处理 |
+| `system/inc/emdevif/system_impl/event_group_definitions.hpp` | 移除所有守卫 |
 | `system/atomic.cppm` | 重构 |
 | `system/sys_message_slot.cppm` | 重构 |
 | `system/Implements/FreeRTOS/modules/thread.cppm` | 重构 |
@@ -693,20 +645,20 @@ ctest --preset HostTestHeadersNoexceptions -C Debug
 
 | 文件 | 变更类型 |
 |------|---------|
-| `peripheral/model/inc/emdevif/peripheral/model/gpio.hpp` | 移除 export 宏，标准库移出守卫 |
-| `peripheral/model/inc/emdevif/peripheral/model/can.hpp` | 移除 export 宏，标准库移出守卫 |
-| `peripheral/model/inc/emdevif/peripheral/model/serial.hpp` | 移除 export 宏，标准库移出守卫 |
-| `peripheral/model/inc/emdevif/peripheral/model/spi.hpp` | 移除 export 宏，标准库移出守卫 |
-| `peripheral/model/inc/emdevif/peripheral/model/pwm.hpp` | 移除 export 宏，标准库移出守卫 |
-| `peripheral/model/inc/emdevif/peripheral/model/timer.hpp` | 移除 export 宏，标准库移出守卫 |
-| `peripheral/peripheral_handle_map/inc/emdevif/peripheral/peripheral_handle_map.hpp` | 移除 export 宏，标准库移出守卫 |
-| `peripheral/peripheral_impl_/inc/emdevif/peripheral/gpio.hpp` | 移除 export 宏，标准库移出守卫 |
-| `peripheral/peripheral_impl_/inc/emdevif/peripheral/can.hpp` | 移除 export 宏，标准库移出守卫 |
-| `peripheral/peripheral_impl_/inc/emdevif/peripheral/serial.hpp` | 移除 export 宏，标准库移出守卫 |
-| `peripheral/peripheral_impl_/inc/emdevif/peripheral/spi.hpp` | 移除 export 宏，标准库移出守卫 |
-| `peripheral/peripheral_impl_/inc/emdevif/peripheral/pwm.hpp` | 移除 export 宏，标准库移出守卫 |
-| `peripheral/peripheral_impl_/inc/emdevif/peripheral/timer.hpp` | 移除 export 宏，标准库移出守卫 |
-| `peripheral/peripheral_impl_/inc/emdevif/peripheral/detail/peripheral_error_handler.hpp` | 守卫处理 |
+| `peripheral/model/inc/emdevif/peripheral/model/gpio.hpp` | 移除 export 宏，移除所有守卫 |
+| `peripheral/model/inc/emdevif/peripheral/model/can.hpp` | 移除 export 宏，移除所有守卫 |
+| `peripheral/model/inc/emdevif/peripheral/model/serial.hpp` | 移除 export 宏，移除所有守卫 |
+| `peripheral/model/inc/emdevif/peripheral/model/spi.hpp` | 移除 export 宏，移除所有守卫 |
+| `peripheral/model/inc/emdevif/peripheral/model/pwm.hpp` | 移除 export 宏，移除所有守卫 |
+| `peripheral/model/inc/emdevif/peripheral/model/timer.hpp` | 移除 export 宏，移除所有守卫 |
+| `peripheral/peripheral_handle_map/inc/emdevif/peripheral/peripheral_handle_map.hpp` | 移除 export 宏，移除所有守卫 |
+| `peripheral/peripheral_impl_/inc/emdevif/peripheral/gpio.hpp` | 移除 export 宏，移除所有守卫 |
+| `peripheral/peripheral_impl_/inc/emdevif/peripheral/can.hpp` | 移除 export 宏，移除所有守卫 |
+| `peripheral/peripheral_impl_/inc/emdevif/peripheral/serial.hpp` | 移除 export 宏，移除所有守卫 |
+| `peripheral/peripheral_impl_/inc/emdevif/peripheral/spi.hpp` | 移除 export 宏，移除所有守卫 |
+| `peripheral/peripheral_impl_/inc/emdevif/peripheral/pwm.hpp` | 移除 export 宏，移除所有守卫 |
+| `peripheral/peripheral_impl_/inc/emdevif/peripheral/timer.hpp` | 移除 export 宏，移除所有守卫 |
+| `peripheral/peripheral_impl_/inc/emdevif/peripheral/detail/peripheral_error_handler.hpp` | 移除所有守卫 |
 | `peripheral/model/modules/gpio_model.cppm` | 重构 |
 | `peripheral/model/modules/can_model.cppm` | 重构 |
 | `peripheral/model/modules/serial_model.cppm` | 重构 |
@@ -725,12 +677,12 @@ ctest --preset HostTestHeadersNoexceptions -C Debug
 
 | 文件 | 变更类型 |
 |------|---------|
-| `inc/emdevif/stm32_peripheral/hal/usart.hpp` | 移除 export 宏，守卫处理 |
-| `inc/emdevif/stm32_peripheral/hal/spi.hpp` | 移除 export 宏，守卫处理 |
-| `inc/emdevif/stm32_peripheral/hal/pwm.hpp` | 移除 export 宏（4处），守卫处理 |
-| `inc/emdevif/stm32_peripheral/hal/gpio.hpp` | 移除 export 宏，守卫处理 |
-| `inc/emdevif/stm32_peripheral/hal/can.hpp` | 移除 export 宏，守卫处理 |
-| `inc/emdevif/stm32_peripheral/hal/detail/hal_status_mapper.hpp` | 守卫处理 |
+| `inc/emdevif/stm32_peripheral/hal/usart.hpp` | 移除 export 宏，移除所有守卫 |
+| `inc/emdevif/stm32_peripheral/hal/spi.hpp` | 移除 export 宏，移除所有守卫 |
+| `inc/emdevif/stm32_peripheral/hal/pwm.hpp` | 移除 export 宏（4处），移除所有守卫 |
+| `inc/emdevif/stm32_peripheral/hal/gpio.hpp` | 移除 export 宏，移除所有守卫 |
+| `inc/emdevif/stm32_peripheral/hal/can.hpp` | 移除 export 宏，移除所有守卫 |
+| `inc/emdevif/stm32_peripheral/hal/detail/hal_status_mapper.hpp` | 移除所有守卫 |
 | `STM32_HAL_Driver/usart_hal_impl.cppm` | 重构 |
 | `STM32_HAL_Driver/spi_hal_impl.cppm` | 重构 |
 | `STM32_HAL_Driver/pwm_hal_impl.cppm` | 重构 |
@@ -742,33 +694,33 @@ ctest --preset HostTestHeadersNoexceptions -C Debug
 | 文件 | 变更类型 |
 |------|---------|
 | `modules/rmdev_math/inc/rmdev/math.hpp` | 聚合，无变更 |
-| `modules/rmdev_math/inc/rmdev/math/basic.hpp` | 移除 export 宏，标准库移出守卫 |
-| `modules/rmdev_math/inc/rmdev/math/const_value.hpp` | 移除 export 宏，标准库移出守卫 |
-| `modules/rmdev_math/inc/rmdev/math/decimal.hpp` | 移除 export 宏，标准库移出守卫 |
-| `modules/rmdev_math/inc/rmdev/math/range.hpp` | 移除 export 宏，标准库移出守卫 |
-| `modules/rmdev_math/inc/rmdev/math/trigonometric.hpp` | 移除 export 宏，标准库移出守卫 |
+| `modules/rmdev_math/inc/rmdev/math/basic.hpp` | 移除 export 宏，移除所有守卫 |
+| `modules/rmdev_math/inc/rmdev/math/const_value.hpp` | 移除 export 宏，移除所有守卫 |
+| `modules/rmdev_math/inc/rmdev/math/decimal.hpp` | 移除 export 宏，移除所有守卫 |
+| `modules/rmdev_math/inc/rmdev/math/range.hpp` | 移除 export 宏，移除所有守卫 |
+| `modules/rmdev_math/inc/rmdev/math/trigonometric.hpp` | 移除 export 宏，移除所有守卫 |
 | `modules/rmdev_math/inc/rmdev/matrix.hpp` | 聚合 |
-| `modules/rmdev_math/inc/rmdev/matrix/matrix_base.hpp` | 移除 export 宏，守卫处理 |
-| `modules/rmdev_math/inc/rmdev/matrix/detail/arm_matrix/ArmMatrixTraits.hpp` | 守卫处理 |
-| `modules/rmdev_math/inc/rmdev/matrix/detail/arm_matrix/ArmMatrix.hpp` | 守卫处理 |
+| `modules/rmdev_math/inc/rmdev/matrix/matrix_base.hpp` | 移除 export 宏，移除所有守卫 |
+| `modules/rmdev_math/inc/rmdev/matrix/detail/arm_matrix/ArmMatrixTraits.hpp` | 移除所有守卫 |
+| `modules/rmdev_math/inc/rmdev/matrix/detail/arm_matrix/ArmMatrix.hpp` | 移除所有守卫 |
 | `modules/rmdev_math/inc/rmdev/matrix/detail/arm_matrix/ArmMatrix.inl` | 移除 export 宏 |
-| `modules/rmdev_message_manager/inc/rmdev/message_manager.hpp` | 移除 export 宏，守卫处理 |
-| `modules/rmdev_message_manager/inc/rmdev/message_manager/topic.hpp` | 移除 export 宏，标准库移出守卫 |
-| `modules/rmdev_message_manager/inc/rmdev/message_manager/subscriber.hpp` | 移除 export 宏，标准库移出守卫 |
-| `modules/rmdev_control_algorithm/inc/rmdev/control_algorithm/pid.hpp` | 移除 export 宏，标准库移出守卫 |
-| `modules/rmdev_device_model/inc/rmdev/device_model/motor.hpp` | 移除 export 宏，标准库移出守卫 |
-| `modules/rmdev_device_model/inc/rmdev/device_model/sensor/imu.hpp` | 移除 export 宏，标准库移出守卫 |
-| `modules/rmdev_kinematic_solution/inc/rmdev/kinematic_solution/chassis/OmniWheelInvSolver.hpp` | 移除 export 宏，标准库移出守卫 |
-| `modules/rmdev_kinematic_solution/inc/rmdev/kinematic_solution/chassis/FourWheelChassisSolver.hpp` | 移除 export 宏，标准库移出守卫 |
-| `modules/rmdev_debug_assistance/inc/rmdev/debug_assistance/vofa.hpp` | 移除 export 宏，标准库移出守卫 |
+| `modules/rmdev_message_manager/inc/rmdev/message_manager.hpp` | 移除 export 宏，移除所有守卫 |
+| `modules/rmdev_message_manager/inc/rmdev/message_manager/topic.hpp` | 移除 export 宏，移除所有守卫 |
+| `modules/rmdev_message_manager/inc/rmdev/message_manager/subscriber.hpp` | 移除 export 宏，移除所有守卫 |
+| `modules/rmdev_control_algorithm/inc/rmdev/control_algorithm/pid.hpp` | 移除 export 宏，移除所有守卫 |
+| `modules/rmdev_device_model/inc/rmdev/device_model/motor.hpp` | 移除 export 宏，移除所有守卫 |
+| `modules/rmdev_device_model/inc/rmdev/device_model/sensor/imu.hpp` | 移除 export 宏，移除所有守卫 |
+| `modules/rmdev_kinematic_solution/inc/rmdev/kinematic_solution/chassis/OmniWheelInvSolver.hpp` | 移除 export 宏，移除所有守卫 |
+| `modules/rmdev_kinematic_solution/inc/rmdev/kinematic_solution/chassis/FourWheelChassisSolver.hpp` | 移除 export 宏，移除所有守卫 |
+| `modules/rmdev_debug_assistance/inc/rmdev/debug_assistance/vofa.hpp` | 移除 export 宏，移除所有守卫 |
 | `modules/rmdev_ins/inc/rmdev/ins.hpp` | 聚合 |
-| `modules/rmdev_ins/inc/rmdev/ins/ins_base.hpp` | 移除 export 宏，守卫处理 |
-| `modules/rmdev_ins/inc/rmdev/ins/detail/quaternion_ekf_ins/QuaternionEKF_INS.hpp` | 移除 export 宏，守卫处理 |
-| `drivers/rmdev_driver_DJIMotor/inc/rmdev/driver/dji_motor.hpp` | 守卫处理 |
-| `drivers/rmdev_driver_DJIMotor/inc/rmdev/driver/dji_motor/can_address.hpp` | 移除 export 宏，守卫处理 |
+| `modules/rmdev_ins/inc/rmdev/ins/ins_base.hpp` | 移除 export 宏，移除所有守卫 |
+| `modules/rmdev_ins/inc/rmdev/ins/detail/quaternion_ekf_ins/QuaternionEKF_INS.hpp` | 移除 export 宏，移除所有守卫 |
+| `drivers/rmdev_driver_DJIMotor/inc/rmdev/driver/dji_motor.hpp` | 移除所有守卫 |
+| `drivers/rmdev_driver_DJIMotor/inc/rmdev/driver/dji_motor/can_address.hpp` | 移除 export 宏，移除所有守卫 |
 | `drivers/rmdev_driver_DJIMotor/inc/rmdev/driver/dji_motor/class_dji_motor.hpp` | 移除 export 宏 |
 | `drivers/rmdev_driver_DJIMotor/inc/rmdev/driver/dji_motor/dji_motor_group.hpp` | 移除 export 宏 |
-| `drivers/rmdev_driver_BMI088/inc/rmdev/driver/bmi088.hpp` | 移除 export 宏（2处），标准库移出守卫 |
+| `drivers/rmdev_driver_BMI088/inc/rmdev/driver/bmi088.hpp` | 移除 export 宏（2处），移除所有守卫 |
 | `modules/rmdev_math/math.cppm` | 重构 |
 | `modules/rmdev_math/Matrix.cppm` | 重构 |
 | `modules/rmdev_message_manager/message_manager.cppm` | 聚合，可能无结构变更 |
