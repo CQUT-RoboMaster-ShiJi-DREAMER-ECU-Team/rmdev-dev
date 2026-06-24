@@ -184,6 +184,11 @@ fabric.properties
 CMakeSettings.json
 
 # =================================================================================================
+# Zed
+
+.zed/
+
+# =================================================================================================
 # Copied from https://github.com/github/gitignore/blob/main/CMake.gitignore
 
 CMakeLists.txt.user
