@@ -20,6 +20,21 @@ endif ()
 set(TEST_PLATFORM "mock" CACHE STRING "The platform to test on(mock, stm32, esp32, etc.)")
 option(TEST_ENABLE_EXCEPTIONS "Enable exceptions in tests" OFF)
 
+message(DEBUG "CMAKE_TOOLCHAIN_FILE: ${CMAKE_TOOLCHAIN_FILE}")
+if ((NOT CMAKE_TOOLCHAIN_FILE) AND (NOT TEST_ENABLE_EXCEPTIONS))
+    if (MSVC)
+        set(cxxCompileOptions /EHs- /GR-)
+    else ()
+        set(cxxCompileOptions -fno-exceptions -fno-rtti)
+    endif ()
+
+    foreach (opt IN LISTS cxxCompileOptions)
+        add_compile_options($<$<COMPILE_LANGUAGE:CXX>:${opt}>)
+    endforeach ()
+
+    unset(cxxCompileOptions)
+endif ()
+
 string(TOLOWER "${TEST_PLATFORM}" TEST_PLATFORM)
 
 include(cmake/utils.cmake)

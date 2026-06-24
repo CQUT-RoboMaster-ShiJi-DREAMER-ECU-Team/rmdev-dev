@@ -47,14 +47,6 @@ target_link_libraries(host_gtest PRIVATE
     rmdev_debug_assistance
 )
 
-if (NOT TEST_ENABLE_EXCEPTIONS)
-    if (NOT MSVC)
-        target_compile_options(host_gtest PRIVATE -fno-exceptions -fno-rtti)
-    else ()
-        target_compile_options(host_gtest PRIVATE /EHs- /GR-)
-    endif ()
-endif ()
-
 # CTest registration
 add_test(NAME host_gtest COMMAND host_gtest)
 set_tests_properties(host_gtest PROPERTIES DEPENDS emdevif_core_error_handler_test)
