@@ -41,7 +41,7 @@ include(cmake/utils.cmake)
 include(cmake/add_packages.cmake)
 
 if (TEST_PLATFORM STREQUAL "mock")
-    set(EMDEVIF_ENABLED_MODULES "")
+    set(EMDEVIF_ENABLED_MODULES timeline peripheral)
     add_subdirectory(emdevif_collection/emdevif)
 
     add_subdirectory(rmdev/modules/rmdev_message_manager)

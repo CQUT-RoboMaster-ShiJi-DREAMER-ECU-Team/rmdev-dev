@@ -30,6 +30,14 @@ add_executable(host_gtest
     emdevif/core/utils/InitOnce_test.cpp
     emdevif/core/utils/When_test.cpp
 
+    # emdevif timeline (link-time injection)
+    emdevif/timeline/user_impl_timeline.cpp
+    emdevif/timeline/Timeline_test.cpp
+
+    # emdevif peripheral (link-time injection)
+    emdevif/peripheral/user_impl_peripheral.cpp
+    emdevif/peripheral/PeripheralHandleMap_test.cpp
+
     # rmdev
     rmdev/debug_assistance/VOFA_test.cpp
     rmdev/message_manager/Subscriber_test.cpp
@@ -42,6 +50,8 @@ target_precompile_headers(host_gtest PRIVATE host_test_pch.hpp)
 target_link_libraries(host_gtest PRIVATE
     gtest_main
     emdevif_core
+    emdevif_timeline
+    emdevif_peripheral
 
     rmdev_message_manager
     rmdev_debug_assistance
