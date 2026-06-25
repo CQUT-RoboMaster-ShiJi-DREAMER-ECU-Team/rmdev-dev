@@ -9,7 +9,7 @@
 #if EMDEVIF_USE_MODULES
 import emdevif.core.error_handler;
 #else
-    #include "emdevif/core/error_handler.hpp"
+#include "emdevif/core/error_handler.hpp"
 #endif
 
 using namespace emdevif;

@@ -5,9 +5,9 @@ import emdevif.peripheral.peripheral_handle_map;
 import emdevif.peripheral.model.gpio;
 import emdevif.peripheral.model.serial;
 #else
-    #include "emdevif/peripheral/peripheral_handle_map.hpp"
-    #include "emdevif/peripheral/model/gpio.hpp"
-    #include "emdevif/peripheral/model/serial.hpp"
+#include "emdevif/peripheral/peripheral_handle_map.hpp"
+#include "emdevif/peripheral/model/gpio.hpp"
+#include "emdevif/peripheral/model/serial.hpp"
 #endif
 
 namespace {

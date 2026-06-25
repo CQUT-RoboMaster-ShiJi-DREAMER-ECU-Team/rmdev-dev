@@ -1,19 +1,21 @@
 #include "host_test_pch.hpp"
 #include "../../../rmdev/message_manager/MockQueue.hpp"
 #if EMDEVIF_USE_MODULES
-    import emdevif.core.data_container.message_queue;
+import emdevif.core.data_container.message_queue;
 #else
-    #include "emdevif/core/data_container/message_queue.hpp"
+#include "emdevif/core/data_container/message_queue.hpp"
 #endif
 
 using namespace emdevif;
 
-TEST(MessageQueueTest, MockQueueSatisfiesConcept) {
+TEST(MessageQueueTest, MockQueueSatisfiesConcept)
+{
     static_assert(MessageQueue<MockQueue<int, 5>>);
     static_assert(MessageSlot<MockSlot<int>>);
 }
 
-TEST(MessageQueueTest, PushPop) {
+TEST(MessageQueueTest, PushPop)
+{
     MockQueue<int, 5> q;
     EXPECT_EQ(q.storeCount(), 0u);
     EXPECT_EQ(q.maxItemCount(), 5u);
@@ -25,7 +27,8 @@ TEST(MessageQueueTest, PushPop) {
     EXPECT_EQ(q.storeCount(), 0u);
 }
 
-TEST(MessageQueueTest, FullAndEmpty) {
+TEST(MessageQueueTest, FullAndEmpty)
+{
     MockQueue<int, 3> q;
     EXPECT_EQ(q.remainCount(), 3u);
     for (int i = 0; i < 3; ++i) {
@@ -39,7 +42,8 @@ TEST(MessageQueueTest, FullAndEmpty) {
     EXPECT_EQ(static_cast<int>(q.pop(false, val)), static_cast<int>(ErrorCode::Empty));
 }
 
-TEST(MessageQueueTest, ForcePush) {
+TEST(MessageQueueTest, ForcePush)
+{
     MockQueue<int, 3> q;
     for (int i = 0; i < 3; ++i) {
         q.push(false, i);
@@ -49,7 +53,8 @@ TEST(MessageQueueTest, ForcePush) {
     EXPECT_EQ(q.remainCount(), 0u);
 }
 
-TEST(MessageQueueTest, Peek) {
+TEST(MessageQueueTest, Peek)
+{
     MockSlot<int> s;
     s.forcePush(false, 42);
     int val = 0;

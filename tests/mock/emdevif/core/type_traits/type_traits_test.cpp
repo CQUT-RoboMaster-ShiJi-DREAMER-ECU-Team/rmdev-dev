@@ -7,7 +7,7 @@
 #if EMDEVIF_USE_MODULES
 import emdevif.core.type_traits;
 #else
-    #include "emdevif/core/type_traits.hpp"
+#include "emdevif/core/type_traits.hpp"
 #endif
 
 using namespace emdevif;
