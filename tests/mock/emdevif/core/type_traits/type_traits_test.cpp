@@ -1,12 +1,15 @@
 #include "host_test_pch.hpp"
-#include <utility>
-#include <tuple>
+
 #include <array>
+#include <tuple>
+#include <utility>
+
 #if EMDEVIF_USE_MODULES
 import emdevif.core.type_traits;
 #else
     #include "emdevif/core/type_traits.hpp"
 #endif
+
 using namespace emdevif;
 
 namespace {

@@ -1,16 +1,16 @@
+#include <csetjmp>
+#include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
-#include <cstdarg>
 #include <cstring>
-#include <csetjmp>
+
+#include "emdevif/core/fatal_handler.h"
 
 #if EMDEVIF_USE_MODULES
 import emdevif.core.error_handler;
 #else
     #include "emdevif/core/error_handler.hpp"
 #endif
-
-#include "emdevif/core/fatal_handler.h"
 
 using namespace emdevif;
 
@@ -28,14 +28,20 @@ static void mock_term()
 static void mock_fatal(const char* f, int l, const char* fmt, std::va_list a)
 {
     g_fatal = true;
-    if (f) std::strncpy(g_ff, f, 255);
+    if (f) {
+        std::strncpy(g_ff, f, 255);
+    }
     g_fl = l;
 }
 static void mock_assert(const char* f, int l, const char*, const char* c, const char*)
 {
     g_assert = true;
-    if (f) std::strncpy(g_af, f, 255);
-    if (c) std::strncpy(g_as, c, 255);
+    if (f) {
+        std::strncpy(g_af, f, 255);
+    }
+    if (c) {
+        std::strncpy(g_as, c, 255);
+    }
     longjmp(g_jb, 1);
 }
 

@@ -1,11 +1,13 @@
 #include "host_test_pch.hpp"
-#include <array>
 #include <algorithm>
+#include <array>
+
 #if EMDEVIF_USE_MODULES
     import emdevif.core.data_container.ring_buffer;
 #else
     #include "emdevif/core/data_container/ring_buffer.hpp"
 #endif
+
 using namespace emdevif;
 
 TEST(RingUnsignedTest, IncrementWrap) {
@@ -49,7 +51,9 @@ TEST(RingBufferTest, BatchReadWrite) {
 }
 TEST(RingBufferTest, FillAndOverwrite) {
     RingBuffer<int, 5> buffer;
-    for (int i = 0; i < 5; ++i) buffer.push(i);
+    for (int i = 0; i < 5; ++i) {
+        buffer.push(i);
+    }
     EXPECT_TRUE(buffer.isFull());
     buffer.push(99);
     EXPECT_EQ(buffer.usedSlots(), 5u);

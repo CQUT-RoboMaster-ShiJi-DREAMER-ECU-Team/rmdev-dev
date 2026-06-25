@@ -1,19 +1,23 @@
 #include "host_test_pch.hpp"
 #include <cstdint>
-#include <utility>
+
 #ifdef __cpp_exceptions
 #include <stdexcept>
+#endif
+
+#include <utility>
+
+#if EMDEVIF_USE_MODULES
+    import emdevif.core.error_handler;
+#else
+    #include "emdevif/core/error_handler.hpp"
 #endif
 #if EMDEVIF_USE_MODULES
     import emdevif.core.resource_guard;
 #else
     #include "emdevif/core/resource_guard.hpp"
 #endif
-#if EMDEVIF_USE_MODULES
-    import emdevif.core.error_handler;
-#else
-    #include "emdevif/core/error_handler.hpp"
-#endif
+
 using namespace emdevif;
 
 static int g_cnt = 0;
@@ -40,7 +44,9 @@ TEST(DeferTest, NestedDefer) {
     EXPECT_EQ(v, 11);
 }
 TEST(DeferTest, ConstexprDefer) {
-    constexpr auto f = []() constexpr -> bool { int flag=0; { Defer d([&flag]() noexcept { flag=1; }); if(flag!=0) return false; } return flag==1; };
+    constexpr auto f = []() constexpr -> bool { int flag=0; { Defer d([&flag]() noexcept { flag=1; }); if(flag!=0) {
+    return false;
+} } return flag==1; };
     EXPECT_TRUE(f()); static_assert(f());
 }
 

@@ -20,12 +20,16 @@ TEST(VOFATest, AppendFrameTail) {
     auto r = JustFloat::appendFrameTail(std::span(buf),3);
     EXPECT_EQ(r.size(), 3*sizeof(float)+4);
     uint8_t t[]={0,0,0x80,0x7f};
-    for(int i=0;i<4;++i) EXPECT_EQ(r[r.size()-4+i], t[i]);
+    for(int i=0;i<4;++i) {
+        EXPECT_EQ(r[r.size()-4+i], t[i]);
+    }
 }
 TEST(VOFATest, ProcessData) {
     std::vector<float> buf(10,0.f); buf[0]=0; buf[1]=1;
     auto r = JustFloat::processData(std::span(buf),2);
     EXPECT_EQ(r.size(), 2u*sizeof(float)+4);
     uint8_t t[]={0,0,0x80,0x7f};
-    for(int i=0;i<4;++i) EXPECT_EQ(r[r.size()-4+i], t[i]);
+    for(int i=0;i<4;++i) {
+        EXPECT_EQ(r[r.size()-4+i], t[i]);
+    }
 }

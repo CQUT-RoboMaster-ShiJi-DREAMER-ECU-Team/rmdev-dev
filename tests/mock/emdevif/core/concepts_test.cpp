@@ -1,13 +1,16 @@
 #include "host_test_pch.hpp"
-#include <type_traits>
-#include <concepts>
+
 #include <compare>
+#include <concepts>
 #include <limits>
+#include <type_traits>
+
 #if EMDEVIF_USE_MODULES
     import emdevif.core.concepts;
 #else
     #include "emdevif/core/concepts.hpp"
 #endif
+
 using namespace emdevif;
 
 class CustomArith {

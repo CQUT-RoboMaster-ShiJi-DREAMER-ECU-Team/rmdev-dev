@@ -21,8 +21,12 @@ namespace emdevif::user_impl::peripheral_handle_map {
 
 void* findHandle(std::string_view name) noexcept
 {
-    if (name == "test_gpio") return &gpio_inst;
-    if (name == "test_serial") return &serial_inst;
+    if (name == "test_gpio") {
+        return &gpio_inst;
+    }
+    if (name == "test_serial") {
+        return &serial_inst;
+    }
     return nullptr;
 }
 

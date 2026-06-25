@@ -1,8 +1,10 @@
 #pragma once
+
 #include <cstddef>
 #include <cstdint>
-#include <vector>
 #include <string_view>
+#include <vector>
+
 #if EMDEVIF_USE_MODULES
     import emdevif.core.error_handler;
 #else
@@ -24,20 +26,28 @@ struct MockQueue {
     static void destroy(MockQueue&) noexcept {}
     void destroy() noexcept { data.clear(); }
     emdevif::ErrorCode push(bool, const T& val, emdevif::MessageQueueTimeout_t=0) noexcept {
-        if(data.size()>=item_size) return emdevif::ErrorCode::Full;
+        if(data.size()>=item_size) {
+            return emdevif::ErrorCode::Full;
+        }
         data.push_back(val); return emdevif::ErrorCode::Success;
     }
     emdevif::ErrorCode pop(bool, T& val, emdevif::MessageQueueTimeout_t=0) noexcept {
-        if(data.empty()) return emdevif::ErrorCode::Empty;
+        if(data.empty()) {
+            return emdevif::ErrorCode::Empty;
+        }
         val=data.front(); data.erase(data.begin()); return emdevif::ErrorCode::Success;
     }
     emdevif::ErrorCode pop(bool) noexcept {
-        if(data.empty()) return emdevif::ErrorCode::Empty;
+        if(data.empty()) {
+            return emdevif::ErrorCode::Empty;
+        }
         data.erase(data.begin()); return emdevif::ErrorCode::Success;
     }
     emdevif::ErrorCode forcePush(bool, const T& val) noexcept { data.push_back(val); return emdevif::ErrorCode::Success; }
     emdevif::ErrorCode peek(bool, T& val, emdevif::MessageQueueTimeout_t=0) noexcept {
-        if(data.empty()) return emdevif::ErrorCode::Empty;
+        if(data.empty()) {
+            return emdevif::ErrorCode::Empty;
+        }
         val=data.front(); return emdevif::ErrorCode::Success;
     }
     void clear() noexcept { data.clear(); }
@@ -58,7 +68,9 @@ struct MockSlot {
     void destroy() noexcept { has_data_=false; }
     emdevif::ErrorCode forcePush(bool, const T& val) noexcept { value_=val; has_data_=true; return emdevif::ErrorCode::Success; }
     emdevif::ErrorCode peek(bool, T& val, emdevif::MessageQueueTimeout_t=0) noexcept {
-        if(!has_data_) return emdevif::ErrorCode::Empty;
+        if(!has_data_) {
+            return emdevif::ErrorCode::Empty;
+        }
         val=value_; return emdevif::ErrorCode::Success;
     }
     void clear() noexcept { has_data_=false; }

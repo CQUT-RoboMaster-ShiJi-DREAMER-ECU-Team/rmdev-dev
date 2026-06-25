@@ -29,7 +29,9 @@ TEST(FixedStringTest, ElementAccess) {
 TEST(FixedStringTest, Iterators) {
     constexpr BasicFixedString<char, 4> s('a','b','c','d');
     std::string result;
-    for (char c : s) result += c;
+    for (char c : s) {
+        result += c;
+    }
     EXPECT_EQ(result, "abcd");
 }
 TEST(FixedStringTest, ConcatStrings) {

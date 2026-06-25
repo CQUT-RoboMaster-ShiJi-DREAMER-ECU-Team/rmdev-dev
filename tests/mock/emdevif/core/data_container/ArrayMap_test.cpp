@@ -1,17 +1,19 @@
 #include "host_test_pch.hpp"
 #include <cstring>
-#include <string_view>
 #include <array>
-#if EMDEVIF_USE_MODULES
-    import emdevif.core.integer_suffix;
-#else
-    #include "emdevif/core/integer_suffix.hpp"
-#endif
+#include <string_view>
+
 #if EMDEVIF_USE_MODULES
     import emdevif.core.data_container.array_map;
 #else
     #include "emdevif/core/data_container/array_map.hpp"
 #endif
+#if EMDEVIF_USE_MODULES
+    import emdevif.core.integer_suffix;
+#else
+    #include "emdevif/core/integer_suffix.hpp"
+#endif
+
 using namespace emdevif;
 
 namespace {
