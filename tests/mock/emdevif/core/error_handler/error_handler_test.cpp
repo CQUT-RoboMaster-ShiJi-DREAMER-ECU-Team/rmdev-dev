@@ -1,9 +1,17 @@
-#include <csetjmp>
 #include <cstdarg>
 #include <cstdio>
-#include <cstdlib>
-#include <cstring>
+#include <csetjmp>
 
+#include <type_traits>
+#include <string_view>
+#include <utility>
+
+#ifdef __cpp_exceptions
+#include <exception>
+#include <stdexcept>
+#endif
+
+#undef NDEBUG  // To test assert in release mode
 #include "emdevif/core/fatal_handler.h"
 
 #if EMDEVIF_USE_MODULES
@@ -12,114 +20,284 @@ import emdevif.core.error_handler;
 #include "emdevif/core/error_handler.hpp"
 #endif
 
-using namespace emdevif;
+namespace {
 
-static jmp_buf g_jb;
-static bool g_term = false, g_fatal = false, g_assert = false;
-static char g_ff[256] = {};
-static int g_fl = 0;
-static char g_af[256] = {}, g_as[256] = {};
-
-static void mock_term()
+template<typename T>
+constexpr decltype(auto) to_underlying(T value) noexcept
+    requires std::is_enum_v<T>
 {
-    g_term = true;
-    longjmp(g_jb, 1);
-}
-static void mock_fatal(const char* f, int l, const char* fmt, std::va_list a)
-{
-    g_fatal = true;
-    if (f) {
-        std::strncpy(g_ff, f, 255);
-    }
-    g_fl = l;
-}
-static void mock_assert(const char* f, int l, const char*, const char* c, const char*)
-{
-    g_assert = true;
-    if (f) {
-        std::strncpy(g_af, f, 255);
-    }
-    if (c) {
-        std::strncpy(g_as, c, 255);
-    }
-    longjmp(g_jb, 1);
+    return static_cast<std::underlying_type_t<T>>(value);
 }
 
-static int test_term()
+class TestOut
 {
-    registerTerminateFunction(mock_term);
-    if (setjmp(g_jb) == 0) {
-        terminate();
-        return 1;
+public:
+    template<typename Func>
+    void operator|(const Func& func)
+    {
+        static_assert(std::is_trivially_destructible_v<Func>);
+
+        for (int i = 0; i < indent_count; ++i) {
+            std::printf(" >> ");
+        }
+        func();
+        std::putchar('\n');
     }
-    if (!g_term) {
-        printf("FAIL: terminate\n");
-        return 1;
+
+    void increaceIndent() noexcept
+    {
+        ++indent_count;
     }
-    printf("PASS: terminate\n");
-    return 0;
-}
-static int test_fatal()
+    void decreaceIndent() noexcept
+    {
+        if (indent_count >= 1) {
+            --indent_count;
+        }
+    }
+
+private:
+    int indent_count = 0;
+} testOut;
+
+static_assert(std::is_trivially_destructible_v<TestOut>);
+
+enum class MockErrorType : int {
+    None = 0,
+    Terminate,
+    Fatal,
+    Assert,
+};
+
+MockErrorType last_mock_error_type = MockErrorType::None;
+std::jmp_buf test_jump_buffer;
+
+void mockTerminate() noexcept
 {
-    registerFatalHandler(mock_fatal);
-    registerTerminateFunction(mock_term);
-    if (setjmp(g_jb) == 0) {
-        fatalHandler("test.cpp", 42, "error %d", 123);
-        return 1;
-    }
-    if (!g_fatal || std::strcmp(g_ff, "test.cpp") != 0 || g_fl != 42) {
-        printf("FAIL: fatal\n");
-        return 1;
-    }
-    printf("PASS: fatal\n");
-    return 0;
+    testOut | [] { std::printf("Terminate called"); };
+
+    last_mock_error_type = MockErrorType::Terminate;
+    std::longjmp(test_jump_buffer, 1);
 }
-static int test_assert()
+
+void mockFatalHandler(const char* file, int line, const char* format, std::va_list args) noexcept
 {
-    registerAssertFailedHandler(mock_assert);
-    registerTerminateFunction(mock_term);
-    if (setjmp(g_jb) == 0) {
-        EMDEVIF_ASSERT(false);
-        printf("FAIL: assert\n");
-        return 1;
-    }
-    if (!g_assert) {
-        printf("FAIL: assert not fired\n");
-        return 1;
-    }
-    g_assert = false;
-    EMDEVIF_ASSERT(true);
-    if (g_assert) {
-        printf("FAIL: assert(true) fired\n");
-        return 1;
-    }
-    printf("PASS: assert\n");
-    return 0;
+    testOut | [&] {
+        std::printf("Fatal error called in file: %s, line: %d, message: ", file, line);
+        std::vprintf(format, args);
+    };
+
+    last_mock_error_type = MockErrorType::Fatal;
+    std::longjmp(test_jump_buffer, 1);
 }
-static int test_ec()
+
+void mockAssertFailedHandler(const char* file,
+                             int line,
+                             const char* func_name,
+                             const char* condition_name,
+                             const char* message) noexcept
 {
-    if (ErrorCode::Success != ErrorCode::Success) {
-        printf("FAIL: ec\n");
-        return 1;
-    }
-    if (ErrorCode::Timeout == ErrorCode::Success) {
-        printf("FAIL: ec cmp\n");
-        return 1;
-    }
-    printf("PASS: error_code\n");
-    return 0;
+    testOut | [&] {
+        std::printf("Assert failed called in file: %s, line: %d, function: %s, condition: %s, message: %s",
+                    file,
+                    line,
+                    func_name,
+                    condition_name,
+                    message);
+    };
+
+    last_mock_error_type = MockErrorType::Assert;
+    std::longjmp(test_jump_buffer, 1);
 }
+
+}  // namespace
+
+// Tests
+namespace {
+
+int testTerminate() noexcept
+{
+    std::printf("Testing terminate...\n");
+    testOut.increaceIndent();
+
+    emdevif::registerTerminateFunction(mockTerminate);
+
+    bool test_passed = false;
+    if (setjmp(test_jump_buffer) == 0) {
+        emdevif::terminate();
+    }
+    else {
+        testOut.increaceIndent();
+        if (last_mock_error_type == MockErrorType::Terminate) {
+            testOut | [] { std::printf("PASS"); };
+            test_passed = true;
+        }
+        else {
+            testOut | [] { std::printf("FAILED, last_mock_error_type=%d", ::to_underlying(last_mock_error_type)); };
+        }
+        testOut.decreaceIndent();
+    }
+
+    testOut.decreaceIndent();
+    last_mock_error_type = MockErrorType::None;
+
+    return test_passed ? 0 : 1;
+}
+
+int testFatalHandler() noexcept
+{
+    std::printf("Testing fatal handler...\n");
+    testOut.increaceIndent();
+
+    emdevif::registerFatalHandler(mockFatalHandler);
+
+    bool test_passed = false;
+    if (setjmp(test_jump_buffer) == 0) {
+        EMDEVIF_FATAL_HANDLER("Test fatal error message: %d", 42);
+    }
+    else {
+        testOut.increaceIndent();
+        if (last_mock_error_type == MockErrorType::Fatal) {
+            testOut | [] { std::printf("PASS"); };
+            test_passed = true;
+        }
+        else {
+            testOut | [] { std::printf("FAILED, last_mock_error_type=%d", ::to_underlying(last_mock_error_type)); };
+        }
+        testOut.decreaceIndent();
+    }
+
+    testOut.decreaceIndent();
+    last_mock_error_type = MockErrorType::None;
+
+    return test_passed ? 0 : 1;
+}
+
+int testAssertFailedHandler() noexcept
+{
+    std::printf("Testing assert failed handler...\n");
+    testOut.increaceIndent();
+
+    emdevif::registerAssertFailedHandler(mockAssertFailedHandler);
+
+    bool test_passed = false;
+    if (setjmp(test_jump_buffer) == 0) {
+        EMDEVIF_ASSERT(false, "Test assert failed message");
+    }
+    else {
+        testOut.increaceIndent();
+        if (last_mock_error_type == MockErrorType::Assert) {
+            testOut | [] { std::printf("PASS"); };
+            test_passed = true;
+        }
+        else {
+            testOut | [] { std::printf("FAILED, last_mock_error_type=%d", ::to_underlying(last_mock_error_type)); };
+        }
+        testOut.decreaceIndent();
+    }
+
+    testOut.decreaceIndent();
+    last_mock_error_type = MockErrorType::None;
+
+    return test_passed ? 0 : 1;
+}
+
+#ifdef __cpp_exceptions
+
+int testErrorWithCodeException() noexcept
+{
+    std::printf("Testing error with code exception...\n");
+    testOut.increaceIndent();
+
+    bool test_passed = false;
+    try {
+        // Test body here...
+        try {
+            throw emdevif::ErrorWithCodeException(emdevif::ErrorCode::InvalidArgument, "Test error with code");
+        }
+        catch (const emdevif::ErrorWithCodeException& e) {
+            testOut | [&] {
+                std::printf("Caught ErrorWithCode exception: code=%d, message=%s",
+                            e.getErrorCode().toUnderlying(),
+                            e.what());
+            };
+
+            using namespace std::string_view_literals;
+            if (e.getErrorCode() != emdevif::ErrorCode::InvalidArgument ||
+                std::string_view(e.what()) != "Test error with code"sv) {
+                testOut | [] { std::printf("FAILED: Exception data does not match expected values"); };
+                throw std::logic_error("Test failed");
+            }
+        }
+
+        try {
+            throw emdevif::ErrorWithCodeException(emdevif::ErrorCode::OutOfMemory);
+        }
+        catch (const emdevif::ErrorWithCodeException& e) {
+            testOut | [&] {
+                std::printf("Caught ErrorWithCode exception: code=%d, message=%s",
+                            e.getErrorCode().toUnderlying(),
+                            e.what());
+            };
+
+            using namespace std::string_view_literals;
+            if (e.getErrorCode() != emdevif::ErrorCode::OutOfMemory || std::string_view(e.what()) != ""sv) {
+                testOut | [] { std::printf("FAILED: Exception data does not match expected values"); };
+                throw std::logic_error("Test failed");
+            }
+        }
+
+        test_passed = true;
+        testOut.increaceIndent();
+        testOut | [&] { std::printf("PASSED"); };
+        testOut.decreaceIndent();
+    }
+    catch (std::logic_error& e) {
+        testOut | [&] { std::printf("FAILED: %s", e.what()); };
+    }
+    catch (emdevif::ErrorWithCodeException& e) {
+        testOut | [&] {
+            std::printf("FAILED: Caught unexpected `ErrorWithCode` exception: code=%d, message=%s",
+                        e.getErrorCode().toUnderlying(),
+                        e.what());
+        };
+    }
+    catch (std::exception& e) {
+        testOut | [&] { std::printf("FAILED: Caught unexpected exception: %s", e.what()); };
+    }
+    catch (...) {
+        testOut | [] { std::printf("FAILED: Caught unknown exception"); };
+    }
+
+    testOut.decreaceIndent();
+
+    return test_passed ? 0 : 1;
+}
+
+#endif  // __cpp_exceptions
+
+}  // namespace
+
 int main()
 {
-    int f = 0;
-    f += test_term();
-    f += test_fatal();
-    f += test_assert();
-    f += test_ec();
-    if (f > 0) {
-        printf("\n%d FAILED\n", f);
-        return 1;
-    }
-    printf("\nAll PASSED\n");
-    return 0;
+    int failed_tests = 0;
+
+    failed_tests += testTerminate();
+    failed_tests += testFatalHandler();
+    failed_tests += testAssertFailedHandler();
+#ifdef __cpp_exceptions
+    failed_tests += testErrorWithCodeException();
+#else
+    testOut | [] { std::printf("Skipping exception tests because exceptions are disabled"); };
+#endif
+
+    std::putchar('\n');
+    testOut | [&] {
+        if (failed_tests == 0) {
+            std::printf("All tests passed");
+        }
+        else {
+            std::printf("%d test(s) failed", failed_tests);
+        }
+    };
+    return failed_tests;
 }

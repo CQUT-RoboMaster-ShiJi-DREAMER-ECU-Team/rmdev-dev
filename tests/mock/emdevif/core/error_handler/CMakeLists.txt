@@ -1,6 +1,10 @@
+cmake_minimum_required(VERSION 3.28...4.3.3)
 
-add_executable(emdevif_core_error_handler_test error_handler_test.cpp)
+project(emdevif_core_error_handler_test LANGUAGES CXX)
 
-target_link_libraries(emdevif_core_error_handler_test PRIVATE emdevif_core)
+add_executable(${PROJECT_NAME} error_handler_test.cpp)
 
-add_test(NAME emdevif_core_error_handler_test COMMAND emdevif_core_error_handler_test)
+target_link_libraries(${PROJECT_NAME} PRIVATE emdevif_core)
+
+add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
+set_tests_properties(${PROJECT_NAME} PROPERTIES TIMEOUT 10)
