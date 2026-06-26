@@ -2,8 +2,9 @@
 
 #include <cstddef>
 #include <cstdint>
+
+#include <queue>
 #include <string_view>
-#include <vector>
 
 #if EMDEVIF_USE_MODULES
 import emdevif.core.error_handler;
@@ -17,52 +18,81 @@ import emdevif.core.data_container.message_queue;
 #endif
 
 template<typename T, size_t N = 8>
-struct MockQueue {
+class MockQueue
+{
+public:
     using ValueType = T;
     static constexpr size_t item_size = N;
+
     struct Config {
         std::string_view name;
     };
-    std::vector<T> data;
-    static MockQueue create(const Config&) noexcept
+
+    MockQueue() = default;
+
+    MockQueue(const MockQueue&) = delete;
+    MockQueue& operator=(const MockQueue&) = delete;
+
+    MockQueue(MockQueue&&) = default;
+    MockQueue& operator=(MockQueue&&) = default;
+
+    explicit MockQueue(Config) noexcept {}
+
+private:
+    std::queue<T> data;
+
+public:
+    static MockQueue create(const Config& config) noexcept
     {
-        return {};
+        return MockQueue{Config{config}};
     }
+
     static void destroy(MockQueue&) noexcept {}
+
     void destroy() noexcept
     {
-        data.clear();
+        data = std::queue<T>{};
     }
+
     emdevif::ErrorCode push(bool, const T& val, emdevif::MessageQueueTimeout_t = 0) noexcept
     {
         if (data.size() >= item_size) {
             return emdevif::ErrorCode::Full;
         }
-        data.push_back(val);
+        data.push(val);
         return emdevif::ErrorCode::Success;
     }
+
     emdevif::ErrorCode pop(bool, T& val, emdevif::MessageQueueTimeout_t = 0) noexcept
     {
         if (data.empty()) {
             return emdevif::ErrorCode::Empty;
         }
         val = data.front();
-        data.erase(data.begin());
+        data.pop();
         return emdevif::ErrorCode::Success;
     }
+
     emdevif::ErrorCode pop(bool) noexcept
     {
         if (data.empty()) {
             return emdevif::ErrorCode::Empty;
         }
-        data.erase(data.begin());
+        data.pop();
         return emdevif::ErrorCode::Success;
     }
+
     emdevif::ErrorCode forcePush(bool, const T& val) noexcept
     {
-        data.push_back(val);
+        if (data.size() < item_size) {
+            data.push(val);
+        }
+        else {
+            data.front() = val;
+        }
         return emdevif::ErrorCode::Success;
     }
+
     emdevif::ErrorCode peek(bool, T& val, emdevif::MessageQueueTimeout_t = 0) noexcept
     {
         if (data.empty()) {
@@ -71,22 +101,27 @@ struct MockQueue {
         val = data.front();
         return emdevif::ErrorCode::Success;
     }
+
     void clear() noexcept
     {
-        data.clear();
+        data = std::queue<T>{};
     }
+
     size_t storeCount() const noexcept
     {
         return data.size();
     }
+
     size_t remainCount() const noexcept
     {
         return item_size - data.size();
     }
+
     static constexpr size_t maxItemCount() noexcept
     {
         return item_size;
     }
+
     void* getHandle() const noexcept
     {
         return nullptr;
@@ -94,53 +129,73 @@ struct MockQueue {
 };
 
 template<typename T>
-struct MockSlot {
+class MockSlot
+{
+public:
     using ValueType = T;
     static constexpr size_t item_size = 1;
+
     struct Config {
         std::string_view name;
     };
-    T value_{};
-    bool has_data_ = false;
-    static MockSlot create(const Config&) noexcept
+
+    MockSlot() = default;
+
+    MockSlot(const MockSlot&) = delete;
+    MockSlot& operator=(const MockSlot&) = delete;
+
+    MockSlot(MockSlot&&) = default;
+    MockSlot& operator=(MockSlot&&) = default;
+
+private:
+    MockQueue<T, 1> queue_;
+
+public:
+    static MockSlot create(const Config& cfg) noexcept
     {
-        return {};
+        MockSlot s;
+        typename MockQueue<T, 1>::Config qcfg{cfg.name};
+        s.queue_ = MockQueue<T, 1>::create(qcfg);
+        return s;
     }
+
     static void destroy(MockSlot&) noexcept {}
+
     void destroy() noexcept
     {
-        has_data_ = false;
+        queue_.destroy();
     }
-    emdevif::ErrorCode forcePush(bool, const T& val) noexcept
+
+    emdevif::ErrorCode forcePush(bool in_isr, const T& val) noexcept
     {
-        value_ = val;
-        has_data_ = true;
-        return emdevif::ErrorCode::Success;
+        return queue_.forcePush(in_isr, val);
     }
-    emdevif::ErrorCode peek(bool, T& val, emdevif::MessageQueueTimeout_t = 0) noexcept
+
+    emdevif::ErrorCode peek(bool in_isr, T& val, emdevif::MessageQueueTimeout_t = 0) noexcept
     {
-        if (!has_data_) {
-            return emdevif::ErrorCode::Empty;
-        }
-        val = value_;
-        return emdevif::ErrorCode::Success;
+        return queue_.peek(in_isr, val);
     }
+
     void clear() noexcept
     {
-        has_data_ = false;
+        queue_.clear();
     }
+
     size_t storeCount() const noexcept
     {
-        return has_data_ ? 1u : 0u;
+        return queue_.storeCount();
     }
+
     size_t remainCount() const noexcept
     {
-        return has_data_ ? 0u : 1u;
+        return queue_.remainCount();
     }
+
     static constexpr size_t maxItemCount() noexcept
     {
         return item_size;
     }
+
     void* getHandle() const noexcept
     {
         return nullptr;

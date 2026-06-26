@@ -33,7 +33,7 @@ TEST(BitIntTest, NonStdSizes)
     BitInt<5> c2 = c1;
     EXPECT_EQ(c2, 10);
     c2 += 5;
-    EXPECT_EQ(c2, -3);
+    EXPECT_EQ(c2, 15);
 }
 TEST(BitIntTest, MixedArith)
 {
@@ -41,7 +41,7 @@ TEST(BitIntTest, MixedArith)
     BitInt<5> c2 = 10;
     c2 += 5;
     int t = c1 + c2 + 1;
-    EXPECT_EQ(t, 0);
+    EXPECT_EQ(t, 26);
     BitInt<6> c6;
     c6 = 0b11101;
     EXPECT_EQ(c6 & 0b11111, 0b11101);

@@ -12,6 +12,7 @@ TEST(MessageQueueTest, MockQueueSatisfiesConcept)
 {
     static_assert(MessageQueue<MockQueue<int, 5>>);
     static_assert(MessageSlot<MockSlot<int>>);
+    SUCCEED();
 }
 
 TEST(MessageQueueTest, PushPop)
@@ -49,8 +50,15 @@ TEST(MessageQueueTest, ForcePush)
         q.push(false, i);
     }
     q.forcePush(false, 99);
-    EXPECT_EQ(q.storeCount(), 4u);
+    EXPECT_EQ(q.storeCount(), 3u);
     EXPECT_EQ(q.remainCount(), 0u);
+    int v = -1;
+    q.pop(false, v);
+    EXPECT_EQ(v, 99);
+    q.pop(false, v);
+    EXPECT_EQ(v, 1);
+    q.pop(false, v);
+    EXPECT_EQ(v, 2);
 }
 
 TEST(MessageQueueTest, Peek)

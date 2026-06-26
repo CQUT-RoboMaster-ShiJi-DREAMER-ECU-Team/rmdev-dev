@@ -66,7 +66,7 @@ TEST(DeferTest, NestedDefer)
         Defer d1([&v]() noexcept { v += 10; });
         {
             Defer d2([&v]() noexcept { v += 1; });
-            EXPECT_EQ(v, 1);
+            EXPECT_EQ(v, 0);
         }
     }
     EXPECT_EQ(v, 11);
