@@ -85,7 +85,8 @@ Get-Help ./scripts/Run-MockTests.ps1
 | 你想了解 | 去哪里看 |
 |---|---|
 | 编码规范（命名 / 格式 / Doxygen / 工程约束） | [docs/coding-style.md](docs/coding-style.md) |
-| 智能体协作约束（修改规则 / 验证要求 / 提交规范） | [AGENTS.md](AGENTS.md) |
+| 贡献指南（多仓库协作 / 提交规范 / 如何贡献） | [CONTRIBUTING.md](CONTRIBUTING.md) |
+| 智能体协作约束（修改规则 / 验证要求） | [AGENTS.md](AGENTS.md) |
 | emdevif 怎么用 | [emdevif_collection/emdevif/README.md](emdevif_collection/emdevif/README.md) |
 | rmdev 怎么用 | [rmdev/README.md](rmdev/README.md) |
 | STM32 外设封装 | [emdevif_collection/emdevif_stm32_peripheral/README.md](emdevif_collection/emdevif_stm32_peripheral/README.md) |
