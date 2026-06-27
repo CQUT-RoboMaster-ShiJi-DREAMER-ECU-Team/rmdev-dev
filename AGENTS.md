@@ -27,8 +27,12 @@ rmdev-dev/
 三个子模块各有独立 AGENTS.md，修改库逻辑时应遵循对应模块的约束：
 
 - [rmdev/AGENTS.md](rmdev/AGENTS.md) — 算法/模型/驱动模块的裁剪、接口与验证要求
-- [emdevif/AGENTS.md](emdevif_collection/emdevif/AGENTS.md) — core/logger/peripheral/system/timeline/util 各模块约束，含 C++20 Modules 双路径验证
+- [emdevif/AGENTS.md](emdevif_collection/emdevif/AGENTS.md) — core/logger/peripheral/system/timeline 各模块约束，含 C++20 Modules 双路径验证
 - [emdevif_stm32_peripheral/AGENTS.md](emdevif_collection/emdevif_stm32_peripheral/AGENTS.md) — HAL/LL 适配与驱动选择路径
+
+## 编码规范
+
+统一编码规范位于本仓库 `docs/coding-style.md`（覆盖 emdevif 与 rmdev 全部子模块）。**身处本仓库时直接阅读该本地文件**；子模块自身文档中的 GitHub 外链指向的也是它，无需跳转。
 
 ## 构建系统
 

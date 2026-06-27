@@ -1,6 +1,10 @@
-# emdevif 编码规范
+# 编码规范
 
-本文档面向所有贡献者，说明编写与阅读 `emdevif` 及下游 `rmdev` 代码时应遵守的编码规则与工程约束。
+本文档是 `emdevif`、`rmdev` 及其全部子模块（含 `emdevif_stm32_peripheral`、各 `rmdev_*` 模块与驱动）的**统一编码规范**，面向所有贡献者与协作智能体。
+
+> **在哪里阅读本文档？**
+> - 在 `rmdev-dev` 集成仓库内：本文件就在工程根目录的 `docs/coding-style.md`，直接阅读即可，无需跳转外链。
+> - 各子模块（`emdevif` / `rmdev` / `emdevif_stm32_peripheral` 等）的 `AGENTS.md` 与 `README.md` 会以 `rmdev-dev` 的 GitHub 链接引用本文档——那是为了这些子模块**独立查看**时也能找到。若你已身处 `rmdev-dev` 仓库，请直接看本地这份，不必顺着外链绕一圈。
 
 ---
 
