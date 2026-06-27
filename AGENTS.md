@@ -71,13 +71,13 @@ cmake --preset HostTestModulesNoexceptions
 cmake --preset HostTestHeadersExceptions
 cmake --preset HostTestHeadersNoexceptions
 
-# Debug 构建并运行测试
-cmake --build --preset HostTestModulesExceptions --config Debug
-ctest --preset HostTestModulesExceptions -C Debug
+# Debug 构建并运行测试（以 `HostTestModulesExceptions` 配置预设为例）
+cmake --build build/mock/HostTestModulesExceptions --config Debug
+ctest --test-dir build/mock/HostTestModulesExceptions -C Debug
 
-# Release 构建并运行测试
-cmake --build --preset HostTestModulesExceptions --config Release
-ctest --preset HostTestModulesExceptions -C Release
+# Release 构建并运行测试（以 `HostTestModulesExceptions` 配置预设为例）
+cmake --build build/mock/HostTestModulesExceptions --config Release
+ctest --test-dir build/mock/HostTestModulesExceptions -C Release
 ```
 
 ### 宿主测试 Preset 表
@@ -90,6 +90,13 @@ ctest --preset HostTestModulesExceptions -C Release
 | `HostTestHeadersNoexceptions` | OFF | OFF |
 
 每个 configure preset 通过 Ninja Multi-Config 同时支持 Debug 和 Release 两种构建配置。
+
+### 辅助脚本
+
+仓库提供了 `scripts/` 下的 PowerShell 辅助脚本：
+
+- **`Run-MockTests.ps1`**：一键配置、构建并运行预设的单元测试，支持 `-TestSuit` 选择预设组合，`-GeneratorConfig` 指定构建配置，`-Quiet`/`-OutputOnFailure` 控制输出
+- **`Format-CppCode.ps1`**：递归格式化 `emdevif_collection/`、`rmdev/`、`tests/` 下的 `.c/.cpp/.h/.hpp/.cppm` 文件，依赖 `clang-format`
 
 ## C++20 Modules 注意
 
