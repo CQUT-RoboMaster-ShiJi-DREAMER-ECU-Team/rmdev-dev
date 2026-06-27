@@ -49,4 +49,6 @@ if (TEST_PLATFORM STREQUAL "mock")
 
     enable_testing()
     add_subdirectory(tests/mock)
+else ()
+    message(FATAL_ERROR "Unsupported TEST_PLATFORM: ${TEST_PLATFORM}")
 endif ()

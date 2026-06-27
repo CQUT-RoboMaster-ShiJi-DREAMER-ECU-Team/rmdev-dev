@@ -8,3 +8,5 @@ target_link_libraries(${PROJECT_NAME} PRIVATE emdevif_core)
 
 add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
 set_tests_properties(${PROJECT_NAME} PROPERTIES TIMEOUT 10)
+
+addCopyFinallyBinaryFileTarget(${PROJECT_NAME})

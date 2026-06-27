@@ -1,29 +1,43 @@
 
 #[==[
-# @function addCopyFinallyBinaryFileTarget(<finalBinaryFileProjectName> <finalBinaryFileName> <finalBinaryFileDir>)
+# addCopyFinallyBinaryFileTarget(<targetName> [executableSuffix])
 #
-# 用于新增一个构建目标，这个目标用于将生成的二进制文件拷贝到 bin 目录以便于调试工具指定路径
-# @param finalBinaryFileProjectName 生成这个二进制文件的目标名称
-# @param finalBinaryFileName 这个二进制文件的名称
-# @param finalBinaryFileDir 这个二进制文件所在的路径
+# 新增一个用户自定义目标，用于将 targetName 目标生成的二进制文件拷贝到 bin 目录以便于调试工具指定路径
+#
+# targetName
+#     待拷贝的文件对应的目标名称
+#
+# executableSuffix
+#     可执行文件的后缀名（要包含 `.`）。此参数可选，如果不指定，则使用 CMAKE_EXECUTABLE_SUFFIX 变量的值作为后缀名。
 ]==]
-function(addCopyFinallyBinaryFileTarget finalBinaryFileProjectName finalBinaryFileName finalBinaryFileDir)
+function(addCopyFinallyBinaryFileTarget targetName)
+    if (NOT ARGN)
+        set(executableSuffix "${CMAKE_EXECUTABLE_SUFFIX}")
+    else ()
+        set(executableSuffix "${ARGN}")
+    endif ()
+
+    set(finalBinaryFileName "${targetName}${executableSuffix}")
+
+    message(DEBUG "In function `${CMAKE_CURRENT_FUNCTION}`:")
+    list(APPEND CMAKE_MESSAGE_INDENT "    ")
+
+    message(DEBUG "executableSuffix: ${executableSuffix}")
+    message(DEBUG "targetName: ${targetName}")
+    message(DEBUG "finalBinaryFileName: ${finalBinaryFileName}")
+
+    set(copyDestFile "${CMAKE_SOURCE_DIR}/bin/${finalBinaryFileName}")
+    message(DEBUG "copyDestFile: ${copyDestFile}")
+
     add_custom_command(
-        TARGET ${finalBinaryFileProjectName} POST_BUILD
+        TARGET ${targetName} POST_BUILD
         COMMENT "Copy the binary file from cmake process binary dir to project_root/bin dir."
         COMMAND ${CMAKE_COMMAND} -E
-        copy "${finalBinaryFileDir}/${finalBinaryFileName}"
-        "${CMAKE_SOURCE_DIR}/bin/${finalBinaryFileName}"
+        copy "$<TARGET_FILE:${targetName}>" "${copyDestFile}"
         VERBATIM
     )
 
-    set_property(DIRECTORY PROPERTY ADDITIONAL_CLEAN_FILES
-        "${CMAKE_SOURCE_DIR}/bin"
-    )
-
-    message(STATUS "[${PROJECT_NAME}](function `${CMAKE_CURRENT_FUNCTION}\'): \n"
-        "        finalBinaryFileProjectName: ${finalBinaryFileProjectName}\n"
-        "        finalBinaryFileName: ${finalBinaryFileName}\n"
-        "        finalBinaryFileDir: ${finalBinaryFileDir}"
+    set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_CLEAN_FILES
+        ${copyDestFile}
     )
 endfunction()

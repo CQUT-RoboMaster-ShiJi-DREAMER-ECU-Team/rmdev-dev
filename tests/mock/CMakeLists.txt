@@ -15,7 +15,9 @@ if (NOT googletest_ADDED)
     message(FATAL_ERROR "CPM: Failed to add package `googletest`")
 endif ()
 
-add_executable(host_gtest
+project(host_gtest LANGUAGES CXX)
+
+add_executable(${PROJECT_NAME}
     # emdevif core
     emdevif/core/concepts_test.cpp
     emdevif/core/data_container/ArrayMap_test.cpp
@@ -44,11 +46,12 @@ add_executable(host_gtest
     rmdev/message_manager/Topic_test.cpp
 )
 
-target_include_directories(host_gtest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-target_precompile_headers(host_gtest PRIVATE host_test_pch.hpp)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_precompile_headers(${PROJECT_NAME} PRIVATE host_test_pch.hpp)
 
-target_link_libraries(host_gtest PRIVATE
-    gtest_main
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    GTest::gtest_main
+
     emdevif_core
     emdevif_timeline
     emdevif_peripheral
@@ -58,5 +61,7 @@ target_link_libraries(host_gtest PRIVATE
 )
 
 # CTest registration
-add_test(NAME host_gtest COMMAND host_gtest)
-set_tests_properties(host_gtest PROPERTIES DEPENDS emdevif_core_error_handler_test)
+add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
+set_tests_properties(${PROJECT_NAME} PROPERTIES DEPENDS emdevif_core_error_handler_test)
+
+addCopyFinallyBinaryFileTarget(${PROJECT_NAME})
