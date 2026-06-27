@@ -124,4 +124,4 @@ ctest --test-dir build/mock/HostTestModulesExceptions -C Release
 
 ## 贡献流程与提交规范
 
-人类贡献者的多仓库协作流程及 Git 提交规范详见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+多仓库协作流程及 Git 提交规范（对所有贡献者都适用）详见 [CONTRIBUTING.md](CONTRIBUTING.md)。
