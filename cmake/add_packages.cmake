@@ -53,13 +53,58 @@ else ()
     message(FATAL_ERROR "[${PROJECT_NAME}]: CPM: Failed to add package `mp-units`")
 endif ()
 
-CPMFindPackage(
-    NAME Eigen3
-    URL "https://gitlab.com/libeigen/eigen/-/archive/5.0.1/eigen-5.0.1.tar.gz"
-    URL_HASH SHA256=E9C326DC8C05CD1E044C71F30F1B2E34A6161A3B6ECF445D56B53FF1669E3DEC
-    VERSION 5.0.1
-    OPTIONS "EIGEN_BUILD_TESTING OFF" "EIGEN_BUILD_DOC OFF"
-)
-if (NOT Eigen3_ADDED)
-    message(FATAL_ERROR "[${PROJECT_NAME}]: CPM: Failed to add package `Eigen3`")
+set(testRequiresCmsisDsp OFF)
+if (TEST_RMDEV_MATH_IMPL STREQUAL "CMSIS-DSP")
+    set(testRequiresCmsisDsp ON)
+else ()
+    message(FATAL_ERROR "[${PROJECT_NAME}]: Invalid value for TEST_RMDEV_MATH_IMPL: ${TEST_RMDEV_MATH_IMPL}")
 endif ()
+
+if (TEST_RMDEV_MATRIX_IMPL STREQUAL "CMSIS-DSP")
+    set(testRequiresCmsisDsp ON)
+elseif (TEST_RMDEV_MATRIX_IMPL STREQUAL "Eigen")
+    CPMFindPackage(
+        NAME Eigen3
+        URL "https://gitlab.com/libeigen/eigen/-/archive/5.0.1/eigen-5.0.1.tar.gz"
+        URL_HASH SHA256=E9C326DC8C05CD1E044C71F30F1B2E34A6161A3B6ECF445D56B53FF1669E3DEC
+        VERSION 5.0.1
+        OPTIONS "EIGEN_BUILD_TESTING OFF" "EIGEN_BUILD_DOC OFF"
+    )
+    if (NOT Eigen3_ADDED)
+        message(FATAL_ERROR "[${PROJECT_NAME}]: CPM: Failed to add package `Eigen3`")
+    endif ()
+endif ()
+
+if (testRequiresCmsisDsp)
+    set(cmsisDspHost OFF)
+
+    if (TEST_PLATFORM STREQUAL "mock")
+        CPMFindPackage(
+            NAME CMSIS_6
+            GITHUB_REPOSITORY ARM-software/CMSIS_6
+            GIT_TAG v6.3.0
+            VERSION 6.3.0
+            DOWNLOAD_ONLY ON
+        )
+        if (NOT CMSIS_6_ADDED)
+            message(FATAL_ERROR "[${PROJECT_NAME}]: CPM: Failed to add package `CMSIS_6`")
+        endif ()
+
+        set(cmsisDspHost ON)
+    endif ()
+
+    CPMFindPackage(
+        NAME CMSIS-DSP
+        GITHUB_REPOSITORY ARM-software/CMSIS-DSP
+        GIT_TAG v1.17.0
+        VERSION 1.17.0
+        OPTIONS "CMSISCORE \"${cmsisCoreDir}\"" "DISABLEFLOAT16 ON" "HOST ${cmsisDspHost}"
+    )
+    if (NOT CMSIS-DSP_ADDED)
+        message(FATAL_ERROR "[${PROJECT_NAME}]: CPM: Failed to add package `CMSIS-DSP`")
+    endif ()
+    target_compile_options(CMSISDSP PRIVATE -ffast-math -fno-finite-math-only -Ofast)
+
+    unset(cmsisDspHost)
+endif ()
+unset(testRequiresCmsisDsp)

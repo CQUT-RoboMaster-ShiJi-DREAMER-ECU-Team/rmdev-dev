@@ -20,6 +20,13 @@ endif ()
 set(TEST_PLATFORM "mock" CACHE STRING "The platform to test on(mock, stm32, esp32, etc.)")
 option(TEST_ENABLE_EXCEPTIONS "Enable exceptions in tests" OFF)
 
+set(TEST_RMDEV_MATH_IMPL "CMSIS-DSP" CACHE STRING "Implementation of rmdev_math module.")
+set(TEST_RMDEV_MATRIX_IMPL "CMSIS-DSP" CACHE STRING
+    "Implementation of rmdev_math matrix operations."
+)
+message(DEBUG "TEST_RMDEV_MATH_IMPL: ${TEST_RMDEV_MATH_IMPL}")
+message(DEBUG "TEST_RMDEV_MATRIX_IMPL: ${TEST_RMDEV_MATRIX_IMPL}")
+
 message(DEBUG "CMAKE_TOOLCHAIN_FILE: ${CMAKE_TOOLCHAIN_FILE}")
 if ((NOT CMAKE_TOOLCHAIN_FILE) AND (NOT TEST_ENABLE_EXCEPTIONS))
     if (MSVC)
@@ -37,6 +44,9 @@ endif ()
 
 string(TOLOWER "${TEST_PLATFORM}" TEST_PLATFORM)
 
+message(DEBUG "TEST_PLATFORM: ${TEST_PLATFORM}")
+message(DEBUG "TEST_ENABLE_EXCEPTIONS: ${TEST_ENABLE_EXCEPTIONS}")
+
 include(cmake/utils.cmake)
 include(cmake/add_packages.cmake)
 
@@ -46,6 +56,10 @@ if (TEST_PLATFORM STREQUAL "mock")
 
     add_subdirectory(rmdev/modules/rmdev_message_manager)
     add_subdirectory(rmdev/modules/rmdev_debug_assistance)
+
+    set(RMDEV_MATH_IMPL ${TEST_RMDEV_MATH_IMPL})
+    set(RMDEV_MATRIX_IMPL ${TEST_RMDEV_MATRIX_IMPL})
+    add_subdirectory(rmdev/modules/rmdev_math)
 
     enable_testing()
     add_subdirectory(tests/mock)

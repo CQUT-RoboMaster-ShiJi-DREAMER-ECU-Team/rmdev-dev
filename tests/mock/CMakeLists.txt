@@ -58,6 +58,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 
     rmdev_message_manager
     rmdev_debug_assistance
+    rmdev_math
 )
 
 # CTest registration
