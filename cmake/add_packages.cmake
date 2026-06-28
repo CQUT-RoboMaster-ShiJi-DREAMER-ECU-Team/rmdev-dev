@@ -52,3 +52,14 @@ if (mp-units_ADDED)
 else ()
     message(FATAL_ERROR "[${PROJECT_NAME}]: CPM: Failed to add package `mp-units`")
 endif ()
+
+CPMFindPackage(
+    NAME Eigen3
+    URL "https://gitlab.com/libeigen/eigen/-/archive/5.0.1/eigen-5.0.1.tar.gz"
+    URL_HASH SHA256=E9C326DC8C05CD1E044C71F30F1B2E34A6161A3B6ECF445D56B53FF1669E3DEC
+    VERSION 5.0.1
+    OPTIONS "EIGEN_BUILD_TESTING OFF" "EIGEN_BUILD_DOC OFF"
+)
+if (NOT Eigen3_ADDED)
+    message(FATAL_ERROR "[${PROJECT_NAME}]: CPM: Failed to add package `Eigen3`")
+endif ()
