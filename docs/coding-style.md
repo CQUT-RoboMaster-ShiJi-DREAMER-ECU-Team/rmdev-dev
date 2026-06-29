@@ -8,7 +8,7 @@
 
 ---
 
-## 代码格式规范
+## C/C++ 代码格式规范
 
 项目格式以仓库 `.clang-format` 为准，核心约束如下：
 
@@ -36,6 +36,45 @@
 - 注释要解释"为什么"，而非重复"代码在做什么"。
 - 公共接口、非直观行为、约束条件必须有注释。
 - 不要保留失效的注释或大段被注释掉的旧代码。
+
+---
+
+## CMake 代码格式规范
+
+- 缩进：4 空格，不使用 Tab。
+- 行宽：尽量控制在 100 列以内；长参数列表换行后对齐到第一个参数（4 空格缩进）。
+
+### 命名
+
+- 缓存变量（`option` / `set(... CACHE ...)`）：`UPPER_SNAKE_CASE`，建议带模块前缀（如 `EMDEVIF_USE_CPP_MODULES`、`RMDEV_ENABLE_INS_MODULE`）。
+- 普通（局部）变量：`camelCase`（如 `emdevifAllModules`、`trueCount`）。
+- 函数名：项目自定义函数使用 `camelCase`；属于特定子模块的函数可加模块前缀（如 `emdevif_trueOptionsCount`），内部辅助函数以下划线结尾（如 `emdevif_messageCompileFeature_`）。
+
+### 大小写
+
+- 关键字（`if` / `else` / `endif` / `foreach` / `function` / `return` / `block` 等）：统一小写。
+- 内置函数、内置模块：遵循 CMake 官方文档的原始大小写，不要统一改写（如 `add_subdirectory`、`target_link_libraries`、`FetchContent_Declare`、`CPMAddPackage`）。
+- 函数的关键字参数（`PUBLIC` / `PRIVATE` / `IN LISTS` / `FILE_SET` 等）：使用 CMake 原始大小写（全大写或混合大小写，以官方为准）。
+
+### 空格与括号
+
+- 控制关键字与括号之间加空格：`if (COND)`、`foreach (var IN LISTS list)`、`function(name)`，不要写成 `if(COND)`。
+- `if` 条件中括号内侧不加空格：`if (COND)`、`if (A AND B)`，不要写成 `if( A AND B )`。
+
+### 字符串引用
+
+- 单值变量或安全标识符可不加引号：`set(CMAKE_CXX_STANDARD 20)`。
+- 多字词、含特殊字符或需进行字符串比较的值使用双引号：`if ("${var}" STREQUAL "")`、`message(STATUS "text")`。
+- 大段字面量使用方括号：`set(var [[raw content]])`。
+
+### 注释
+
+- 单行注释使用 `#`。
+- `.cmake` 工具函数文件中，函数级文档使用方括号注释块：`#[==[ ... ]==]`，写在 `function()` 之前。
+
+### 消息前缀
+
+- 项目输出的 `message()` 统一使用 `[${PROJECT_NAME}]:` 作为前缀，便于在多子项目日志中定位来源。
 
 ---
 
