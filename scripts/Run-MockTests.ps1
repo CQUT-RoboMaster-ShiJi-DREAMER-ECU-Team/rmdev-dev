@@ -70,6 +70,10 @@ class CMakePreset {
     CMakePreset([string]$TestSuitName) {
         $this.Name = "HostTest" + $TestSuitName
     }
+
+    [string] ToString() {
+        return $this.Name
+    }
 }
 
 
@@ -117,7 +121,7 @@ function Invoke-Test {
     $succeed = $LASTEXITCODE -eq 0
     Write-Message -Title "CMake build with preset `"$($Preset.Name)`" on config `"$GeneratorConfig`"" `
         -Message ($build | Out-String).Trim() -Succeed $succeed
-    
+
     if (-not $succeed) { return 1 }
 
     $ctestOutput = `
@@ -125,7 +129,7 @@ function Invoke-Test {
     $succeed = $LASTEXITCODE -eq 0
     Write-Message -Title "CTest with preset `"$($Preset.Name)`" on config `"$GeneratorConfig`"" `
         -Message ($ctestOutput | Out-String).Trim() -Succeed $succeed
-        
+
     if (-not $succeed) { return 1 }
 
     return 0
@@ -141,9 +145,13 @@ Write-Debug "`$workDirectory=$workDirectory"
 try {
     Set-Location $workDirectory
 
-    [CMakePreset[]]$runningPresets = $TestSuit |
-        ForEach-Object { [CMakePreset]::new($suitNameToFullSuitNameMap[$_]) } |
-        Select-Object -Unique
+    $uniqueSuitNames = $TestSuit | ForEach-Object {
+        $suitNameToFullSuitNameMap[$_]
+    } | Select-Object -Unique
+
+    [CMakePreset[]]$runningPresets = $uniqueSuitNames | ForEach-Object {
+        [CMakePreset]::new($_)
+    }
 
     [int]$failedCount = 0
     $runningPresets | ForEach-Object {

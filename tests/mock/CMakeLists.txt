@@ -44,6 +44,7 @@ add_executable(${PROJECT_NAME}
     rmdev/debug_assistance/VOFA_test.cpp
     rmdev/message_manager/Subscriber_test.cpp
     rmdev/message_manager/Topic_test.cpp
+    rmdev/math/matrix_test.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
