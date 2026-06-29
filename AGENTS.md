@@ -12,7 +12,7 @@ rmdev-dev/
 ├── emdevif_collection/
 │   ├── emdevif/                  # 子模块：嵌入式通用接口抽象（有独立 AGENTS.md）
 │   └── emdevif_stm32_peripheral/ # 子模块：emdevif 的 STM32 外设扩展（有独立 AGENTS.md）
-├── tests/                        # 宿主单元测试
+├── tests/                        # 模拟单元测试
 │   ├── CMakeLists.txt
 │   └── mock/
 │       ├── host_test_pch.hpp     # 预编译头（GoogleTest）
@@ -40,7 +40,7 @@ rmdev-dev/
 
 根 `CMakeLists.txt` 根据 `TEST_PLATFORM` 选择入口：
 
-- `TEST_PLATFORM=mock`：宿主单元测试模式，进入 `tests/`，不依赖平台/板卡
+- `TEST_PLATFORM=mock`：模拟单元测试模式，进入 `tests/`，不依赖平台/板卡
 - 其他 `TEST_PLATFORM`：暂时未实现，后续添加相关功能
 
 第三方依赖通过 CPM 管理（`cmake/add_packages.cmake`），目前引入 `mpaland/printf` 和 `mpusz/mp-units`。测试依赖 `google/googletest`。
@@ -51,9 +51,9 @@ rmdev-dev/
 |---------------------------|--------|--------------------------|-------------------------------------------------|
 | `TEST_PLATFORM`           | String | `"mock"`                 | 见前文                                             |
 | `EMDEVIF_USE_CPP_MODULES` | Bool   | `ON`                     | `emdevif` 子模块自身默认 `ON`；本仓库 `CMakePresets.json` 显式覆盖以覆盖 Modules ON/OFF 两条验证路径 |
-| `TEST_ENABLE_EXCEPTIONS`  | Bool   | `OFF`                    | C++ 异常开关（宿主测试路径），`CMakeLists.txt` 中默认关闭，Preset 可显式开启；关闭时测试中异常相关用例通过 `GTEST_SKIP` 跳过 |
+| `TEST_ENABLE_EXCEPTIONS`  | Bool   | `OFF`                    | C++ 异常开关（模拟测试路径），`CMakeLists.txt` 中默认关闭，Preset 可显式开启；关闭时测试中异常相关用例通过 `GTEST_SKIP` 跳过 |
 
-### 宿主单元测试
+### 模拟单元测试
 
 在 Windows/Linux/macOS 上使用 GoogleTest 进行单元测试。
 
@@ -70,28 +70,28 @@ rmdev-dev/
 cmake --list-presets
 
 # 配置（4 选 1）
-cmake --preset HostTestModulesExceptions
-cmake --preset HostTestModulesNoexceptions
-cmake --preset HostTestHeadersExceptions
-cmake --preset HostTestHeadersNoexceptions
+cmake --preset MockTestModulesExceptions
+cmake --preset MockTestModulesNoexceptions
+cmake --preset MockTestHeadersExceptions
+cmake --preset MockTestHeadersNoexceptions
 
-# Debug 构建并运行测试（以 `HostTestModulesExceptions` 配置预设为例）
-cmake --build build/mock/HostTestModulesExceptions --config Debug
-ctest --test-dir build/mock/HostTestModulesExceptions -C Debug
+# Debug 构建并运行测试（以 `MockTestModulesExceptions` 配置预设为例）
+cmake --build build/mock/MockTestModulesExceptions --config Debug
+ctest --test-dir build/mock/MockTestModulesExceptions -C Debug
 
-# Release 构建并运行测试（以 `HostTestModulesExceptions` 配置预设为例）
-cmake --build build/mock/HostTestModulesExceptions --config Release
-ctest --test-dir build/mock/HostTestModulesExceptions -C Release
+# Release 构建并运行测试（以 `MockTestModulesExceptions` 配置预设为例）
+cmake --build build/mock/MockTestModulesExceptions --config Release
+ctest --test-dir build/mock/MockTestModulesExceptions -C Release
 ```
 
-### 宿主测试 Preset 表
+### 模拟测试 Preset 表
 
 | Preset 名 | EMDEVIF_USE_CPP_MODULES | TEST_ENABLE_EXCEPTIONS |
 |---|---|---|
-| `HostTestModulesExceptions` | ON | ON |
-| `HostTestModulesNoexceptions` | ON | OFF |
-| `HostTestHeadersExceptions` | OFF | ON |
-| `HostTestHeadersNoexceptions` | OFF | OFF |
+| `MockTestModulesExceptions` | ON | ON |
+| `MockTestModulesNoexceptions` | ON | OFF |
+| `MockTestHeadersExceptions` | OFF | ON |
+| `MockTestHeadersNoexceptions` | OFF | OFF |
 
 每个 configure preset 通过 Ninja Multi-Config 同时支持 Debug 和 Release 两种构建配置。
 
@@ -124,4 +124,10 @@ ctest --test-dir build/mock/HostTestModulesExceptions -C Release
 
 ## 贡献流程与提交规范
 
-多仓库协作流程及 Git 提交规范（对所有贡献者都适用）详见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+**所有提交（包括智能体提交）必须严格遵守 [`CONTRIBUTING.md`](CONTRIBUTING.md) 中的 Git 提交规范。**
+
+在提交代码前，务必阅读 `CONTRIBUTING.md` 的以下章节：
+- **Git 提交规范**（含提交信息格式、`Assisted-by` 行等）
+- **多仓库协作流程**（何时在子模块提交、何时在本仓库提交）
+
+不规范的提交信息将被要求修改。智能体提交时尤其要注意正确添加 `Assisted-by` 行。

@@ -15,40 +15,40 @@
             }
         },
         {
-            "name": "HostTestModulesExceptions",
+            "name": "MockTestModulesExceptions",
             "inherits": "Default-Host",
-            "displayName": "Host Test (Modules + Exceptions)",
-            "description": "Host unit test with C++20 Modules and exceptions enabled",
+            "displayName": "Mock Test (Modules + Exceptions)",
+            "description": "Mock unit test with C++20 Modules and exceptions enabled",
             "cacheVariables": {
                 "EMDEVIF_USE_CPP_MODULES": "ON",
                 "TEST_ENABLE_EXCEPTIONS": "ON"
             }
         },
         {
-            "name": "HostTestModulesNoexceptions",
+            "name": "MockTestModulesNoexceptions",
             "inherits": "Default-Host",
-            "displayName": "Host Test (Modules + No Exceptions)",
-            "description": "Host unit test with C++20 Modules and exceptions disabled",
+            "displayName": "Mock Test (Modules + No Exceptions)",
+            "description": "Mock unit test with C++20 Modules and exceptions disabled",
             "cacheVariables": {
                 "EMDEVIF_USE_CPP_MODULES": "ON",
                 "TEST_ENABLE_EXCEPTIONS": "OFF"
             }
         },
         {
-            "name": "HostTestHeadersExceptions",
+            "name": "MockTestHeadersExceptions",
             "inherits": "Default-Host",
-            "displayName": "Host Test (Headers + Exceptions)",
-            "description": "Host unit test with traditional headers and exceptions enabled",
+            "displayName": "Mock Test (Headers + Exceptions)",
+            "description": "Mock unit test with traditional headers and exceptions enabled",
             "cacheVariables": {
                 "EMDEVIF_USE_CPP_MODULES": "OFF",
                 "TEST_ENABLE_EXCEPTIONS": "ON"
             }
         },
         {
-            "name": "HostTestHeadersNoexceptions",
+            "name": "MockTestHeadersNoexceptions",
             "inherits": "Default-Host",
-            "displayName": "Host Test (Headers + No Exceptions)",
-            "description": "Host unit test with traditional headers and exceptions disabled",
+            "displayName": "Mock Test (Headers + No Exceptions)",
+            "description": "Mock unit test with traditional headers and exceptions disabled",
             "cacheVariables": {
                 "EMDEVIF_USE_CPP_MODULES": "OFF",
                 "TEST_ENABLE_EXCEPTIONS": "OFF"

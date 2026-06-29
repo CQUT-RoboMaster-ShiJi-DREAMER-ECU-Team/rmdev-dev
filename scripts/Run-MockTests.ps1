@@ -68,7 +68,7 @@ class CMakePreset {
     [string]$Name
 
     CMakePreset([string]$TestSuitName) {
-        $this.Name = "HostTest" + $TestSuitName
+        $this.Name = "MockTest" + $TestSuitName
     }
 
     [string] ToString() {
