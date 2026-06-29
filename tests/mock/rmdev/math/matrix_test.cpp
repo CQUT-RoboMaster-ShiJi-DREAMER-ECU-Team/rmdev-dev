@@ -15,8 +15,11 @@ using M22 = Matrix<float, 2, 2>;
 using M33 = Matrix<float, 3, 3>;
 using M23 = Matrix<float, 2, 3>;
 using M32 = Matrix<float, 3, 2>;
+using M44 = Matrix<float, 4, 4>;
+using M55d = Matrix<double, 5, 5>;
+using M66d = Matrix<double, 6, 6>;
 
-} // anonymous namespace
+}  // anonymous namespace
 
 // ============================================================
 // Construction
@@ -545,4 +548,175 @@ TEST(MatrixEdge, ZeroMatrixMul)
     M22 a = {1, 2, 3, 4};
     EXPECT_EQ(zero * a, zero);
     EXPECT_EQ(a * zero, zero);
+}
+
+// ============================================================
+// Determinant
+// ============================================================
+
+// --- Non-square ---
+
+TEST(MatrixDeterminant, NonSquareReturnsZero)
+{
+    M23 m = {1, 2, 3, 4, 5, 6};
+    EXPECT_FLOAT_EQ(m.determinant(), 0.0f);
+}
+
+// --- 1x1 ---
+
+TEST(MatrixDeterminant, OneByOne)
+{
+    M11 m = {5};
+    EXPECT_FLOAT_EQ(m.determinant(), 5.0f);
+}
+
+// --- 2x2 ---
+
+TEST(MatrixDeterminant, TwoByTwo)
+{
+    M22 m = {1, 2, 3, 4};
+    EXPECT_FLOAT_EQ(m.determinant(), -2.0f);
+}
+
+TEST(MatrixDeterminant, TwoByTwoIdentity)
+{
+    M22 m(SpecialMatrixTag::E);
+    EXPECT_FLOAT_EQ(m.determinant(), 1.0f);
+}
+
+TEST(MatrixDeterminant, TwoByTwoSingular)
+{
+    M22 m = {1, 2, 2, 4};
+    EXPECT_FLOAT_EQ(m.determinant(), 0.0f);
+}
+
+// --- 3x3 ---
+
+TEST(MatrixDeterminant, ThreeByThree)
+{
+    M33 m = {1, 2, 3, 0, 1, 4, 5, 6, 0};
+    EXPECT_FLOAT_EQ(m.determinant(), 1.0f);
+}
+
+TEST(MatrixDeterminant, ThreeByThreeIdentity)
+{
+    M33 m(SpecialMatrixTag::E);
+    EXPECT_FLOAT_EQ(m.determinant(), 1.0f);
+}
+
+TEST(MatrixDeterminant, ThreeByThreeSingular)
+{
+    M33 m = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    EXPECT_FLOAT_EQ(m.determinant(), 0.0f);
+}
+
+// --- 4x4 ---
+
+TEST(MatrixDeterminant, FourByFourIdentity)
+{
+    M44 m(SpecialMatrixTag::E);
+    EXPECT_FLOAT_EQ(m.determinant(), 1.0f);
+}
+
+TEST(MatrixDeterminant, FourByFourDiagonal)
+{
+    M44 m = {2, 0, 0, 0, 0, 3, 0, 0, 0, 0, 5, 0, 0, 0, 0, 7};
+    EXPECT_FLOAT_EQ(m.determinant(), 210.0f);
+}
+
+TEST(MatrixDeterminant, FourByFourSingular)
+{
+    M44 m = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+    EXPECT_NEAR(m.determinant(), 0.0f, 1e-4f);
+}
+
+// --- 5x5 (PLU decomposition, >=5 path) ---
+
+TEST(MatrixDeterminant, FiveByFiveIdentity)
+{
+    M55d m(SpecialMatrixTag::E);
+    EXPECT_DOUBLE_EQ(m.determinant(), 1.0);
+}
+
+TEST(MatrixDeterminant, FiveByFiveDiagonal)
+{
+    M55d m = {2, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 6};
+    EXPECT_DOUBLE_EQ(m.determinant(), 720.0);
+}
+
+TEST(MatrixDeterminant, FiveByFiveUpperTriangular)
+{
+    // clang-format off
+    M55d m = {1, 1, 1, 1, 1,
+              0, 2, 1, 1, 1,
+              0, 0, 3, 1, 1,
+              0, 0, 0, 4, 1,
+              0, 0, 0, 0, 5};
+    // clang-format on
+    EXPECT_DOUBLE_EQ(m.determinant(), 120.0);
+}
+
+TEST(MatrixDeterminant, FiveByFiveSingularDuplicateRows)
+{
+    // clang-format off
+    M55d m = {1, 2, 3, 4, 5,
+              6, 7, 8, 9, 10,
+              1, 2, 3, 4, 5,
+              11,12,13,14,15,
+              16,17,18,19,20};
+    // clang-format on
+    EXPECT_DOUBLE_EQ(m.determinant(), 0.0);
+}
+
+// --- 6x6 ---
+
+TEST(MatrixDeterminant, SixBySixIdentity)
+{
+    M66d m(SpecialMatrixTag::E);
+    EXPECT_DOUBLE_EQ(m.determinant(), 1.0);
+}
+
+TEST(MatrixDeterminant, SixBySixDiagonal)
+{
+    // clang-format off
+    M66d m = {2, 0, 0, 0, 0, 0,
+              0, 3, 0, 0, 0, 0,
+              0, 0, 4, 0, 0, 0,
+              0, 0, 0, 5, 0, 0,
+              0, 0, 0, 0, 6, 0,
+              0, 0, 0, 0, 0, 7};
+    // clang-format on
+    EXPECT_DOUBLE_EQ(m.determinant(), 5040.0);
+}
+
+// --- Integer determinant via free function (Bareiss algorithm) ---
+
+TEST(MatrixDeterminant, IntegerBareiss5x5)
+{
+    const int data[25] = {2, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 6};
+    EXPECT_EQ(calculateGenericMatrixDeterminant(std::span<const int>{data, 25}, 5, 5), 720);
+}
+
+TEST(MatrixDeterminant, IntegerBareissSingular5x5)
+{
+    // clang-format off
+    const int data[25] = {1, 2, 3, 4, 5,
+                          6, 7, 8, 9, 10,
+                          1, 2, 3, 4, 5,
+                          11,12,13,14,15,
+                          16,17,18,19,20};
+    // clang-format on
+    EXPECT_EQ(calculateGenericMatrixDeterminant(std::span<const int>{data, 25}, 5, 5), 0);
+}
+
+TEST(MatrixDeterminant, IntegerBareissUpperTriangular5x5)
+{
+    // clang-format off
+    const int data[25] = {1, 1, 1, 1, 1,
+                          0, 2, 1, 1, 1,
+                          0, 0, 3, 1, 1,
+                          0, 0, 0, 4, 1,
+                          0, 0, 0, 0, 5};
+    // clang-format on
+    EXPECT_EQ(calculateGenericMatrixDeterminant(std::span<const int>{data, 25}, 5, 5), 120);
 }
