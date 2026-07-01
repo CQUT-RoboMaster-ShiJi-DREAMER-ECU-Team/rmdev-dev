@@ -4,11 +4,11 @@ option(NOT_USE_CCACHE "Disable CCache, even if it is available" OFF)
 
 find_program(CCACHE_PROGRAM ccache)
 if (CCACHE_PROGRAM AND (NOT NOT_USE_CCACHE))
-    message(DEBUG "CCache found: ${CCACHE_PROGRAM}")
+    message(STATUS "CCache found: ${CCACHE_PROGRAM}")
     set(CMAKE_C_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
     set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
 else ()
-    message(DEBUG "CCache not found or disabled (NOT_USE_CCACHE=${NOT_USE_CCACHE}).")
+    message(STATUS "CCache not found or disabled (NOT_USE_CCACHE=${NOT_USE_CCACHE}).")
 endif ()
 
 project(rmdev-dev C CXX ASM)

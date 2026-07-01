@@ -57,12 +57,16 @@ param (
 Write-Debug "`$TestSuit=$TestSuit"
 
 New-Variable -Name suitNameToFullSuitNameMap -Value @{
-    "ME"  = "ModulesExceptions"; "ModulesExceptions"  = "ModulesExceptions"
+    "ME" = "ModulesExceptions"; "ModulesExceptions" = "ModulesExceptions"
     "MNE" = "ModulesNoexceptions"; "ModulesNoexceptions" = "ModulesNoexceptions"
-    "HE"  = "HeadersExceptions"; "HeadersExceptions"  = "HeadersExceptions"
+    "HE" = "HeadersExceptions"; "HeadersExceptions" = "HeadersExceptions"
     "HNE" = "HeadersNoexceptions"; "HeadersNoexceptions" = "HeadersNoexceptions"
 } -Option ReadOnly
 
+New-Variable -Name paramVerboseOn `
+    -Value ($PSBoundParameters.ContainsKey('Verbose') -and ($PSBoundParameters['Verbose'] -eq $true)) `
+    -Option ReadOnly
+Write-Debug "`$Verbose=$paramVerboseOn"
 
 class CMakePreset {
     [string]$Name
@@ -81,14 +85,16 @@ function Write-Message {
     param (
         [string]$Title,
         [string]$Message,
-        [bool]$Succeed
+        [bool]$Succeed,
+        [string]$DurationMilliseconds = $null
     )
 
     [scriptblock]$writeAction = {
         $color = if ($Succeed) { [ConsoleColor]::Green } else { [ConsoleColor]::Red }
+        $durationMsg = if ($DurationMilliseconds) { " in $DurationMilliseconds ms" } else { "" }
 
         Write-Host "`n$("=" * 100)" -ForegroundColor $color
-        Write-Host "$Title    $(if ($Succeed) {"PASSED"} else {"FAILED"}), message:" `
+        Write-Host "$Title    $(if ($Succeed) {"PASSED"} else {"FAILED"})$durationMsg, message:" `
             -ForegroundColor $color
         Write-Host $Message
     }
@@ -110,25 +116,40 @@ function Invoke-Test {
     [OutputType([int])]
     param ([CMakePreset]$Preset)
 
-    $configure = & cmake --preset "$($Preset.Name)" 2>&1
+    $verboseArg = if ($paramVerboseOn) { '--verbose' } else { $null }
+
+    $configure = $null
+    $duration = Measure-Command {
+        $configure = & cmake --preset "$($Preset.Name)" 2>&1
+    }
     $succeed = $LASTEXITCODE -eq 0
     Write-Message -Title "CMake configure with preset `"$($Preset.Name)`"" `
-        -Message ($configure | Out-String).Trim() -Succeed $succeed
+        -Message ($configure | Out-String).Trim() -Succeed $succeed `
+        -DurationMilliseconds $duration.TotalMilliseconds
 
     if (-not $succeed) { return 1 }
 
-    $build = & cmake --build "build/mock/$($Preset.Name)" --config $GeneratorConfig 2>&1
+    $build = $null
+    $duration = Measure-Command {
+        $build = & cmake --build "build/mock/$($Preset.Name)" --config $GeneratorConfig $verboseArg 2>&1
+    }
     $succeed = $LASTEXITCODE -eq 0
     Write-Message -Title "CMake build with preset `"$($Preset.Name)`" on config `"$GeneratorConfig`"" `
-        -Message ($build | Out-String).Trim() -Succeed $succeed
+        -Message ($build | Out-String).Trim() -Succeed $succeed `
+        -DurationMilliseconds $duration.TotalMilliseconds
 
     if (-not $succeed) { return 1 }
 
-    $ctestOutput = `
-        & ctest --test-dir "build/mock/$($Preset.Name)" -C $GeneratorConfig --output-on-failure 2>&1
+    $ctestMessageArg = if ($paramVerboseOn) { '--verbose' } else { '--output-on-failure' }
+    $ctestOutput = $null
+    $duration = Measure-Command {
+        $ctestOutput = `
+            & ctest --test-dir "build/mock/$($Preset.Name)" -C $GeneratorConfig $ctestMessageArg 2>&1
+    }
     $succeed = $LASTEXITCODE -eq 0
     Write-Message -Title "CTest with preset `"$($Preset.Name)`" on config `"$GeneratorConfig`"" `
-        -Message ($ctestOutput | Out-String).Trim() -Succeed $succeed
+        -Message ($ctestOutput | Out-String).Trim() -Succeed $succeed `
+        -DurationMilliseconds $duration.TotalMilliseconds
 
     if (-not $succeed) { return 1 }
 

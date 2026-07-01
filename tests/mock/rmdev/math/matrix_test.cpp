@@ -324,6 +324,37 @@ TEST(MatrixArithmetic, Inverse3x3)
     EXPECT_TRUE(prod.isApprox(eye, 1e-5f));
 }
 
+TEST(MatrixArithmetic, InverseInPlace2x2)
+{
+    M22 a = {1, 2, 3, 4};
+    a.inverseInPlace();
+    M22 expected = {-2.0f, 1.0f, 1.5f, -0.5f};
+    EXPECT_TRUE(a.isApprox(expected, 1e-5f));
+}
+
+TEST(MatrixArithmetic, InverseInPlace3x3)
+{
+    M33 a = {1, 2, 3, 0, 1, 4, 5, 6, 0};
+    a.inverseInPlace();
+    EXPECT_TRUE(a.isApprox({-24, 18, 5, 20, -15, -4, -5, 4, 1}, 1e-4f));
+}
+
+TEST(MatrixArithmetic, InverseInPlace1x1)
+{
+    M11 a = {5};
+    a.inverseInPlace();
+    M11 expected = {0.2f};
+    EXPECT_TRUE(a.isApprox(expected, 1e-5f));
+}
+
+TEST(MatrixArithmetic, InverseInPlaceIdentity)
+{
+    M22 a(SpecialMatrixTag::E);
+    a.inverseInPlace();
+    M22 eye(SpecialMatrixTag::E);
+    EXPECT_TRUE(a.isApprox(eye, 1e-5f));
+}
+
 TEST(MatrixArithmetic, TransposeInPlace)
 {
     M22 a = {1, 2, 3, 4};
@@ -498,6 +529,14 @@ TEST(MatrixCompound, ScalarDivEq)
     a /= 2.0f;
     M22 expected = {1, 2, 3, 4};
     EXPECT_EQ(a, expected);
+}
+
+TEST(MatrixCompound, InverseInPlace)
+{
+    M22 a = {1, 2, 3, 4};
+    a.inverseInPlace();
+    M22 expected = {-2.0f, 1.0f, 1.5f, -0.5f};
+    EXPECT_TRUE(a.isApprox(expected, 1e-5f));
 }
 
 TEST(MatrixCompound, MatDivEq)

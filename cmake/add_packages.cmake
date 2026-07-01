@@ -1,12 +1,12 @@
 
 include(${CMAKE_CURRENT_LIST_DIR}/get_cpm.cmake)
 
-if(CPM_SOURCE_CACHE)
-    message(DEBUG "Defined CPM_SOURCE_CACHE as cmake variable, value=${CPM_SOURCE_CACHE}")
-elseif(DEFINED ENV{CPM_SOURCE_CACHE})
-    message(DEBUG "Found CPM_SOURCE_CACHE in environment, value=${CPM_SOURCE_CACHE}")
+if(DEFINED ENV{CPM_SOURCE_CACHE})
+    message(STATUS "Found CPM_SOURCE_CACHE in environment, value=$ENV{CPM_SOURCE_CACHE}")
+elseif(CPM_SOURCE_CACHE)
+    message(STATUS "Defined CPM_SOURCE_CACHE as cmake variable, value=${CPM_SOURCE_CACHE}")
 else()
-    message(DEBUG "Did not find CPM_SOURCE_CACHE, use default configure")
+    message(STATUS "Did not find CPM_SOURCE_CACHE, use default configure")
 endif()
 
 # 该工程不应该使用包锁文件，因为该仓库是一系列库的聚合，其子模块有不同的依赖关系，使用包锁文件会导致依赖冲突。
@@ -90,6 +90,7 @@ if (testRequiresCmsisDsp)
             message(FATAL_ERROR "[${PROJECT_NAME}]: CPM: Failed to add package `CMSIS_6`")
         endif ()
 
+        set(cmsisCoreDir "${CMSIS_6_SOURCE_DIR}/CMSIS/Core/Include")
         set(cmsisDspHost ON)
     endif ()
 
@@ -105,6 +106,7 @@ if (testRequiresCmsisDsp)
     endif ()
     target_compile_options(CMSISDSP PRIVATE -ffast-math -fno-finite-math-only -Ofast)
 
+    unset(cmsisCoreDir)
     unset(cmsisDspHost)
 endif ()
 unset(testRequiresCmsisDsp)
