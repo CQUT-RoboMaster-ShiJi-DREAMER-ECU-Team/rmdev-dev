@@ -99,7 +99,7 @@ if (testRequiresCmsisDsp)
         GITHUB_REPOSITORY ARM-software/CMSIS-DSP
         GIT_TAG v1.17.0
         VERSION 1.17.0
-        OPTIONS "CMSISCORE \"${cmsisCoreDir}\"" "DISABLEFLOAT16 ON" "HOST ${cmsisDspHost}"
+        OPTIONS "CMSISCORE ${cmsisCoreDir}" "DISABLEFLOAT16 ON" "HOST ${cmsisDspHost}"
     )
     if (NOT CMSIS-DSP_ADDED)
         message(FATAL_ERROR "[${PROJECT_NAME}]: CPM: Failed to add package `CMSIS-DSP`")

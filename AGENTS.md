@@ -63,7 +63,7 @@ rmdev-dev/
 - `rmdev/debug_assistance`
 - `rmdev/message_manager`
 
-`emdevif` 的 `logger`、`timeline`、`system`、`peripheral` 以及 `rmdev` 的 `rmdev_math`、`rmdev_control_algorithm`、`rmdev_kinematic_solution`、`rmdev_device_model`、`rmdev_ins` 和各驱动模块的测试将在后续补充。
+`emdevif` 的 `logger`、`timeline`、`system`、`peripheral` 以及 `rmdev` 的 `math`、`control_algorithm`、`kinematic_solution`、`device_model`、`ins` 和各驱动模块的测试将在后续补充。
 
 ```bash
 # 列出所有可用预设

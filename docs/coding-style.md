@@ -1,6 +1,6 @@
 # 编码规范
 
-本文档是 `emdevif`、`rmdev` 及其全部子模块（含 `emdevif_stm32_peripheral`、各 `rmdev_*` 模块与驱动）的**统一编码规范**，面向所有贡献者与协作智能体。
+本文档是 `emdevif`、`rmdev` 及其全部子模块（含 `emdevif_stm32_peripheral`、各模块与驱动）的**统一编码规范**，面向所有贡献者与协作智能体。
 
 > **在哪里阅读本文档？**
 > - 在 `rmdev-dev` 集成仓库内：本文件就在工程根目录的 `docs/coding-style.md`，直接阅读即可，无需跳转外链。
@@ -94,7 +94,7 @@
 - `emdevif` 子模块目标统一前缀：`emdevif_`
 - 示例：`emdevif_core`、`emdevif_logger`、`emdevif_system`
 - 内部实现目标命名以下划线结尾，如 `emdevif_peripheral_impl_`。
-- `rmdev` 子模块目标统一前缀：`rmdev_`（如 `rmdev_math`、`rmdev_driver_BMI088`）
+- `rmdev` 模块 CMake 目标统一前缀：`rmdev_`（如 `rmdev_math`、`rmdev_driver_BMI088`）
 
 ### 命名空间
 
@@ -323,16 +323,16 @@ emdevif 本身不直接操作外设，而是通过 `peripheral/` 子系统提供
 
 ### rmdev 新增功能模块
 
-1. 在独立仓库中开发模块，遵循 `rmdev_<name>` 命名
-2. 在 `rmdev/modules/` 下以 git submodule 引入
+1. 在 `rmdev/modules/` 下创建模块目录，遵循 `<name>` 命名
+2. 内部 CMake 目标命名统一前缀：`rmdev_<name>`
 3. 在 `rmdev/CMakeLists.txt` 中添加 `add_subdirectory` 和 `target_link_libraries`
-4. 在本文件中新增对应的子模块约束小节
+4. 在本文件中新增对应的模块约束小节
 5. 如需按条件启用，选择合适的机制：布尔开关（类似 INS）或列表（类似驱动）
 
 ### rmdev 新增驱动
 
-1. 在独立仓库中开发驱动，遵循 `rmdev_driver_<Name>` 命名
-2. 在 `rmdev/drivers/` 下以 git submodule 引入
+1. 在 `rmdev/drivers/` 下创建驱动目录，遵循 `<Name>` 命名
+2. 内部 CMake 目标命名统一前缀：`rmdev_driver_<Name>`
 3. 用户通过 `RMDEV_ENABLED_DRIVER_LIST` 启用
 4. 驱动通过 `emdevif_peripheral` 访问硬件，不直接耦合板级
 

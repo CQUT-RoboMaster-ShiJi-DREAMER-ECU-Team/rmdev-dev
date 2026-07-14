@@ -65,12 +65,12 @@ if (TEST_PLATFORM STREQUAL "mock")
     set(EMDEVIF_ENABLED_MODULES timeline peripheral)
     add_subdirectory(emdevif_collection/emdevif)
 
-    add_subdirectory(rmdev/modules/rmdev_message_manager)
-    add_subdirectory(rmdev/modules/rmdev_debug_assistance)
+    add_subdirectory(rmdev/modules/message_manager)
+    add_subdirectory(rmdev/modules/debug_assistance)
 
     set(RMDEV_MATH_IMPL ${TEST_RMDEV_MATH_IMPL})
     set(RMDEV_MATRIX_IMPL ${TEST_RMDEV_MATRIX_IMPL})
-    add_subdirectory(rmdev/modules/rmdev_math)
+    add_subdirectory(rmdev/modules/math)
 
     enable_testing()
     add_subdirectory(tests/mock)

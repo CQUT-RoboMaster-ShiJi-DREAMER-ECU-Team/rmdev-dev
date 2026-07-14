@@ -16,10 +16,10 @@
 
 `rmdev-dev` 是集成与验证环境，库逻辑的日常开发应在对应子模块的独立仓库完成：
 
-1. **库逻辑改动**：优先在子模块独立仓库（如 `emdevif.git`、`rmdev_math.git`、`rmdev_driver_BMI088.git`）提交并验证；
+1. **库逻辑改动**：优先在子模块独立仓库（如 `emdevif.git`、`emdevif_stm32_peripheral.git`）提交并验证；
 2. **同步到集成环境**：子模块改动合并后，及时同步到 `rmdev-dev` 并运行模拟测试，确保集成路径无回归；
 3. **集成层改动**：仅当改动涉及 `rmdev-dev` 自身的构建脚本、测试框架、文档聚合或 CI 配置时，才直接在 `rmdev-dev` 提交；
-4. **子模块聚合层**：`rmdev` 与 `emdevif_collection/*` 在本仓库中作为子模块引入，如需调整其 `CMakeLists.txt`、`.gitmodules` 或聚合结构，按第 3 条处理。
+4. **子模块聚合层**：`rmdev` 与 `emdevif_collection/*` 在本仓库中作为子模块引入，如需调整其 `CMakeLists.txt` 或聚合结构，按第 3 条处理。
 
 ## 子模块贡献入口
 
