@@ -20,10 +20,12 @@ project(host_gtest LANGUAGES CXX)
 add_executable(${PROJECT_NAME}
     # emdevif core
     emdevif/core/concepts_test.cpp
-    emdevif/core/data_container/ArrayMap_test.cpp
     emdevif/core/data_container/FixedString_test.cpp
+    emdevif/core/data_container/InplaceDynamicArray_test.cpp
+    emdevif/core/data_container/InplaceMap_test.cpp
     emdevif/core/data_container/MessageQueue_test.cpp
     emdevif/core/data_container/RingBuffer_test.cpp
+    emdevif/core/data_container/StaticMap_test.cpp
     emdevif/core/endian_test.cpp
     emdevif/core/integer_suffix_test.cpp
     emdevif/core/resource_guard/resource_guard_test.cpp
