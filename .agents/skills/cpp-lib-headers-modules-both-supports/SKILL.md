@@ -25,7 +25,7 @@ description: Design and implement a C++ library that supports both traditional h
 #endif  // !PROJECT_NAME_DETAIL_CONFIG_HPP
 ```
 
-不再需要 `PROJECT_NAME_MODULE_EXPORT`、`PROJECT_NAME_MODULE_INTERFACE_UNIT` 等宏。
+本模式仅需 `PROJECT_NAME_USE_MODULES` 一个配置宏，头文件代码无需 `export` 等模块关键字。
 
 ## 纯头文件库
 
@@ -128,5 +128,5 @@ import lib.b;                             // import 替代 #include
 
 ## 隐式包含规则
 
-在 `.hpp` 文件中，所有 `#include` 均无条件包含，不再使用 `PROJECT_NAME_MODULE_INTERFACE_UNIT` 守卫。
-`.cppm` 文件不再 `import` 项目模块，项目依赖完全由头文件的 `#include` 隐式提供。
+在 `.hpp` 文件中，所有 `#include` 均无条件包含。
+`.cppm` 文件不 `import` 项目模块，项目依赖完全由头文件的 `#include` 隐式提供。
