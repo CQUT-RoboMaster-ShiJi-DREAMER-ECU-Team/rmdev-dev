@@ -33,6 +33,7 @@ TEST(InplaceDynamicArrayTest, PushBackAndAccess)
     EXPECT_EQ(arr.back(), 3);
     EXPECT_EQ(arr[1], 2);
     EXPECT_EQ(*arr.at(1), 2);
+    EXPECT_EQ(arr.at(4), nullptr);
     EXPECT_EQ(arr.at(5), nullptr);
 }
 
@@ -42,6 +43,7 @@ TEST(InplaceDynamicArrayTest, PushBackWhenFull)
     EXPECT_EQ(arr.pushBack(1), ErrorCode::Success);
     EXPECT_EQ(arr.pushBack(2), ErrorCode::Success);
     EXPECT_EQ(arr.pushBack(3), ErrorCode::Full);
+    EXPECT_EQ(arr.size(), 2);
     EXPECT_TRUE(arr.isFull());
 }
 
@@ -51,6 +53,7 @@ TEST(InplaceDynamicArrayTest, TryPushBack)
     EXPECT_NE(arr.tryPushBack(1), nullptr);
     EXPECT_NE(arr.tryPushBack(2), nullptr);
     EXPECT_EQ(arr.tryPushBack(3), nullptr);
+    EXPECT_EQ(arr, (decltype(arr){1, 2}));
 }
 
 TEST(InplaceDynamicArrayTest, EmplaceBack)
@@ -58,10 +61,13 @@ TEST(InplaceDynamicArrayTest, EmplaceBack)
     InplaceDynamicArray<std::pair<int, int>, 3> arr;
     EXPECT_EQ(arr.emplaceBack(1, 2), ErrorCode::Success);
     EXPECT_EQ(arr.emplaceBack(3, 4), ErrorCode::Success);
-    EXPECT_EQ(arr[0].first, 1);
-    EXPECT_EQ(arr[1].second, 4);
     EXPECT_EQ(arr.emplaceBack(5, 6), ErrorCode::Success);
     EXPECT_EQ(arr.emplaceBack(7, 8), ErrorCode::Full);
+
+    EXPECT_EQ(arr[0], (std::pair{1, 2}));
+    EXPECT_EQ(arr[1], (std::pair{3, 4}));
+    EXPECT_EQ(arr[2], (std::pair{5, 6}));
+    EXPECT_EQ(arr.size(), 3);
 }
 
 TEST(InplaceDynamicArrayTest, PopBack)

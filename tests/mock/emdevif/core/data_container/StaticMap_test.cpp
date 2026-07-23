@@ -6,7 +6,7 @@
 #if EMDEVIF_USE_MODULES
 import emdevif.core.data_container.static_map;
 #else
-#include "emdevif/core/data_container/array_map/static_map.hpp"
+#include "emdevif/core/data_container/static_map.hpp"
 #endif
 
 using namespace emdevif;
