@@ -14,12 +14,6 @@ rmdev: RoboMaster Development， RoboMaster 电控开发库。
 - 支持 C++20 的编译器
 - `emdevif`（必须先加入工程）
 
-## 编码规范
-
-本项目遵循统一编码规范（覆盖 emdevif 与 rmdev 全部子模块）：
-- 集成环境内：[`../docs/coding-style.md`](../docs/coding-style.md)（相对本仓库根目录）
-- 独立查看：https://github.com/CQUT-RoboMaster-ShiJi-DREAMER-ECU-Team/rmdev-dev/blob/main/docs/coding-style.md
-
 ## 模块组成
 
 模块
@@ -66,7 +60,3 @@ project_root
 | RMDEV_ENABLED_DRIVER_LIST | String | `""` | 要使用的驱动列表。驱动名称之间使用分号分隔 |
 
 说明：由于姿态解算库直接依赖 CMSISDSP，而驱动库往往依赖项较多，因此这两个模块设置变量用于开关。
-
-## 测试
-
-单元测试已迁移至模拟测试环境仓库 `rmdev-dev` 的 `tests/mock/` 目录，使用 GoogleTest 框架。详见 `rmdev-dev` 根目录 `AGENTS.md` 的模拟单元测试章节。

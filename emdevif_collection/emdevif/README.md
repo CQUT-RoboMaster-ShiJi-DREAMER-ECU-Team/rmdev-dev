@@ -232,7 +232,3 @@ emdevif::ErrorCode printLogMessage(const char* message) noexcept
 | EMDEVIF_ENABLE_TESTS    | Bool   | OFF                              | 是否启用测试                        |
 | EMDEVIF_USE_STM32CUBEMX | Bool   | OFF                              | 是否使用 STM32CubeMX              |
 | EMDEVIF_ENABLED_MODULES | String | `${emdevifAllModules}`(默认开启所有模块) | 要使用的模块，模块名之间用分号间隔             |
-
-## 测试
-
-单元测试已迁移至模拟测试环境仓库 `rmdev-dev` 的 `tests/mock/` 目录，使用 GoogleTest 框架。详见 `rmdev-dev` 根目录 `AGENTS.md` 的模拟单元测试章节。
