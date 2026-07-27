@@ -8,10 +8,10 @@
 
 ```
 rmdev-dev/
-├── rmdev/                        # 子模块：电控算法/驱动聚合库（有独立 AGENTS.md）
+├── rmdev/                        # 子仓库（git subtree 集成）：电控算法/驱动聚合库（有独立 AGENTS.md）
 ├── emdevif_collection/
-│   ├── emdevif/                  # 子模块：嵌入式通用接口抽象（有独立 AGENTS.md）
-│   └── emdevif_stm32_peripheral/ # 子模块：emdevif 的 STM32 外设扩展（有独立 AGENTS.md）
+│   ├── emdevif/                  # 子仓库（git subtree 集成）：嵌入式通用接口抽象（有独立 AGENTS.md）
+│   └── emdevif_stm32_peripheral/ # 子仓库（git subtree 集成）：emdevif 的 STM32 外设扩展（有独立 AGENTS.md）
 ├── tests/                        # 模拟单元测试
 │   ├── CMakeLists.txt
 │   └── mock/
@@ -22,9 +22,9 @@ rmdev-dev/
 └── cmake/                        # CMake 辅助脚本（utils、add_packages、get_cpm）
 ```
 
-### 子模块层级
+### 子仓库层级
 
-三个子模块各有独立 AGENTS.md，修改库逻辑时应遵循对应模块的约束：
+三个子仓库各有独立 AGENTS.md，修改库逻辑时应遵循对应模块的约束：
 
 - [rmdev/AGENTS.md](rmdev/AGENTS.md) — 算法/模型/驱动模块的裁剪、接口与验证要求
 - [emdevif/AGENTS.md](emdevif_collection/emdevif/AGENTS.md) — core/logger/peripheral/system/timeline 各模块约束，含 C++20 Modules 双路径验证
@@ -32,7 +32,7 @@ rmdev-dev/
 
 ## 编码规范
 
-统一编码规范位于本仓库 `docs/coding-style.md`（覆盖 emdevif 与 rmdev 全部子模块）。**身处本仓库时直接阅读该本地文件**；子模块自身文档中的 GitHub 外链指向的也是它，无需跳转。
+统一编码规范位于本仓库 `docs/coding-style.md`（覆盖 emdevif 与 rmdev 全部子仓库的内部模块）。**身处本仓库时直接阅读该本地文件**；子仓库自身文档中的 GitHub 外链指向的也是它，无需跳转。
 
 ## 构建系统
 
@@ -50,7 +50,7 @@ rmdev-dev/
 | 变量                        | 类型     | 默认                       | 说明                                              |
 |---------------------------|--------|--------------------------|-------------------------------------------------|
 | `TEST_PLATFORM`           | String | `"mock"`                 | 见前文                                             |
-| `EMDEVIF_USE_CPP_MODULES` | Bool   | `ON`                     | `emdevif` 子模块自身默认 `ON`；本仓库 `CMakePresets.json` 显式覆盖以覆盖 Modules ON/OFF 两条验证路径 |
+| `EMDEVIF_USE_CPP_MODULES` | Bool   | `ON`                     | `emdevif` 自身默认 `ON`；本仓库 `CMakePresets.json` 显式覆盖以覆盖 Modules ON/OFF 两条验证路径 |
 | `TEST_ENABLE_EXCEPTIONS`  | Bool   | `OFF`                    | C++ 异常开关（模拟测试路径），`CMakeLists.txt` 中默认关闭，Preset 可显式开启；关闭时测试中异常相关用例通过 `GTEST_SKIP` 跳过 |
 
 ### 模拟单元测试
@@ -104,7 +104,7 @@ ctest --test-dir build/mock/MockTestModulesExceptions -C Release
 
 ## C++20 Modules 注意
 
-代码同时支持 `#include` 和 `import` 两种导入方式，通过 `EMDEVIF_USE_CPP_MODULES` 切换。emdevif 子模块的 AGENTS.md 要求验证 ON/OFF 两条构建路径。在本仓库做集成验证时，至少覆盖一条 Modules 开启路径和一条关闭路径。
+代码同时支持 `#include` 和 `import` 两种导入方式，通过 `EMDEVIF_USE_CPP_MODULES` 切换。emdevif 子仓库的 AGENTS.md 要求验证 ON/OFF 两条构建路径。在本仓库做集成验证时，至少覆盖一条 Modules 开启路径和一条关闭路径。
 
 ## 项目技能
 
@@ -117,10 +117,11 @@ ctest --test-dir build/mock/MockTestModulesExceptions -C Release
 
 ## 修改约束
 
-- 优先在对应子模块中修复库逻辑；本仓库只做集成与验证层调整。
+- 库逻辑、构建脚本、测试、文档等改动**统一在本仓库**完成：直接修改对应子仓库目录（`rmdev/`、`emdevif_collection/emdevif/`、`emdevif_collection/emdevif_stm32_peripheral/`），无需切换到其他仓库；本仓库即下游子仓库的统一开发入口。
 - 测试逻辑放在 `tests/mock/`。
 - `.agents/` 目录下的智能体规则与技能文档优先于其他历史路径；项目技能统一存放在 `.agents/skills/` 下。
 - 遇到已有的不符合 Doxygen 注释规范的代码时，不要强制修改格式，应先询问用户是否需要修改。
+- 需要把子仓库目录改动发布回对应子仓库时，由维护者统一执行 `git subtree push`（普通贡献者无需关心；详见 `CONTRIBUTING.md` 的「开发与发布流程」）。
 
 ## 贡献流程与提交规范
 
@@ -128,6 +129,6 @@ ctest --test-dir build/mock/MockTestModulesExceptions -C Release
 
 在提交代码前，务必阅读 `CONTRIBUTING.md` 的以下章节：
 - **Git 提交规范**（含提交信息格式、`Assisted-by` 行等）
-- **多仓库协作流程**（何时在子模块提交、何时在本仓库提交）
+- **开发与发布流程**（统一在本仓库开发子仓库对应的目录，合并后由维护者通过 git subtree 推送回子仓库）
 
 不规范的提交信息将被要求修改。智能体提交时尤其要注意正确添加 `Assisted-by` 行。

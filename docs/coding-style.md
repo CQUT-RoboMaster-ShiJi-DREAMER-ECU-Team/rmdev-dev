@@ -1,10 +1,6 @@
 # 编码规范
 
-本文档是 `emdevif`、`rmdev` 及其全部子模块（含 `emdevif_stm32_peripheral`、各模块与驱动）的**统一编码规范**，面向所有贡献者与协作智能体。
-
-> **在哪里阅读本文档？**
-> - 在 `rmdev-dev` 集成仓库内：本文件就在工程根目录的 `docs/coding-style.md`，直接阅读即可，无需跳转外链。
-> - 各子模块（`emdevif` / `rmdev` / `emdevif_stm32_peripheral` 等）的 `AGENTS.md` 与 `README.md` 会以 `rmdev-dev` 的 GitHub 链接引用本文档——那是为了这些子模块**独立查看**时也能找到。若你已身处 `rmdev-dev` 仓库，请直接看本地这份，不必顺着外链绕一圈。
+本文档是**统一编码规范**，面向所有贡献者与协作智能体。
 
 ---
 
@@ -352,4 +348,3 @@ emdevif 本身不直接操作外设，而是通过 `peripheral/` 子系统提供
 - 检查 `RMDEV_ENABLE_INS_MODULE` 与驱动列表的条件构建路径。
 - 关键模块改动后，至少验证对应测试或最小集成编译。
 - 与 emdevif 接口交互的改动，需验证 `EMDEVIF_USE_CPP_MODULES=ON/OFF` 两条路径。
-- 变更涉及子模块子仓库时，还需在该子仓库独立验证。

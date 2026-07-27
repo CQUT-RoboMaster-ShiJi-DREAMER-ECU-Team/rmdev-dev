@@ -1,6 +1,7 @@
 # AGENTS.md
 
 ## 模块定位
+
 `rmdev` 是 RoboMaster 电控开发库，统一组织算法、模型与驱动模块，并依赖 `emdevif` 提供底层抽象。
 
 ## 仓库结构
@@ -28,13 +29,6 @@ rmdev/
 - **INS 模块**：通过 `RMDEV_ENABLE_INS_MODULE=ON` 启用，依赖 CMSIS-DSP
 - **驱动模块**：通过 `RMDEV_ENABLED_DRIVER_LIST` 按需启用
 
-## 编码规范
-
-统一编码规范位于 `rmdev-dev` 仓库的 `docs/coding-style.md`：
-
-- 集成环境内（本仓库作为 `rmdev-dev` 子模块检出）：直接阅读 `../docs/coding-style.md`（相对本仓库根目录）
-- 独立查看：https://github.com/CQUT-RoboMaster-ShiJi-DREAMER-ECU-Team/rmdev-dev/blob/main/docs/coding-style.md
-
 ## 构建系统
 
 ### 关键 CMake 变量
@@ -45,14 +39,10 @@ rmdev/
 | `RMDEV_ENABLED_DRIVER_LIST` | `""` | 启用的驱动列表（分号分隔），如 `"BMI088;DJIMotor"` |
 
 ### 依赖链
+
 - `rmdev` → `emdevif`（必须先 `add_subdirectory`）
 - `rmdev_ins` → CMSIS-DSP（由 CubeMX 或用户提供）
 
-### 测试
-
-单元测试已迁移至模拟测试环境，测试文件位于开发环境仓库 [rmdev-dev](https://github.com/CQUT-RoboMaster-ShiJi-DREAMER-ECU-Team/rmdev-dev) 根目录下的 `tests/mock/`，使用 GoogleTest 框架。详见 `rmdev-dev` 根 `AGENTS.md` 的模拟单元测试章节。
-
 ## 参考资料
-- 编码规范：见上文「编码规范」章节（集成环境内读 `../docs/coding-style.md`）
-- 开发环境（集成与测试）：https://github.com/CQUT-RoboMaster-ShiJi-DREAMER-ECU-Team/rmdev-dev
+
 - 完整使用指南：`README.md`
