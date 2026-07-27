@@ -1,0 +1,26 @@
+/**
+ * @file exception_config.hpp
+ * @brief emdevif.core.utils.BitInt 模块的异常配置
+ */
+
+#pragma once
+#ifndef EMDEVIF_CORE_UTILS_BIT_INT_DETAIL_EXCEPTION_CONFIG_HPP
+#define EMDEVIF_CORE_UTILS_BIT_INT_DETAIL_EXCEPTION_CONFIG_HPP
+
+#ifndef EMDEVIF_UTIL_BIT_INT_USE_EXCEPTIONS
+#if (defined(EMDEVIF_ENABLE_EXCEPTIONS) && EMDEVIF_ENABLE_EXCEPTIONS)
+#define EMDEVIF_UTIL_BIT_INT_USE_EXCEPTIONS true
+#else
+#define EMDEVIF_UTIL_BIT_INT_USE_EXCEPTIONS false
+#endif
+#endif
+
+#if (EMDEVIF_UTIL_BIT_INT_USE_EXCEPTIONS)
+#include <stdexcept>
+
+#define EMDEVIF_UTIL_BITINT_NOEXCEPT
+#else
+#define EMDEVIF_UTIL_BITINT_NOEXCEPT noexcept
+#endif
+
+#endif  // !EMDEVIF_CORE_UTILS_BIT_INT_DETAIL_EXCEPTION_CONFIG_HPP
