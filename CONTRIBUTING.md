@@ -46,7 +46,7 @@ PR 合并到 `rmdev-dev` `main` 后，由维护者通过 git subtree 把子目�
 
 ```bash
 # rmdev
-git subtree push --prefix=rmdev https://github.com/CQUT-RoboMaster-ShiJi-DREAMER-ECU-Team/rmdev.git main
+git subtree push --prefix=rmdev https://github.com/CQUT-RoboMaster-ShiJi-DREAMER-ECU-Team/rmdev main
 
 # emdevif
 git subtree push --prefix=emdevif_collection/emdevif https://github.com/CQUT-RoboMaster-ShiJi-DREAMER-ECU-Team/emdevif main
