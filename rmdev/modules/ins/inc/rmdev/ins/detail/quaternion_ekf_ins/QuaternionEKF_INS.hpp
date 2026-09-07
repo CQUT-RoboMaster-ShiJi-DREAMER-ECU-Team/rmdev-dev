@@ -133,7 +133,7 @@ private:
 
     emdevif::Duration<ScaleType> duration_{};
 
-    static constexpr auto X = 0, Y = 1, Z = 2;
+    static inline constexpr auto X = 0, Y = 1, Z = 2;
 
 public:
     /**
@@ -189,7 +189,7 @@ private:
 
 private:
     /* clang-format off */
-    static constexpr float IMU_QuaternionEKF_F[36] = {1, 0, 0, 0, 0, 0,
+    static inline constexpr float IMU_QuaternionEKF_F[36] = {1, 0, 0, 0, 0, 0,
                                                       0, 1, 0, 0, 0, 0,
                                                       0, 0, 1, 0, 0, 0,
                                                       0, 0, 0, 1, 0, 0,

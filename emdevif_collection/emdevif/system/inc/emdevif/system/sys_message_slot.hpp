@@ -28,7 +28,7 @@ public:
     using ValueType = Type;  ///< 消息元素类型
     using Handle = void*;    ///< 句柄类型
 
-    static constexpr std::size_t item_size = 1;
+    static inline constexpr std::size_t item_size = 1;
 
 private:
     SysQueue<Type, 1> queue_{};

@@ -126,7 +126,7 @@ public:
         mulparam
     };
     /// 多参数线程入口创建标志
-    static constexpr auto mulparam = MulParam::mulparam;
+    static inline constexpr auto mulparam = MulParam::mulparam;
 
     /**
      * 等待时间最大值

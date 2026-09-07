@@ -47,7 +47,7 @@ public:
     };
 
     /// 当前时间线能够提供的最高精度
-    static constexpr auto basic_accuracy =
+    static inline constexpr auto basic_accuracy =
         (EMDEVIF_TIMELINE_SOURCE_IS_MILLISECONDS ? BasicAccuracy::Milliseconds : BasicAccuracy::Microseconds);
 
     /**
@@ -165,7 +165,7 @@ template<typename ConvertType = float>
 class Duration
 {
 public:
-    static constexpr auto basic_accuracy = Timeline::basic_accuracy;  ///< 时间线的最高精度
+    static inline constexpr auto basic_accuracy = Timeline::basic_accuracy;  ///< 时间线的最高精度
 
     constexpr Duration() noexcept = default;
     constexpr Duration(const Duration&) noexcept = default;

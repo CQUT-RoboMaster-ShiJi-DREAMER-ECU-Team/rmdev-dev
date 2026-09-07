@@ -63,7 +63,7 @@ public:
     }
 
     /// 事件组的位数最大值
-    static constexpr BitsType_t maxEventBits = detail::maxEventBits();
+    static inline constexpr BitsType_t maxEventBits = detail::maxEventBits();
 
     /// 事件组的位类型，用于表示事件组的位
     using EventBits_t = UBitInt<maxEventBits>;

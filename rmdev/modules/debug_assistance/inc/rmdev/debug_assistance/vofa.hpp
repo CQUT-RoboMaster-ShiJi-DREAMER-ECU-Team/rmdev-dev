@@ -24,7 +24,7 @@ class JustFloat
 {
 public:
     /// @brief VOFA+ JustFloat 数据帧尾
-    static constexpr std::array<uint8_t, 4> frame_tail{0x00, 0x00, 0x80, 0x7f};
+    static inline constexpr std::array<uint8_t, 4> frame_tail{0x00, 0x00, 0x80, 0x7f};
 
     /**
      * @brief 将浮点数组转换为小端字节序（若本机为大端则进行字节交换）

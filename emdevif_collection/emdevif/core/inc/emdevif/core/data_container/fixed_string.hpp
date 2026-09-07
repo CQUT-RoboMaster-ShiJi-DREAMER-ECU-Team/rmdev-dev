@@ -140,10 +140,10 @@ public:
 
     // 容量 -------------------------------------------------------------------
 
-    static constexpr std::integral_constant<size_type, N> size{};
-    static constexpr std::integral_constant<size_type, N> length{};
-    static constexpr std::integral_constant<size_type, N> max_size{};
-    static constexpr std::bool_constant<N == 0> empty{};
+    static inline constexpr std::integral_constant<size_type, N> size{};
+    static inline constexpr std::integral_constant<size_type, N> length{};
+    static inline constexpr std::integral_constant<size_type, N> max_size{};
+    static inline constexpr std::bool_constant<N == 0> empty{};
 
     // 元素访问 -----------------------------------------------------------------
 

@@ -29,13 +29,13 @@ class Subscriber
 public:
     using ViewType = ViewType_;
 
-    static constexpr bool is_queue_not_slot = emdevif::MessageQueue<QueueImpl>;
+    static inline constexpr bool is_queue_not_slot = emdevif::MessageQueue<QueueImpl>;
 
     using ValueType = QueueImpl::ValueType;
 
     static_assert(std::is_convertible_v<ValueType, ViewType>, "`ValueType\' should be convertable to `ViewType\'");
 
-    static constexpr bool view_type_equals_to_value_type = std::is_same_v<ValueType, ViewType>;
+    static inline constexpr bool view_type_equals_to_value_type = std::is_same_v<ValueType, ViewType>;
 
 private:
     QueueImpl& queue_;

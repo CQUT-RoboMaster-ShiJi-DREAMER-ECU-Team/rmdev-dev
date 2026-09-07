@@ -29,7 +29,7 @@ inline namespace units {
 inline namespace motor_units {
 
 /// 转每分（== 1/60 Hz）
-constexpr struct rpm final : mp_units::named_unit<"rpm",
+inline constexpr struct rpm final : mp_units::named_unit<"rpm",
                                                   mp_units::mag_ratio<1, 60> * mp_units::si::unit_symbols::Hz,
                                                   mp_units::kind_of<mp_units::isq::frequency>> {
 } rpm{};
@@ -139,7 +139,7 @@ class MotorGroup
 {
 public:
     using MotorType = MotorType_;
-    static constexpr std::size_t motor_count = motor_count_;
+    static inline constexpr std::size_t motor_count = motor_count_;
 
     using ControlType = MotorType::ControlType;
     using SendDataType = MotorType::SendDataType;

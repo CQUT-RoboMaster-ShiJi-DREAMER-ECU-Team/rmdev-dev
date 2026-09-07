@@ -86,7 +86,7 @@ public:
     static_assert(motor_count_ > 0 && motor_count_ <= 4, "The counts of motors in this group should be 1~4");
 
     using MotorList = Super_::MotorList;
-    static constexpr std::size_t motor_count = Super_::motor_count;
+    static inline constexpr std::size_t motor_count = Super_::motor_count;
 
     DJIMotorGroup() = delete;
 

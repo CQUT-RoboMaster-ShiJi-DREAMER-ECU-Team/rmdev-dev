@@ -89,7 +89,7 @@ public:
     }
 
     /// @brief 最大超时值，表示无限等待
-    static constexpr uint32_t max_delay = std::numeric_limits<uint32_t>::max();
+    static inline constexpr uint32_t max_delay = std::numeric_limits<uint32_t>::max();
 };
 
 }  // namespace emdevif

@@ -47,7 +47,7 @@ namespace rmdev::inline drivers {
 #define GzOFFSET (-0.00135726751f)
 #define gNORM    9.7229061133f
 
-constexpr std::size_t init_fail_max_count = RMDEV_DRIVER_BMI088_INIT_FAIL_MAX_COUNT;
+inline constexpr std::size_t init_fail_max_count = RMDEV_DRIVER_BMI088_INIT_FAIL_MAX_COUNT;
 
 /**
  * @brief BMI088 六轴惯性传感器驱动类
@@ -205,32 +205,32 @@ private:
         spi_.transmitReceive(false, {tx_buffer.data(), length}, {data, length}, 1000);
     }
 
-    static constexpr auto BMI088_TEMP_FACTOR = 0.125f;
-    static constexpr auto BMI088_TEMP_OFFSET = 23.0f;
+    static inline constexpr auto BMI088_TEMP_FACTOR = 0.125f;
+    static inline constexpr auto BMI088_TEMP_OFFSET = 23.0f;
 
-    static constexpr auto BMI088_WRITE_ACCEL_REG_NUM = 6;
-    static constexpr auto BMI088_WRITE_GYRO_REG_NUM = 6;
+    static inline constexpr auto BMI088_WRITE_ACCEL_REG_NUM = 6;
+    static inline constexpr auto BMI088_WRITE_GYRO_REG_NUM = 6;
 
-    static constexpr auto BMI088_GYRO_DATA_READY_BIT = 0;
-    static constexpr auto BMI088_ACCEL_DATA_READY_BIT = 1;
-    static constexpr auto BMI088_ACCEL_TEMP_DATA_READY_BIT = 2;
+    static inline constexpr auto BMI088_GYRO_DATA_READY_BIT = 0;
+    static inline constexpr auto BMI088_ACCEL_DATA_READY_BIT = 1;
+    static inline constexpr auto BMI088_ACCEL_TEMP_DATA_READY_BIT = 2;
 
-    static constexpr auto BMI088_LONG_DELAY_TIME = 120;
-    static constexpr auto BMI088_COM_WAIT_SENSOR_TIME = 150;
+    static inline constexpr auto BMI088_LONG_DELAY_TIME = 120;
+    static inline constexpr auto BMI088_COM_WAIT_SENSOR_TIME = 150;
 
-    static constexpr auto BMI088_ACCEL_IIC_ADDRESSE = (0x18 << 1);
-    static constexpr auto BMI088_GYRO_IIC_ADDRESSE = (0x68 << 1);
+    static inline constexpr auto BMI088_ACCEL_IIC_ADDRESSE = (0x18 << 1);
+    static inline constexpr auto BMI088_GYRO_IIC_ADDRESSE = (0x68 << 1);
 
-    static constexpr auto BMI088_ACCEL_3G_SEN = 0.0008974358974f;
-    static constexpr auto BMI088_ACCEL_6G_SEN = 0.00179443359375f;
-    static constexpr auto BMI088_ACCEL_12G_SEN = 0.0035888671875f;
-    static constexpr auto BMI088_ACCEL_24G_SEN = 0.007177734375f;
+    static inline constexpr auto BMI088_ACCEL_3G_SEN = 0.0008974358974f;
+    static inline constexpr auto BMI088_ACCEL_6G_SEN = 0.00179443359375f;
+    static inline constexpr auto BMI088_ACCEL_12G_SEN = 0.0035888671875f;
+    static inline constexpr auto BMI088_ACCEL_24G_SEN = 0.007177734375f;
 
-    static constexpr auto BMI088_GYRO_2000_SEN = 0.00106526443603169529841533860381f;
-    static constexpr auto BMI088_GYRO_1000_SEN = 0.00053263221801584764920766930190693f;
-    static constexpr auto BMI088_GYRO_500_SEN = 0.00026631610900792382460383465095346f;
-    static constexpr auto BMI088_GYRO_250_SEN = 0.00013315805450396191230191732547673f;
-    static constexpr auto BMI088_GYRO_125_SEN = 0.000066579027251980956150958662738366f;
+    static inline constexpr auto BMI088_GYRO_2000_SEN = 0.00106526443603169529841533860381f;
+    static inline constexpr auto BMI088_GYRO_1000_SEN = 0.00053263221801584764920766930190693f;
+    static inline constexpr auto BMI088_GYRO_500_SEN = 0.00026631610900792382460383465095346f;
+    static inline constexpr auto BMI088_GYRO_250_SEN = 0.00013315805450396191230191732547673f;
+    static inline constexpr auto BMI088_GYRO_125_SEN = 0.000066579027251980956150958662738366f;
 
     /**
      * @brief BMI088 传感器状态与错误码
@@ -256,7 +256,7 @@ private:
         BMI088_NO_SENSOR = 0xFF
     };
 
-    static constexpr uint8_t write_BMI088_accel_reg_data_error[BMI088_WRITE_ACCEL_REG_NUM][3] = {
+    static inline constexpr uint8_t write_BMI088_accel_reg_data_error[BMI088_WRITE_ACCEL_REG_NUM][3] = {
         {BMI088_ACC_PWR_CTRL, BMI088_ACC_ENABLE_ACC_ON, BMI088_ACC_PWR_CTRL_ERROR},
         {BMI088_ACC_PWR_CONF, BMI088_ACC_PWR_ACTIVE_MODE, BMI088_ACC_PWR_CONF_ERROR},
         {BMI088_ACC_CONF, BMI088_ACC_NORMAL | BMI088_ACC_800_HZ | BMI088_ACC_CONF_MUST_Set, BMI088_ACC_CONF_ERROR},
@@ -266,7 +266,7 @@ private:
          BMI088_INT1_IO_CTRL_ERROR},
         {BMI088_INT_MAP_DATA, BMI088_ACC_INT1_DRDY_INTERRUPT, BMI088_INT_MAP_DATA_ERROR}};
 
-    static constexpr uint8_t write_BMI088_gyro_reg_data_error[BMI088_WRITE_GYRO_REG_NUM][3] = {
+    static inline constexpr uint8_t write_BMI088_gyro_reg_data_error[BMI088_WRITE_GYRO_REG_NUM][3] = {
         {BMI088_GYRO_RANGE, BMI088_GYRO_2000, BMI088_GYRO_RANGE_ERROR},
         {BMI088_GYRO_BANDWIDTH, BMI088_GYRO_2000_230_HZ | BMI088_GYRO_BANDWIDTH_MUST_Set, BMI088_GYRO_BANDWIDTH_ERROR},
         {BMI088_GYRO_LPM1, BMI088_GYRO_NORMAL_MODE, BMI088_GYRO_LPM1_ERROR},
@@ -276,8 +276,8 @@ private:
          BMI088_GYRO_INT3_INT4_IO_CONF_ERROR},
         {BMI088_GYRO_INT3_INT4_IO_MAP, BMI088_GYRO_DRDY_IO_INT3, BMI088_GYRO_INT3_INT4_IO_MAP_ERROR}};
 
-    static constexpr float BMI088_ACCEL_SEN = BMI088_ACCEL_6G_SEN;
-    static constexpr float BMI088_GYRO_SEN = BMI088_GYRO_2000_SEN;
+    static inline constexpr float BMI088_ACCEL_SEN = BMI088_ACCEL_6G_SEN;
+    static inline constexpr float BMI088_GYRO_SEN = BMI088_GYRO_2000_SEN;
 
     uint8_t error = BMI088_NO_ERROR;  ///< 传感器错误状态标志位
 

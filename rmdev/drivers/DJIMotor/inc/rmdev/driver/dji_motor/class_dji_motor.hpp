@@ -278,7 +278,7 @@ struct IsDJIMotor : public std::is_same<DJIMotor, T> {
 };
 
 template<typename T>
-constexpr bool IsDJIMotor_v = IsDJIMotor<T>::value;
+inline constexpr bool IsDJIMotor_v = IsDJIMotor<T>::value;
 
 template<typename T>
 concept ValidDJIMotor = IsDJIMotor_v<T>;

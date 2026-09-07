@@ -34,9 +34,9 @@ class Topic
 public:
     using ValueType = QueueImpl::ValueType;
 
-    static constexpr std::size_t queue_item_size = QueueImpl::item_size;
+    static inline constexpr std::size_t queue_item_size = QueueImpl::item_size;
 
-    static constexpr bool is_queue_not_slot = emdevif::MessageQueue<QueueImpl>;
+    static inline constexpr bool is_queue_not_slot = emdevif::MessageQueue<QueueImpl>;
 
     using QueueListType = std::vector<QueueImpl, Allocator<QueueImpl>>;
     using QueueListIterator = QueueListType::iterator;

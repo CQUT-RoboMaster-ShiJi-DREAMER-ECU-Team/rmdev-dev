@@ -18,10 +18,10 @@
 namespace emdevif::stm32hal {
 
 /// UART 最大阻塞等待延时值
-constexpr uint32_t uart_max_delay = HAL_MAX_DELAY;
+inline constexpr uint32_t uart_max_delay = HAL_MAX_DELAY;
 
 /// UART 非阻塞等待值（立即返回）
-constexpr uint32_t uart_none_blocking = 0U;
+inline constexpr uint32_t uart_none_blocking = 0U;
 
 /**
  * @brief 获取 USART 当前状态

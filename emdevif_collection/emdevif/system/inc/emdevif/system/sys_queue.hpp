@@ -52,7 +52,7 @@ public:
     using ValueType = Type;  ///< 消息元素类型
     using Handle = void*;    ///< 句柄
 
-    static constexpr std::size_t item_size = item_size_;
+    static inline constexpr std::size_t item_size = item_size_;
 
     // todo 等消息队列接口做好了之后再来补注释
     /**
