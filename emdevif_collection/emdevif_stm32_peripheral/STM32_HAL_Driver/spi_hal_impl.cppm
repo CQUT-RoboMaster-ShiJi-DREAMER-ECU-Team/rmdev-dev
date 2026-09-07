@@ -5,6 +5,8 @@
 
 module;
 
+#include <cstddef>
+
 #include "spi.h"
 #include "emdevif/stm32_peripheral/hal/spi.hpp"
 

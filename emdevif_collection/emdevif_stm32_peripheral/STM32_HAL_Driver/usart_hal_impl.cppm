@@ -5,6 +5,8 @@
 
 module;
 
+#include <cstddef>
+
 #include "usart.h"
 #include "emdevif/stm32_peripheral/hal/usart.hpp"
 

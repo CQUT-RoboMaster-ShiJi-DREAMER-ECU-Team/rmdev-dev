@@ -5,6 +5,8 @@
 
 module;
 
+#include <cstddef>
+
 #include "tim.h"
 #include "emdevif/stm32_peripheral/hal/pwm.hpp"
 

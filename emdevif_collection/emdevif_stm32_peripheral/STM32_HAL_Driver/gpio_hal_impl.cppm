@@ -5,6 +5,8 @@
 
 module;
 
+#include <cstddef>
+
 #include "gpio.h"
 #include "emdevif/stm32_peripheral/hal/gpio.hpp"
 

@@ -5,6 +5,8 @@
 
 module;
 
+#include <cstddef>
+
 #include "can.h"
 #include "emdevif/stm32_peripheral/hal/can.hpp"
 
